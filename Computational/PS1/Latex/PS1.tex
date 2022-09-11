@@ -49,7 +49,7 @@
 
 \begin{document}
 \section{Solution to questions (using Julia)}
-Note: I answer questions 1-3 using the output of my Julia program. I include the output for Matlab and Fortran in the next section. All code, figures, and auxilliary files can be found \href{https://github.com/johnfhiggins/F22/tree/master/Computational/PS1}{here}. 
+Note: I answer questions 1-3 using the output of my Julia program. I include the output for Matlab and Fortran in the next section. All code, figures, and auxiliary files can be found \href{https://github.com/johnfhiggins/F22/tree/master/Computational/PS1}{here}. 
 \begin{enumerate}
 	\item The agent's dynamic programming problem is as follows. Given a current level of capital $k$ and realization of productivity level $z$, the agent's value is given by the following:
 	\[V(k, z) = \max_{(k', c) \in \Gamma(k,z)} u(c) + \beta \sum_{z' \in Z} V(k', z') \Pi(z', z)\]
@@ -96,7 +96,7 @@ Note: I answer questions 1-3 using the output of my Julia program. I include the
     \end{center}
     Time comparison:
     \begin{itemize}
-        \item Julia: 7.305 seconds
+        \item Julia: 3.297 seconds
         \item Matlab: 
         \item Fortran (non-parallelized): 3.067 seconds
         \item Fortran (parallelized): 0.188 seconds
