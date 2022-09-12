@@ -3,13 +3,14 @@ include("PS2_functions.jl")
 
 #initialize the Primitives and Results structs, respectively
 prim, res = Initialize()
-@elapsed solve_model(prim,res, 0.99425) #solve the model using functions in the included file
+@elapsed solve_vf(prim,res) #solve the model using functions in the included file
 
 q_test = Q_finder(prim, res)
 plot(q_test)
 
 mu = invar_dist(prim, res)
-
+excess_demand(prim, res, 0.9942703)
+market_clearing(prim, res)
 
 using Profile
 
