@@ -50,7 +50,6 @@ end
 function Bellman(prim::Primitives, res::Results)
     @unpack β,δ,θ,nk, k_grid, Pi, prod_mat,zk = prim
     v_next = zeros(nk,2)
-
     for i_k = 1:nk #iterate over capital grid
         candidate_max_h = -1e10 #very low number 
         candidate_max_l = -1e10 #very low number 

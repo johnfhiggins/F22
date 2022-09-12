@@ -1,8 +1,12 @@
-using Parameters, Plots
-include("HW1.jl")
+using Distributed
+
+addprocs(6)
+
+@everywhere using Parameters, Plots, SharedArrays
+@everywhere include("HW1_par_func.jl")
 
 #initialize the Primitives and Results structs, respectively
-prim, res = Initialize()
+@everywhere prim, res = Initialize()
 @elapsed solve_model(prim,res) #solve the model using functions in the included file
 
 @unpack val_func, pol_func = res #unpack the value and policy functions

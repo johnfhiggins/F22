@@ -97,7 +97,7 @@ end
 
 function solve_vf(prim::Primitives, res::Results)
     error = 100
-    tol = 1e-4
+    tol = 1e-6
     n=0
     q = res.q
     #v_next= zeros(prim.na, 2)
@@ -136,22 +136,25 @@ function next_mu_finder(prim::Primitives, res::Results)
     Q = res.Q
     μ_1 = zeros(na, 2)
     for ap_i =1:na
-        for sp_i = 1:2
-            val = 0.0
-            for a_i = 1:na
-                for s_i = 1:2
-                    val += Q[a_i, s_i, ap_i, sp_i]*μ_0[a_i, s_i]
-                end
+        val_h = 0.0
+        val_l = 0.0
+        for a_i = 1:na
+            for s_i = 1:2
+                val_h += Q[a_i, s_i, ap_i, 1]*μ_0[a_i, s_i] #employed
+                val_l += Q[a_i, s_i, ap_i, 2]*μ_0[a_i, s_i] #unemployed
             end
-            μ_1[ap_i, sp_i] = val
         end
+        μ_1[ap_i, 1] = val_h
+        μ_1[ap_i, 2] = val_l
     end
     μ_1
 end
 
 function invar_dist(prim::Primitives, res::Results)
     @unpack A, na, Π, Π_st = prim
+    println("Finding Q:")
     res.Q = Q_finder(prim::Primitives, res::Results)
+    println("Found Q")
     μ_0 = zeros(na, 2)
     for j=1:na
         for si = 1:2
@@ -160,16 +163,16 @@ function invar_dist(prim::Primitives, res::Results)
     end
     res.μ = μ_0
     error = 100
-    tol = 1e-4
+    tol = 1e-6
     n=0
     while error > tol
         n+=1
         μ_1 = next_mu_finder(prim, res)
         error = maximum(abs.(μ_1 - res.μ))/maximum(abs.(res.μ)) 
         res.μ = copy(μ_1)
-        #if mod(n, 100) == 0
-        #    println(n, ": ", error)
-        #end
+        if mod(n, 100) == 0
+            println(n, ": ", error)
+        end
     end
     print("Found it in $(n) tries!")
     res.μ
@@ -211,3 +214,19 @@ function market_clearing(prim::Primitives, res::Results)
     end
     res.q
 end
+
+function wealth_dist(prim::Primitives, res::Results)
+    @unpack A, na = prim
+    invar_dist(prim, res)
+    μ = res.μ
+    wealth_dist = zeros(na, 2)
+    for a_i = 1:na
+        wealth_i_h = min(a_i + 143, 1000) #since the range has increments of (roughly) 0.007, adding one to the level of assets corresponds to adding 1/0.007 = 143 to the index of asset holdings 
+        wealth_i_l = min(a_i + 71, 1000) #similarly, we add 71 to the index a_i to add 0.5 
+        #note: minimum operator included to ensure we don't go out of bounds with the index. Since there is zero mass of agents with assets more than 2, this has no practical impact and is only included to ensure we don't have a bounds error in the next two lines
+        wealth_dist[wealth_i_h, 1] = μ[a_i, 1] #set measure at wealth level corresponding to a_i when employed to the mass with assets a_i
+        wealth_dist[wealth_i_l, 2] = μ[a_i, 2] #same as above, but for unemployed
+    end
+    wealth_dist
+end
+
