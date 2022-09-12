@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.6)  10 SEP 2022 14:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.6)  12 SEP 2022 18:43
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -707,23 +707,44 @@ LaTeX Font Info:    Trying to load font information for U+rsfs on input line 53.
 File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
 ) [1{/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
-] [2] [3] [4] [5] (./PS2.aux)
+] [2] [3] [4]
+<pfplot.png, id=43, 602.25pt x 401.5pt>
+File: pfplot.png Graphic file (type png)
+<use pfplot.png>
+Package pdftex.def Info: pfplot.png  used on input line 125.
+(pdftex.def)             Requested size: 301.12425pt x 200.7495pt.
+<pfdiffplot.png, id=44, 602.25pt x 401.5pt>
+File: pfdiffplot.png Graphic file (type png)
+<use pfdiffplot.png>
+Package pdftex.def Info: pfdiffplot.png  used on input line 129.
+(pdftex.def)             Requested size: 301.12425pt x 200.7495pt.
+ [5 <./pfplot.png>]
+Overfull \hbox (4.37431pt too wide) in paragraph at lines 132--133
+[]\OT1/cmr/m/n/12 The market-clearing bond price is ap-prox-i-mately 0.99427. The sta-tion-ary cross-sectional
+ []
+
+<wealthplot.png, id=50, 602.25pt x 401.5pt>
+File: wealthplot.png Graphic file (type png)
+<use wealthplot.png>
+Package pdftex.def Info: wealthplot.png  used on input line 134.
+(pdftex.def)             Requested size: 301.12425pt x 200.7495pt.
+[6 <./pfdiffplot.png> <./wealthplot.png>] (./PS2.aux)
 Package rerunfilecheck Info: File `PS2.out' has not changed.
 (rerunfilecheck)             Checksum: 55F48542B143FD900E7297CD5FF8B452;567.
  ) 
 Here is how much of TeX's memory you used:
- 26267 strings out of 478268
- 494012 string characters out of 5846348
+ 26292 strings out of 478268
+ 494415 string characters out of 5846348
  756579 words of memory out of 5000000
- 44043 multiletter control sequences out of 15000+600000
+ 44062 multiletter control sequences out of 15000+600000
  475356 words of font info for 52 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,12n,89p,673b,347s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,12n,89p,673b,567s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on PS2.pdf (5 pages, 126238 bytes).
+Output written on PS2.pdf (6 pages, 194946 bytes).
 PDF statistics:
- 99 PDF objects out of 1000 (max. 8388607)
- 69 compressed objects within 1 object stream
- 9 named destinations out of 1000 (max. 500000)
- 29 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 107 PDF objects out of 1000 (max. 8388607)
+ 73 compressed objects within 1 object stream
+ 11 named destinations out of 1000 (max. 500000)
+ 44 words of extra memory for PDF output out of 10000 (max. 10000000)
 
