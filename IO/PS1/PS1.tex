@@ -1,0 +1,126 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Do not alter this block of commands.  If you're proficient at LaTeX, you may include additional packages, create macros, etc. immediately below this block of commands, but make sure to NOT alter the header, margin, and comment settings here. 
+\documentclass[12pt]{article}
+ \usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,amsfonts, enumitem, fancyhdr, color, hyperref,comment, graphicx, environ,mathtools, bbm, tikz, setspace, cleveref,listings, dcolumn}
+\usepackage{array, multirow, caption, booktabs}
+\usepackage{ mathrsfs }
+\usetikzlibrary{matrix,positioning}
+\tikzset{bullet/.style={circle,draw=black,inner sep=8pt}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\Var}{\text{Var}}
+\DeclareMathOperator*{\Cov}{\text{Cov}}
+
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\DeclareMathOperator{\eps}{\varepsilon}
+\doublespacing
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\pagestyle{fancy}
+\setlength{\headheight}{65pt}
+\newenvironment{problem}[2][Problem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{sol}
+    {\emph{Solution:}
+    }
+    {
+    \qed
+    }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\usepackage{xcolor}
+ 
+ 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\rhead{John Higgins\\Econ 899 \\ 20 September, 2022} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\begin{problem}{1}
+\end{problem}
+\begin{sol}
+Consider a market in which goods are homogenous. 
+\begin{enumerate}[label=\alph*)]
+    \item Let $P(\cdot)$ be an inverse demand function with constant elasticity. This notably implies that, $\forall Q$,
+    \[\eps(P(Q)) = -\frac{P(Q)}{P'(Q)Q} = -\sigma\]
+    for some $\sigma >0$. Rearranging this expression, we obtain:
+    \[P(Q) = \sigma P'(Q)Q \iff P(Q) - \sigma P'(Q)Q = 0\]
+    Applying the Implicit Function Theorem to the above expression, we have that
+    \[P'(Q) - \sigma(P'(Q) + P''(Q)Q ) = 0\]
+    Hence,
+    \[P'(Q) + P''(Q) Q = \frac{P'(Q)}{\sigma} > 0\]
+    since both $P'(Q) > 0$ and $\sigma > 0$. It thus follows that, $\forall Q$, $P'(Q) + P''(Q) Q > 0$ for all inverse demand functions $P(\cdot)$ with constant elasticity. As such, assumption A1 of the Cournot model is violated.
+    \item Consider the Cournot model with $N$ firms that each have identical cost functions $C(\cdot)$. Suppose that assumptions A1 and A2 hold. Namely, A1 requires that $0 \geq P''(Y)y_i + P'(Y)$ $\forall y_i < Y$. A2 requires that $ 0 \geq P'(Y) - C''(y_i)$ $\forall y_i \leq Y$. We wish to show that these two assumptions imply that the equilibrium price and firm quantities are decreasing in $N$.
+    
+    We begin by deriving each firm's profit function. Firm $i$'s profits when producing $y_i$ and facing aggregate output by opponents $Y_{-i} = \sum_{j \neq i} y_j$ are given by
+    \[\pi_i(y_i, Y_{-i}) = P(y_i + Y_{-i}) y_i - C(y_i)\]
+    The first order condition for $y_i$ is the following:
+    \begin{align*}
+        \frac{\partial \pi_i(y_i, Y_{-i})}{\partial y_i} = 0 &\iff P'(y_i + Y_{-i}) y_i + P(y_i + Y_{-i}) - C'(y_i) = 0\\
+        &\iff y_i = \frac{C'(y_i) - P(y_i + Y_{-i})}{P'(y_i + Y_{-i})}
+    \end{align*}
+    Based on the above first order condition, we define $R(Y_{-i}) = \frac{C'(y_i) - P(y_i + Y_{-i})}{P'(y_i + Y_{-i})}$ as the best reply function of firm $i$ to opponent action profile $Y_{-i}$. 
+    
+    We must verify the optimality $R(Y_{-i})$ when facing opponent action profile $Y_{-i}$ using the second derivative test. The second derivative of the profit function is given by
+    \[\frac{\partial^2 \pi_i(y_i, Y_{-i})}{\partial y_i^2} = P''(y_i + Y_{-i}) y_i + P'(y_i + Y_{-i}) + P'(y_i + Y_{-i}) - C''(y_i)\] 
+    Note by A1, $P''(y_i + Y_{-i})y_i + P'(y_i + Y_{-i}) \leq 0$. Similarly, by A2, $P'(y_i + Y_{-i} - C''(y_i)) \leq 0$. Jointly, this implies that
+    \[\frac{\partial^2 pi_i(y_i, Y_{-i})}{\partial y_i^2} = P''(y_i + Y_{-i}) y_i + P'(y_i + Y_{-i}) + P'(y_i + Y_{-i}) - C''(y_i) \leq 0\]
+    Thus, firm $i$'s objective function is locally concave in $y_i$ when $y_i$ satisfies the first order condition, implying that the (unique) solution to the FOC yields a maximum of the profit function. This verifies the optimality (and uniqueness) of the best reply function $R_i(Y_{-i}$.
+
+    We now must find the Nash equilibrium. Since each firm has identical cost functions, their best reply functions are identical. We therefore suppress the $i$ subscript and instead write $R_{i}(Y_{-i}) = R(Y_{-i})$ for $i=1,\ldots, N$. Given the symmetry of best response functions, we search for a symmetric equilibrium. That is, we suppose that $y_i = y_{j} = y^*$ $\forall i,j = 1,\ldots,N$. In order for $Y = (y^*, \ldots, y^*)$ to constitute a Nash equilibrium, we must have that 
+    \[y^* = R((Y_{-i}^*) = R((N-1)y^*)\]
+    Now that we have obtained the equation which characterizes the Nash equilibrium, we can analyze the impact of the number of firms $N$ on the equilibrium quantities $y^*$. 
+    
+    We note that the first order condition implies that
+    \[\frac{\partial \pi_i(R(Y_{-i}), Y_{-i})}{\partial y_i} = 0\]
+    Using the Implicit Function Theorem, we obtain that
+    \[R'(Y_{-i}) = -\frac{\partial^2 \pi_i(R(Y_{-i}))/\partial Y_{-i} \partial y_i}{\partial^2 \pi_i(R(Y_{-i}), Y_{-i})/\partial y_i^2}\]
+    Thus,
+    \[R'(Y_{-i}) = -\frac{P'(y_i + Y_{-i}) + y_i P''(y_i + Y_{-i})}{y_i P''(y_i + Y_{-i}) + 2 P'(y_i + Y_{-i}) - C''(y_i)}\]
+    Note that A1 directly implies the numerator is negative. Furthermore, we have previously demonstrated how A1 and A2 jointly imply that the denominator is negative. Together, it follows that $R'(Y_{-i}) \leq 0$. It now remains to show that $R'(Y_{-i}) \geq -1$. Note that
+    \begin{align*}
+        R'(Y_{-i}) &= -\frac{P'(y_i + Y_{-i}) + y_i P''(y_i + Y_{-i})}{y_i P''(y_i + Y_{-i}) + 2 P'(y_i + Y_{-i}) - C''(y_i)}\\
+        &\geq -\frac{P'(y_i + Y_{-i}) + y_i P''(y_i + Y_{-i}) + P'(y_i + Y_{-i}) - C''(y_i)}{y_i P''(y_i + Y_{-i}) + 2 P'(y_i + Y_{-i}) - C''(y_i)}\\
+        &= -1
+    \end{align*} 
+    where we again use assumption A2 in the penultimate line.
+
+    Hence, we have shown that $R'(Y_{-i}) \in (-1, 0)$. This implies that the best reply function is a contraction mapping and thus that the Nash equilibrium exists, is unique, and is globally stable! We now consider the implications of this for the equilibrium prices and quantities. The Nash equilibrium is characterized by the equation $y^* = R((N-1)y^*)$, where $y_i = y^*$ $\forall i=1,\ldots, N$ (such an solution is guaranteed to exist by the above argument). Applying the fact that $R'(Y_{-i}) < 0$, it follows that
+    \[R'((N-1)y^*) \leq 0\]
+    This implies that the equilibrium per-firm quantity $y^*$ is decreasing in the number of firms $N$. It finally remains to show that the equilibrium price is decreasing. Let $y^*_N$ indicate the per-firm equilibrium quantity with $N$ firms. We claim that $Ny^*_N$ is increasing in $N$.
+
+    To do so, we define the mapping 
+    \[\varphi : Y_{-i} \mapsto (R(Y_{-i}) + Y_{-i}) \left(\frac{N-1}{N}\right)\]
+    It is clear that $\varphi(Y_{-i}, N)$ is strictly increasing in $N$, as $\frac{N-1}{N} = 1 - \frac{1}{N}$ is strictly increasing in $N$. It is also strictly increasing in $Y_{-i}$, as 
+    \[\varphi'(Y_{-i}) = (R'(Y_{-i}) + 1)\left( \frac{N-1}{N}\right) \geq (-1 + 1) \frac{N-1}{N} = 0\]
+    Combining these arguments, we note that $\varphi$ has increasing differences in $Y_{-i}$ and $N$ and is therefore supermodular. 
+    
+    Furthermore, we observe that $(N-1)y^*_{N}$ is a fixed point of $\varphi$. Indeed,
+    \[\varphi((N-1)y^*_N)) = (y^*_N + (N-1)y^*_N)\left(\frac{N-1}{N}\right) = N y^*_N \left( \frac{N-1}{N}\right) = y^*_N (N-1)\]
+    
+    Now for the punchline! As $\varphi$ is supermodular in $N$ and $Y_{-i}$ and is increasing in $N$, its fixed points will also be increasing in $N$. Hence, $(N-1) y^*_N$ is increasing in $N$. It follows that total industry output is increasing in $N$, even though per-firm outputs decrease. This works because even though each firm produces less as the number of firms increases, the reduction in quantity is outweighed by the fact that an additional firm is producing. Hence, total industry output increases. 
+
+    Since total industry output is increasing in $N$, it follows that $P(Ny^*)$ is decreasing in $N$ (as $P'(\cdot) < 0)$.
+\end{enumerate}
+\end{sol}
+\begin{problem}{2}
+\end{problem}
+\begin{sol}
+\begin{enumerate}[label=\alph*) ]
+    \item 
+\end{enumerate}
+\end{sol}
+\end{document}
