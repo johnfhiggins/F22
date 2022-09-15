@@ -1,42 +1,53 @@
-using Parameters, Plots
+@everywhere using Parameters, Plots
 
-@with_kw struct Primitives
+@everywhere @with_kw struct Primitives
     β :: Float64 = 0.9932 #discount rate
     α :: Float64 = 1.5 #crra parameter
     S :: Array{Float64,1} = [1, 0.5] #possible earning levels
     Π :: Array{Float64} = [0.97 0.03; 0.5 0.5] #transition matrix
-    Π_st :: Array{Float64} = [0.9434, 0.0566]
+    Π_st :: Array{Float64} = [0.9434, 0.0566] #change back
     A :: Array{Float64, 1} = collect(range(-2.0, length = 1000, stop= 5.0)) #asset grid
     na :: Int64 = length(A) #number of grid points
 end
 
-mutable struct Results
-    val_func :: Array{Float64} #value function struct
-    pol_func :: Array{Float64} #policy function struct
-    pol_func_ind :: Array{Int64} #policy function index struct
+@everywhere mutable struct Results
+    val_func :: SharedArray{Float64,2} #value function struct
+    pol_func :: SharedArray{Float64,2} #policy function struct
+    pol_func_ind :: SharedArray{Int64,2} #policy function index struct
     q :: Float64 #bond price 
-    μ :: Array{Float64} #invar_dist
-    Q :: Array{Float64} #endog transition matrix
+    μ :: SharedArray{Float64} #invar_dist
+    Q :: SharedArray{Float64} #endog transition matrix
 end
 
-function Initialize()
+@everywhere function mu_guess(prim::Primitives)
+    @unpack A,na, Π_st = prim
+    μ_0 = zeros(na, 2)
+    for j=1:na
+        for si = 1:2
+            μ_0[j, si] = (1)/(2*na) #* Π_st[si]
+        end
+    end
+    μ_0
+end
+
+@everywhere function Initialize()
     prim = Primitives() #initialize primtiives
     val_func = zeros(prim.na, 2) #initial value function guess
     pol_func = zeros(prim.na, 2) #initial policy function guess
     pol_func_ind = ones(Int64, prim.na,2) #initial policy function guess index
     q = (1 + prim.β)/2 #initial price guess
-    μ = zeros(prim.na, 2) #empty initial distribution
+    μ = mu_guess(prim) #guessed initial distribution
     Q = zeros(prim.na, 2, prim.na, 2) #empty transition matrix
     res = Results(val_func, pol_func, pol_func_ind, q, μ, Q) #initialize results struct
     prim, res #return structs
 end
 
-function Bellman(prim::Primitives, res::Results, q::Float64) #bellman operator which takes primitives, results struct, employment status, and the market price as given
+@everywhere function Bellman(prim::Primitives, res::Results, q::Float64) #bellman operator which takes primitives, results struct, employment status, and the market price as given
     @unpack β, α, S, Π, A, na = prim
-    v_next = zeros(na, 2)
+    v_next = SharedArray{Float64}(zeros(na, 2))
 
     #s = S[s_i] #find current income given employment status index
-    for a_i=1:na
+    @sync @distributed for a_i=1:na
         a = A[a_i] #given current asset index, find asset holding in grid
         val_prev_h = -1e16 #v bad number to start as candidate maximum for employed agent
         val_prev_l = -1e16 #same, but for unemployed agent
@@ -95,9 +106,9 @@ function Bellman(prim::Primitives, res::Results, q::Float64) #bellman operator w
     v_next
 end
 
-function solve_vf(prim::Primitives, res::Results)
+@everywhere function solve_vf(prim::Primitives, res::Results)
     error = 100
-    tol = 1e-6
+    tol = 1e-6 #used 1e-8 for mkt clearing
     n=0
     q = res.q
     #v_next= zeros(prim.na, 2)
@@ -111,7 +122,7 @@ function solve_vf(prim::Primitives, res::Results)
     println("Convergence in $(n) iterations!")
 end
 
-function Q_finder(prim::Primitives, res::Results) #find Q
+@everywhere function Q_finder(prim::Primitives, res::Results) #find Q
     @unpack A, na, Π = prim
     pf_ind = res.pol_func_ind #policy index matrix
     Q = zeros(na, 2, na, 2)
@@ -130,12 +141,12 @@ end
             
 
 
-function next_mu_finder(prim::Primitives, res::Results)
+@everywhere function next_mu_finder(prim::Primitives, res::Results)
     @unpack A, na, Π, Π_st = prim
-    μ_0 = res.μ
+    μ_0 = res.μ #unpack the distribution mu
     Q = res.Q
-    μ_1 = zeros(na, 2)
-    for ap_i =1:na
+    μ_1 = SharedArray{Float64}(zeros(na, 2))
+    @sync @distributed for ap_i =1:na
         val_h = 0.0
         val_l = 0.0
         for a_i = 1:na
@@ -150,26 +161,19 @@ function next_mu_finder(prim::Primitives, res::Results)
     μ_1
 end
 
-function invar_dist(prim::Primitives, res::Results)
+@everywhere function invar_dist(prim::Primitives, res::Results)
     @unpack A, na, Π, Π_st = prim
     println("Finding Q:")
     res.Q = Q_finder(prim::Primitives, res::Results)
     println("Found Q")
-    μ_0 = zeros(na, 2)
-    for j=1:na
-        for si = 1:2
-            μ_0[j, si] = ((A[j] + 2))/(32) * Π_st[si]
-        end
-    end
-    res.μ = μ_0
     error = 100
-    tol = 1e-6
+    tol = 1e-6 #used -10 for mkt clearing
     n=0
     while error > tol
         n+=1
         μ_1 = next_mu_finder(prim, res)
         error = maximum(abs.(μ_1 - res.μ))/maximum(abs.(res.μ)) 
-        res.μ = copy(μ_1)
+        res.μ = copy(μ_1) #update the distribution stored in results struct
         if mod(n, 100) == 0
             println(n, ": ", error)
         end
@@ -179,7 +183,7 @@ function invar_dist(prim::Primitives, res::Results)
 end
 
 
-function excess_demand(prim::Primitives, res::Results)
+@everywhere function excess_demand(prim::Primitives, res::Results)
     @unpack A, na = prim
     #q = res.q
     #prim, res = Initialize()
@@ -194,14 +198,14 @@ function excess_demand(prim::Primitives, res::Results)
     excess
 end 
 
-function market_clearing(prim::Primitives, res::Results)
+@everywhere function market_clearing(prim::Primitives, res::Results)
     @unpack β = prim
     q_high = 1.0 #upper bound for discount bond rate; since it is a discount bond, it will be less than 1
     q_low = β #by assumption, the discount bond rate must exceed beta
     res.q = (q_low + q_high)/2
     excess = excess_demand(prim, res)
     println("Price: $(res.q), Excess Demand: $(excess)")
-    tol = 1e-6
+    tol = 1e-4 
     while abs(excess) > tol
         if excess > 0
             q_low = res.q
@@ -215,7 +219,7 @@ function market_clearing(prim::Primitives, res::Results)
     res.q
 end
 
-function wealth_dist(prim::Primitives, res::Results)
+@everywhere function wealth_dist(prim::Primitives, res::Results)
     @unpack A, na = prim
     invar_dist(prim, res)
     μ = res.μ
@@ -230,3 +234,44 @@ function wealth_dist(prim::Primitives, res::Results)
     wealth_dist
 end
 
+function lorenz_curve(prim::Primitives, res::Results, w_dist::Array{Float64,2})
+    @unpack A, na = prim
+    total_wealth_dist = w_dist[:,1] + w_dist[:,2] #the total mass of agents with wealth level w is the sum of the measures of employed and unemployed with wealth w
+    lorenz_num=zeros(na)
+    prop_lower = zeros(na)
+    lorenz_num[1] = total_wealth_dist[1]*A[1]
+    prop_lower[1] = total_wealth_dist[1]
+    for a_i=2:na
+        a = A[a_i]
+        lorenz_num[a_i] = total_wealth_dist[a_i] * a + lorenz_num[a_i-1]
+        prop_lower[a_i] = total_wealth_dist[a_i] + prop_lower[a_i-1]
+    end
+    x_grid = prop_lower ./ prop_lower[na]
+    lorenz = lorenz_num ./ lorenz_num[na]
+    x_grid, lorenz
+end
+
+@everywhere function gini_finder(x_grid::Vector{Float64}, lorenz::Vector{Float64})
+    unscaled_gini = 0.0
+    for i=2:length(x_grid)
+        delta_x = x_grid[i]-x_grid[i-1]
+        unscaled_gini += (x_grid[i] - lorenz[i])*delta_x
+    end
+    gini = unscaled_gini*2 #the area under the 45 degree line is 1/2. The Gini coefficient is the ratio of the area between the 45-degree line and the lorenz curve over the area under the 45-degree line. So we divide the area between the curves by the total area under the 45 degree line, which is 1/2. Equivalently, we multiply by 2
+    gini
+end
+
+
+@everywhere function welfare_comparison(prim::Primitives, res::Results)
+    @unpack A, na, α, β = prim
+    λ = zeros(na, 2)
+    μ = res.μ
+    wfb = -4.252556
+    ab_frac = 1/((1-α)*(1-β))
+    val_func = res.val_func
+    num = wfb + 1 /((1 - α)*(1 - β))
+    denom = val_func .+ (1 ./((1 .- α).*(1 .- β)))
+
+    λ = (num./denom).^(1/(1 .- α)) .- 1
+    λ
+end

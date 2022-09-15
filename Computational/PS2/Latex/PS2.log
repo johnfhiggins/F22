@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.6)  12 SEP 2022 18:43
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.6)  15 SEP 2022 11:30
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -687,7 +687,6 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 50.
 LaTeX Info: Redefining \pageref on input line 50.
 LaTeX Info: Redefining \nameref on input line 50.
- (./PS2.out) (./PS2.out)
 \@outlinefile=\write5
 \openout5 = `PS2.out'.
 
@@ -708,12 +707,12 @@ File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
 ) [1{/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
 ] [2] [3] [4]
-<pfplot.png, id=43, 602.25pt x 401.5pt>
+<pfplot.png, id=36, 602.25pt x 401.5pt>
 File: pfplot.png Graphic file (type png)
 <use pfplot.png>
 Package pdftex.def Info: pfplot.png  used on input line 125.
 (pdftex.def)             Requested size: 301.12425pt x 200.7495pt.
-<pfdiffplot.png, id=44, 602.25pt x 401.5pt>
+<pfdiffplot.png, id=37, 602.25pt x 401.5pt>
 File: pfdiffplot.png Graphic file (type png)
 <use pfdiffplot.png>
 Package pdftex.def Info: pfdiffplot.png  used on input line 129.
@@ -723,28 +722,252 @@ Overfull \hbox (4.37431pt too wide) in paragraph at lines 132--133
 []\OT1/cmr/m/n/12 The market-clearing bond price is ap-prox-i-mately 0.99427. The sta-tion-ary cross-sectional
  []
 
-<wealthplot.png, id=50, 602.25pt x 401.5pt>
+<wealthplot.png, id=44, 602.25pt x 401.5pt>
 File: wealthplot.png Graphic file (type png)
 <use wealthplot.png>
 Package pdftex.def Info: wealthplot.png  used on input line 134.
 (pdftex.def)             Requested size: 301.12425pt x 200.7495pt.
-[6 <./pfdiffplot.png> <./wealthplot.png>] (./PS2.aux)
-Package rerunfilecheck Info: File `PS2.out' has not changed.
-(rerunfilecheck)             Checksum: 55F48542B143FD900E7297CD5FF8B452;567.
+<lorenzplot.png, id=45, 602.25pt x 401.5pt>
+File: lorenzplot.png Graphic file (type png)
+<use lorenzplot.png>
+Package pdftex.def Info: lorenzplot.png  used on input line 138.
+(pdftex.def)             Requested size: 301.12425pt x 200.7495pt.
+[6 <./pfdiffplot.png> <./wealthplot.png>]
+<lambdaplot.png, id=52, 602.25pt x 401.5pt>
+File: lambdaplot.png Graphic file (type png)
+<use lambdaplot.png>
+Package pdftex.def Info: lambdaplot.png  used on input line 150.
+(pdftex.def)             Requested size: 301.12425pt x 200.7495pt.
+ [7 <./lorenzplot.png>]
+LaTeX Font Info:    Trying to load font information for U+bbm on input line 155.
+ (/usr/local/texlive/2022/texmf-dist/tex/latex/bbm-macros/ubbm.fd
+File: ubbm.fd 1999/03/15 V 1.2 Font definition for bbm font - TH
+)
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: Undefined control sequence.
+\enit@endenumerate ->\enit@after 
+                                 \endlist \ifx \enit@series \relax \else \if...
+l.160 \end{enumerate}
+                     
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: Undefined control sequence.
+\enit@endenumerate ...\else \ifnum \enit@resuming 
+                                                  =\@ne \enit@setresumekeys ...
+l.160 \end{enumerate}
+                     
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: Missing number, treated as zero.
+<to be read again> 
+                   =
+l.160 \end{enumerate}
+                     
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: Undefined control sequence.
+\enit@setresumekeys ...xpandafter {\enit@savekeys 
+                                                  }\xdef \enit@afterlist {#2...
+l.160 \end{enumerate}
+                     
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: Undefined control sequence.
+\enit@setresumekeys ...it@toks }\ifnum \enit@type 
+                                                  =\z@ #3\def \enit@noexcs {...
+l.160 \end{enumerate}
+                     
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: Missing number, treated as zero.
+<to be read again> 
+                   =
+l.160 \end{enumerate}
+                     
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: Undefined control sequence.
+<argument> enit@resume@series@\enit@series 
+                                           
+l.160 \end{enumerate}
+                     
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: Undefined control sequence.
+\enit@setresumekeys ...me@#1}{\csname c@\@listctr 
+                                                  \endcsname \the \csname c@...
+l.160 \end{enumerate}
+                     
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: Undefined control sequence.
+\enit@setresumekeys ...e \the \csname c@\@listctr 
+                                                  \endcsname }\fi }
+l.160 \end{enumerate}
+                     
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: You can't use `\relax' after \the.
+<recently read> \c@ 
+                    
+l.160 \end{enumerate}
+                     
+I'm forgetting what you said and using zero instead.
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: Undefined control sequence.
+\enit@endenumerate ...t \fi \ifnum \enit@resuming 
+                                                  =\thr@@ \enit@setresumekey...
+l.160 \end{enumerate}
+                     
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: Missing number, treated as zero.
+<to be read again> 
+                   =
+l.160 \end{enumerate}
+                     
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: Undefined control sequence.
+\enit@setresumekeys ...xpandafter {\enit@savekeys 
+                                                  }\xdef \enit@afterlist {#2...
+l.160 \end{enumerate}
+                     
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: Undefined control sequence.
+\enit@setresumekeys ...it@toks }\ifnum \enit@type 
+                                                  =\z@ #3\def \enit@noexcs {...
+l.160 \end{enumerate}
+                     
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: Missing number, treated as zero.
+<to be read again> 
+                   =
+l.160 \end{enumerate}
+                     
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: Undefined control sequence.
+\enit@setresumekeys ...me@#1}{\csname c@\@listctr 
+                                                  \endcsname \the \csname c@...
+l.160 \end{enumerate}
+                     
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: Undefined control sequence.
+\enit@setresumekeys ...e \the \csname c@\@listctr 
+                                                  \endcsname }\fi }
+l.160 \end{enumerate}
+                     
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: You can't use `\relax' after \the.
+<recently read> \c@ 
+                    
+l.160 \end{enumerate}
+                     
+I'm forgetting what you said and using zero instead.
+
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: LaTeX Error: \begin{document} ended by \end{enumerate}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.160 \end{enumerate}
+                     
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+/Users/johnhiggins/Documents/F22/Computational/PS2/Latex/PS2.tex:160: Extra \endgroup.
+<recently read> \endgroup 
+                          
+l.160 \end{enumerate}
+                     
+Things are pretty mixed up, but I think the worst is over.
+
+[8 <./lambdaplot.png>] (./PS2.aux)
+
+Package rerunfilecheck Warning: File `PS2.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `PS2.out':
+(rerunfilecheck)             Before: <no file>
+(rerunfilecheck)             After:  042134F5CB97A73F397259DC32EAC549;855.
  ) 
 Here is how much of TeX's memory you used:
- 26292 strings out of 478268
- 494415 string characters out of 5846348
- 756579 words of memory out of 5000000
- 44062 multiletter control sequences out of 15000+600000
- 475356 words of font info for 52 fonts, out of 8000000 for 9000
+ 26331 strings out of 478268
+ 495350 string characters out of 5846348
+ 756505 words of memory out of 5000000
+ 44090 multiletter control sequences out of 15000+600000
+ 475751 words of font info for 55 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,12n,89p,673b,567s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on PS2.pdf (6 pages, 194946 bytes).
+ 84i,12n,89p,860b,567s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ </Users/johnhiggins/Library/texlive/2022/texmf-var/fonts/pk/ljfour/public/bbm/bbm12.600pk></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
+Output written on PS2.pdf (8 pages, 251365 bytes).
 PDF statistics:
- 107 PDF objects out of 1000 (max. 8388607)
- 73 compressed objects within 1 object stream
- 11 named destinations out of 1000 (max. 500000)
- 44 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 123 PDF objects out of 1000 (max. 8388607)
+ 84 compressed objects within 1 object stream
+ 18 named destinations out of 1000 (max. 500000)
+ 38 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -120,7 +120,66 @@ Consider a market in which goods are homogenous.
 \end{problem}
 \begin{sol}
 \begin{enumerate}[label=\alph*) ]
-    \item 
+    \item The game has players $I = \{1, 2\}$. Players each have valuation $V > 0$, and this valuation is common knowledge. Players submit bids $b_i \in B_i = [0, -\infty)$. The joint strategy space is $B = B_1 \times B_2$. Player $i$'s utility function is a mapping $u : B \rightarrow \mathbb{R}$ given by
+    \[u_i(b_i, b_{-i})= \begin{cases} V - b_i \quad&\text{if } b_i > b_{-i}\\
+        (V - b_i)/2 \quad&\text{if } b_i = b_{-i}\\
+        0 \quad&\text{if } b_i < b_j
+    \end{cases}\]
+    where $b_{-i}$ indicates the bid of the other player. I assume that if players tie, they each get a 50 percent chance of winning.
+
+    We want to find the Nash equilibrium of this game. We begin by noting that, regardless of what the other player plays, playing $b_i > V$ is strictly dominated by playing $b_i = 0$. That is, $\forall i$, $\forall b_{-i}$, $\forall b_i > V$, $u(b_i, b_{-i}) < 0 = u(0, b_{-i})$. As such, no equilibrium can contain $b_i > V$ for either player.
+
+    We now consider equilibria of the form $(b_i, b_{-i})$ where $b_i, b_{-i} \in (0, V)$. Suppose first that $b_i = b_{-i}$. We argue that this is not an equilibrium, since player $i$ could instead bid $b_i + \eps$ for some small $\eps > 0$ and be certain to win. Their payoff from bid $b_i$ is $(V - b_i)/2$, whereas their payoff from bid $b_i + \eps$ is $V - b_i - \eps$, which exceeds the tie payoff for sufficiently small $\eps$. This means that player $i$ could strictly improve by deviating, implying that this cannot be an equilibrium.
+
+    As a second case, suppose without loss of generality that $0 < b_i < b_{-i} < V$. We argue that this cannot be an equilibrium since player $i$ would achieve a strictly higher payoff by bidding $b_i' = b_{-i} + \eps$ for $\eps < V - b_{i}$. As such, this cannot be an equilibrium.
+
+    Now consider equilibria of the form $(b_i, 0)$ for some player $i$. This is also not an equilibrium, since $i$ could strictly benefit by playing $b_i = \eps$ for some $\eps \in (0,b_i)$ and achieve a strictly higher payoff.
+
+    This leaves us with only $b_i = b_{-i} = V$ remaining. This gives expected payoff of 0 to both players. To see why this is a Nash equilibrium, we note that either player cannot strictly improve by playing $b_i < V$, as this would guarantee they lose and give them 0 payoff. Furthermore, bidding over $V$ is strictly dominated. Thus, neither player has a unilateral incentive to deviate, implying that this is a Nash equilibrium.
+    \item We now assume the seller uses an all-pay auction. The payoffs to player 1 for the pair of bids $(b_1, b_2)$ are given by 
+    \[u_1(b_1, b_2) = \begin{cases} V - b_1 &\quad\text{if } b_1 > b_2\\
+        V/2 - b_1&\quad\text{if } b_1 = b_2\\
+        - b_1 &\quad\text{if } b_1 < b_2
+    \end{cases}\]
+    As before, we assume that agents have an equal chance of winning if they submit tied bids.
+    \item We argue that no pure strategy Nash equilibrium of the all pay auction exists. To do so, we proceed by considering a number of cases.
+    
+    As in the first price auction, playing $b_i > V$ is strictly dominated for all players and will never be played in equilibrium. 
+
+    First consider the case where $b_i, b_j \in (0,V]$ with $b_i < b_j$. Player $i$'s payoff is $-b_i$ because they do not win the auction. They could strictly improve by playing $b_i = 0$, which gives them payoff 0.
+
+    We now consider $b_i = b_j \in [0,V]$. Each player has expected payoff of $V/2 - b_i$. If $b_i > V/2$, $i$'s payoff will be negative, implying that $b_i > V/2$ is strictly dominated by playing $b_i' = 0$ (which gives payoff zero). Thus, an equilibrium could only consist of $b_i = b_j \leq V/2$. We argue that this is not an equilibrium, since $b_i$ could strictly benefit by playing $b_i' = b_j + \eps$ for $\eps \leq \min\{V/2, V-b_j\}$, which allows them to win the auction and have strictly higher payoff than $V/2 - b_i$. In summary, we cannot have $b_i = b_j \in [0,V]$.
+
+    Now consider equilibria of the form $(b_i, 0)$, where $b_i \in (0, V]$. Player $i$ will win the auction and get payoff $V - b_i$. However, they could strictly improve by bidding $b_i' = \eps > 0$, which allows them to still win while paying less (so long as $\eps < b_i$). This implies that $(b_i, 0)$ with $b_i > 0$ cannot be an equilibrium.
+    
+    The above cases exhaust the possible pure strategy equilibrium candidates, and thus we conclude that there is no pure strategy Nash equilibrium.
+
+    \item We wish to find the mixed strategy Nash equilibrium. To do so, we assume that each player plays with a bidding strategy $G_i(b)$, where $G_i(\cdot) = P(b_i \leq b)$ is the CDF corresponding to the distribution of player $i$'s bids. Since each player has the same valuation $V$ and this valuation is common knowledge, we impose the restriction that $G_i(b) = G_j(b) = G(b)$. That is, players play with a common bid function. 
+    
+    Furthermore, given the linear form of the payoff function, we conjecture that $G$ has the form $G(b) = \alpha b + \beta$ for some constants $\alpha, \beta$ to be determined. It follows that $g(b) = \alpha$ is the pdf of a player's bids. Note that this implies that $b_i = b_j$ with probability zero and we can thus neglect this possibility in players' expected utility. 
+    
+    Player $1$'s expected payoff from bidding strategy $G(\cdot)$ is given by
+    \begin{align*}E[u(b_1, b_{j})] &= \int_{0}^{V} \int_{b_1}^V (V-b_1)\alpha \, d b_2  \alpha \, d b_1 + \int_{0}^{V} \int_{0}^{b_1} (-b_1)\alpha \, d b_2  \alpha \, d b_1 \\
+        &= \alpha^2 \int_{0}^{V} (V - b_1)^2 \, d b_1 - \alpha^2 \int_{0}^V b_1^2 \, d b_1\\
+        &= \alpha^2 \left[ V^3 - V^2 + \frac{V^3}{3}\right] - \alpha^2 \frac{V^3}{3}\\
+        &= \frac{\alpha V^3}{3} - \alpha^2 \frac{V^3}{3}\\
+        &= 0
+    \end{align*}
+    (player 2's expected payoff is of course identical). It makes sense that the expected value is zero: by the Revenue Equivalence Theorem, we know that any bidder's expected value will be the same regardless of auction type (as long as they are normal auctions). The first price auction considered in part a) has the same expected payoff (0), so it is encouraging that these align.
+
+    It now remains to solve for $\alpha$ and $\beta$. Since playing $b_i > V$ is a dominated strategy, we must have that $G(V) = 1$. Hence,
+    \[\alpha V + \beta = 1 \iff \beta = 1 - \alpha V\]
+    We now must find $\alpha$. Given that no player can submit a negative bid, $G$ must also obey the condition that $G(0) = 0$. As such,
+    \[G(0) = 0 \iff \alpha (0) + \beta = 0 \iff 1 - \alpha V = 0 \iff \alpha = \frac{1}{V}\]
+    Consequently, $\beta = 1 - \alpha V = 1- \alpha \frac{1}{\alpha} = 0$. It follows that $G(b) = \frac{b}{V}$ is the equilibrium bidding strategy.
+    \item We will directly compute the expected revenue to the seller (although we already know by the Revenue Equivalence Theorem that it will be equal to the expected revenue of the auction in part a), which is $V$). To do so, we simply take the expectation of the bids of each player given that they are playing with the bid function $G(\cdot)$ found in the previous section.
+    
+    As $G(b) = \frac{b}{V}$ is the cdf of a uniform random variable on the interval $[0,V]$, the expectation of each player's bid is $\frac{V}{2}$. Adding the expected revenue from each player, we see that the expected revenue to the seller is $\frac{V}{2} + \frac{V}{2} = V$. This aligns with the auction in part a, which has the same expected revenue (due to the RET).
 \end{enumerate}
+\end{sol}
+\begin{problem}{3}
+\end{problem}
+\begin{sol}
+
 \end{sol}
 \end{document}

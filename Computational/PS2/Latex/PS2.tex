@@ -128,10 +128,34 @@ We verify that asset market clearing is satisfied:
     \begin{center}
         \includegraphics[scale=0.5]{pfdiffplot.png}
     \end{center}
-    It appears that $\hat{a} \approx 1.3$ or so for employed agents and $\hat{a} =-2$ for unemployed agents.
+    The first $a$ such that $g(a, s) \leq a$ is given by $\hat{a} \approx 1.076$ for employed agents and $\hat{a} =-2$ for unemployed agents.
     \item The market-clearing bond price is approximately 0.99427. The stationary cross-sectional distribution associated with this price is plotted below:
     \begin{center}
         \includegraphics[scale=0.5]{wealthplot.png}
     \end{center}
+    \item The plot of the Lorenz curve is included below. We estimate the gini index to be 0.3843. 
+    \begin{center}
+        \includegraphics[scale=0.5]{lorenzplot.png}
+    \end{center}
+    Comparing these with the data, we see that our Lorenz curve is not nearly as curved as the Lorenz curve in the data. As a consequence, our gini coefficient is far less than that computed from the data. The real gini coefficient for wealth is 0.816, whereas ours is less than half of this. This suggests that this model alone cannot account for the degree of inequality observed in the data.
+\end{enumerate}
+\section{III. Comparing complete and incomplete markets}
+    \begin{enumerate}[label=\alph*) ]
+        \item We compute the consumption equivalent $\lambda(a, s)$ using the following formula:
+        \[\lambda(a,s) = \left[ \frac{W^{FB} + \frac{1}{(1-\alpha)(1-\beta)}}{v(a,s) + \frac{1}{(1-\alpha)(1-\beta)}}\right]^{1/(1-\alpha)} -1\]
+        where $W^{FB}$ represent's an agents discounted present value of consumption under the complete markets framework. Given that $c^{FB} = 0.9717$, it follows that
+        \[W^{FB} = \sum_{t=0}^{\infty} \beta^t u(0.9717) = \frac{(0.9717)^{1-\alpha} -1}{1-\alpha} \frac{1}{1-\beta} \approx -4.2526\]
+        We now compute $\lambda(a,s)$ $\forall a,s$ and plot the curves below for each employment status:
+        \begin{center}
+            \includegraphics[scale=0.5]{lambdaplot.png}
+        \end{center}
+        Clearly, unemployed agents are willing to pay more to have access to complete markets because they are not able to smooth consumption in incomplete markets as much as they could with complete markets. Furthermore, agents with lower levels of asset holdings would prefer complete markets because they don't have as much assets on hand to smooth consumption over future shocks. Agents with higher wealth holdings will prefer to keep incomplete markets, since they already have sufficient assets to smooth consumption over future shocks and their consumption would be lower under complete markets. In other words, they would have to give up consumption when going from incomplete to complete markets, so it is understandable why they would not be in favor of switching.
+        \item As previously identified, $W^{FB} = -4.2526$. We compute that $W^{INC}= -4.4574$ and $WG = 0.00138$. These indicate that aggregate welfare is lower under incomplete markets, and that the economy-wide welfare gain from complete markets is positive.
+        \item The fraction of the population which would prefer changing to complete markets is given by
+        \[\sum_{a,s \in A\times S} \mathbbm{1}_{\{\lambda(a,s) \geq 0\}}(a,s) \mu(a,s) \approx 0.5418\]
+        That is, 54\% of agents would prefer to change to complete markets. 
+    \end{enumerate}    
+    
+
 \end{enumerate}
 \end{document}
