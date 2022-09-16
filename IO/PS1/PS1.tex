@@ -180,6 +180,56 @@ Consider a market in which goods are homogenous.
 \begin{problem}{3}
 \end{problem}
 \begin{sol}
+\begin{enumerate}[label=\alph*) ]
+    \item We first specify the firm-specific demand function. The demand for firm $i$ given prices $p_i, p_j$ and capacities $k_i, k_j$ is given by
+    \begin{align*}
+        D_i(p_i, p_j) = \begin{cases} \min\{k_i, 1\} \quad&\text{if } p_i < p_j\\
+            \min\{k_i/(k_i + k_j), k_i\} \quad&\text{if } p_i = p_j\\
+            \min\{k_i, 1- k_j\} \quad&\text{if } p_i > p_j
+        \end{cases}
+    \end{align*}
+    
+    We proceed by considering the following cases:
+    \begin{itemize}
+        \item Region I: $k_1, k_2 \geq 1$
+        \item Region II: $k_1, k_2 \in [0,1]$, $k_1 + k_2 \leq 1$
+        \item Region III: $k_1, k_2 \in [0,1]$, $k_1 + k_2 > 1$
+        \item Region IV: $k_1 \in [0,1)$, $k_2 \geq 1$ (given symmetry of payoff structures, the argument is the same if the indices are flipped)
+    \end{itemize}
+    Region I: We start with $k_1, k_2 > 1$. In this case, either firm can supply the entire market. I argue that $p_1 = p_2 = 0$ is the unique equilibrium given these capacities. Suppose to the contrary that one firm sets a positive price. The other firm could simply undercut by $\eps$ and capture the entire market. Consequently, only $p_1 = p_2 = 0$ is a Nash equilibrium.
 
+    Region II: Now suppose $k_1, k_2 \in [0,1]$ and $k_1 + k_2 \leq 1$. In this case, firms are essentially not competing with each other over any consumers. Together, they can cover the entire market demand, yet neither firm can supply more than the entire market. I argue that $p_i = p_j = 1$ is the unique equilibrium. Suppose not. Specifically, suppose $p_i < 1$ and $p_j \in [0,1]$. Firm $i$ gets demand $k_i$, giving profit $p_i k_i$. If they increase $p_i$ to $p_i' = p_j$, they would get demand of $\min\{k_i /(k_i + k_j), k_i\} = k_i$ (since $k_i + k_j \leq 1$, implying $\frac{k_i}{k_i + k_j} \geq k_i$). Hence, their profit is $p_j k_i > p_i k_i$, which is strictly higher. Thus, they would benefit from increasing $p_i$ and $p_i < 1$ cannot be an equilibrium. We are only left with $p_i = p_j = 1$. No firm would seek to deviate by lowering prices, as they get the same demand either way and would only reduce their revenue by cutting prices. Hence, in this scenario, $p_i = p_j = 1$ is the unique Nash equilibrium.
+
+    Region III: Consider now the case where $k_1, k_2 \in [0,1]$ and $k_1 + k_2 > 1$. This implies that neither firm can completely serve the market, but together they have capacity which exceeds the market. I argue that there is no Nash equilibrium in pure strategies in this region. Suppose to the contrary that $p_i, p_j \in [0,1]$ constitutes a Nash equilibrium. In particular, first suppose $p_i = p_j$. We have that $k_i + k_j \geq 1$, implying that $\min\{k_i/(k_i + k_j), k_i\} = \frac{k_i}{k_i + k_j}$. Thus, firm $i$ has incentive to undercut $j$ by setting $p_i = p_j - \eps$ and capturing a larger share than when $p_i = p_j$. Hence, $p_i = p_j$ cannot be an equilibrium. Suppose now that $p_i < p_j$ (without loss). Firm $i$ consequently gets demand $\min\{1, k_i\}$ at price $p_i$. However, they could get the same demand if they were to set a price $p_i = p_j - \eps$ for $\eps > 0$ sufficiently small, yet the higher price would give them strictly higher revenue. Thus, $p_i < p_j$ cannot be an equilibrium either. $p_i = p_j$ and $p_i < p_j$ exhaust the possible equilibrium candidates (modulo permutation of firm index), implying that there is no equilibrium in pure strategies.
+
+    Region IV: Finally, suppose $k_1 \in [0,1)$, $k_2 \geq 1$. Here, firm 2 can supply the entire market, whereas 1 cannot. I claim that $p_1 = 0$ and $p_2 = 1$ is the unique Nash equilibrium in this region. Firm 2 has incentive to undercut any positive price set by firm 1, meaning that the only stable scenario is where $p_1 = 0$ and $p_2 = 1$.
+    \item We search for the upper and lower bound of the support for the mixed strategy equilibrium played when $k_1, k_2$ are such that $k_1, k_2 \in [0,1]$ and $k_1 + k_2 > 1$. To do so, we use the fact that $\bar{p} = 1$ ensures that the firm with larger capacity will ``lose the market'' almost surely (i.e. they will get only the residual demand). Suppose without loss that $k_1 \leq k_2$ so that firm 2 has larger capacity. Firm 1's revenue is $ \bar{p} (1-k_2) = 1-k_2$. We now search for $\underline{p}$. We know that the revenue to firm $1$ must be the same at $\underline{p}$ as it was at $\bar{p}$. When firm 1 plays $\underline{p}$ and thus wins almost surely, they will get demand $k_1$. As such, their revenue is $\underline{p} k_1$. Equating this with $1-k_2$, we obtain that
+     \[1 - k_2 = \underline{p} k_1 \iff \underline{p} = \frac{1-k_2}{k_1}\]
+     Hence, the support of the mixed strategy equilibrium is $\left[\frac{1-k_2}{k_1}, 1\right]$, where $k_2$ is the firm with larger capacity. If firm 1 were to have larger capacity, the indices would be flipped but the result would otherwise be unchanged.
+     \item We now derive profit functions for the above regions. 
+     \begin{itemize}
+        \item Region I: In Region I, the equilibrium in the pricing stage is to have $p_i = p_j = 0$. Thus, firm profits are given by 
+        \[\Pi_i(k_i, k_j) = - c k_i\]
+        This is clearly decreasing in $k_i$ and is maximized with $k_i^* = 0$, implying that $k_i \geq 1$ cannot be optimal. Hence, this cannot be a subgame perfect equilibrium.
+        \item Region II: In Region II, the equilibrium in the pricing stage was $p_i = p_j = 1$. This implies that firm profits are given by
+         \[\Pi_i (k_i, k_j) = k_i - c k_i\]
+         This is maximized by setting $k_i = 1- k_j$ (in order to stay in Region II). The question is: can firm i profitably deviate by increasing $k_i$ so that they go into Region III? The answer is no: we know that the expected revenue in Region III for firm $i$ is $1-k_j$, which is exactly the revenue they'd get by setting $k_i = 1- k_j$! So thus any combinations of $k_i^*, k_j^* \in [0,1]$ such that $k_i^* + k_j^* = 1$ constitute subgame-perfect Nash equilibria.
+         \item Region III: In Region III, players play according to the mixed strategy specified above which gives expected revenue $1 - k_j$ to firm $i$. Firm $i$'s profits are therefore
+         \[\Pi_i(k_i, k_j) = 1 - k_j - c k_i\]
+         This is strictly decreasing in $k_i$, so firm $i$ will optimally set $k_i = 0$. This is inconsistent with the fact that $k_i + k_j > 1$, implying that this cannot be subgame-perfect.
+         \item Finally, if $k_1 \in [0,1)$ and $k_2 \geq 1$, firm 1 gets profit of 
+         \[\Pi_1(k_1, k_2) = - c k_1\]
+         which is decreasing in $k_1$. Thus, firm 1 optimally chooses $k_1 =0$.  
+         Firm 2 gets profits of
+         \[\Pi_2(k_1, k_2) = 1 - c k_2\]
+         which is optimized by setting $k_2$ as low as it can go without adversely impacting revenue. If they lower it below 1, they go into Region III and get expected revenue $1-k_1$, which is less than 1. Thus, they set $k_2 = 1$. If both $k_2 = 1 and k_1 = 0$ (or vice versa), then this is subgame perfect (and technically, it is in Region II). Any other $(k_1, k_2)$ pair in Region IV is not subgame-perfect.
+     \end{itemize}
+
+     We finally show that the profit functions have the Cournot form in the subgame perfect equilibrium. In Region 2, we have that 
+     \[\Pi_i(k_i, k_j) = k_i (1-c)\]
+     Suppose now that firms instead engage in Cournot competition where they choose quantities to supply (subject to the constraint that $k_i + k_j \leq 1$), and that the market price is 1. It follows that their profit functions are of the form
+     \[\Pi_i (k_i, k_j) = P(k_i, k_j)k_i - c k_i = k_i - c k_i\]
+     This is exactly identical to firm's profit functions in the subgame perfect equilibrium!  
+\end{enumerate}
 \end{sol}
 \end{document}
