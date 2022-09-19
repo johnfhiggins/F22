@@ -9,8 +9,10 @@
     σ :: Float64 = 2.0 #CRRA parameter
     α::Float64  = 0.36  #capital share in production function
     δ::Float64 = 0.06 #depreciation rate of capital
-    A :: Array{Float64} = collect(range(0.0, length=5000, stop=100.0)) #capital grid
-    na = Int64 = length(A) #number of grid points in capital grid
+    na ::Int64 = 5000
+    a_max = 100.0
+    a_range = range(0.0, length=na, stop=a_max)
+    A :: Array{Float64} = collect(a_range) #capital grid
 end
 
 mutable struct Param
@@ -59,11 +61,31 @@ function mu_finder(prim::Primitives,mu_1::Float64)
     μ
 end
 
+function opt_l(ap::Float64,a::Float64, prod::Float64, param::Param)
+    val = max(0,min(1,(param.γ*(1-param.θ)*prod*param.w - (1-param.γ)*((1+param.r)*a - ap))/((1-param.θ)*param.w*prod)))
+    val 
+end
+
+function work_budget(ap::Float64, a::Float64, prod::Float64, param::Param )
+    budg = param.w*(1-param.θ)*prod*opt_l(ap, a, prod, param) + (1+param.r)*a
+    budg
+end
+
+function utility_w(ap::Float64, a::Float64, prod::Float64, prim::Primitives, param::Param )
+    @unpack σ = prim
+    u = 0.0
+    if work_budget(ap, a, prod, param) > ap && opt_l(ap, a, prod, param) < 1
+        u = (((work_budget(ap, a, prod, param)-ap)^(param.γ) *(1-opt_l(ap, a, prod, param))^(1-param.γ))^(1-σ))/(1-σ)
+    else
+        u = -Inf
+    end
+    u
+end
 
 
 #solve consumer's problem given w, r, and b fixed.
 function cons_opt(prim::Primitives, res::Results, param::Param)
-    @unpack na, A, N, jr, σ, δ, β, Π, η_arr = prim
+    @unpack na, A, N, jr, σ, δ, β, Π, η_arr, a_range, a_max = prim
     θ = param.θ
     w = param.w
     r = param.r
@@ -78,58 +100,51 @@ function cons_opt(prim::Primitives, res::Results, param::Param)
         res.cap_pf[N,a_i, :] .= 0.0
     end
     for age in reverse(jr:N-1)#loop backwards over retirement ages
+        vf_interp_h = scale(interpolate(res.val_func[age+1, :, 1],  BSpline(Linear())), a_range)
+        vf_interp_l = scale(interpolate(res.val_func[age+1, :, 2],  BSpline(Linear())), a_range)
+        vf_interp = [vf_interp_h, vf_interp_l]
         print(age)
         for a_i=1:na
             budget = (1+r)*A[a_i] + b
-            val_prev = -1e10
-            cand_max = 0.0
-            for ap_i=1:na
-                c = budget - A[ap_i] #amount left over for consumption
-                if c >= 0
-                    val = (c)^((1-σ)*γ)/(1-σ) + β*res.val_func[age+1, ap_i, 1]
-                    if val < val_prev #due to concavity we know that once the value starts decreasing, we can stop iterating
-                        break
-                    else
-                        val_prev = val
-                        cand_max = A[ap_i]
-                    end
-                end
-            end
-            res.val_func[age, a_i, :] .= val_prev
-            res.cap_pf[age, a_i, :] .= cand_max
+            val_opt = optimize(ap ->  -(budget - ap)^((1-σ)*γ)/(1-σ) - β*vf_interp[1](ap) , 0.0, min(budget, a_max))
+            val = -val_opt.minimum
+            #find the corresponding optimal choice of n
+            opt_ap = val_opt.minimizer
+            closest_ap_i = findmin(abs.(A .- opt_ap ))[2]
+            closest_ap = A[closest_ap_i]
+            res.val_func[age, a_i, :] .= (budget - closest_ap)^((1-σ)*γ)/(1-σ) + β*vf_interp[1](closest_ap)
+            res.cap_pf[age, a_i, :] .= closest_ap
         end
     end
 
     for age=reverse(1:jr-1)#loop backwards over working ages
+        vf_interp_h = scale(interpolate(res.val_func[age+1, :, 1], BSpline(Linear())), a_range)
+        vf_interp_l = scale(interpolate(res.val_func[age+1, :, 2], BSpline(Linear())), a_range)
+        vf_interp = [vf_interp_h, vf_interp_l]
         print(age)
         η = η_arr[age]
         for a_i=1:na
             a = A[a_i]
             for z_i = 1:2
-                val_prev = -1e10
-                cand_max = 0.0
-                for ap_i= 1:na
-                    ap = A[ap_i]
-                    prod = η*Z[z_i]
-                    opt_l = max(0,min(1,(γ*(1-θ)*prod*w - (1-γ)*((1+r)*a - ap))/((1-θ)*w*prod)))
-                    res.labor_pf[age, a_i, z_i] = opt_l
-                    budget = w*(1-θ)*prod*opt_l + (1+r)*a
-                    c = budget - ap #amount left over for consumption
-                    if c >= 0
-                        val = (((c)^γ *(1-opt_l)^(1-γ))^(1-σ))/(1-σ) 
-                        for zp_i=1:2
-                            val += β*res.val_func[age+1, ap_i, zp_i]*Π[z_i, zp_i]
-                        end
-                        if val < val_prev
-                            break
-                        else
-                            val_prev = val
-                            cand_max = ap
-                        end
-                    end
+                prod = η*Z[z_i]
+                budget_a_i = findfirst([(work_budget(ap, a, prod, param) < ap) for ap in A])
+                if isnothing(budget_a_i)
+                    budget_a = a_max
+                else
+                    budget_a = A[budget_a_i]
                 end
-                res.val_func[age, a_i, z_i] = val_prev
-                res.cap_pf[age, a_i, z_i] = cand_max
+
+                val_opt = optimize(ap ->  -utility_w(ap, a, prod, prim, param) - β*(Π[z_i, 1]*vf_interp[1](ap) + Π[z_i, 2]*vf_interp[2](ap))  , 0.0, budget_a )
+                val = -val_opt.minimum
+                #find the corresponding optimal choice of n
+                opt_ap = val_opt.minimizer
+                closest_ap_i = findmin(abs.(A .- opt_ap ))[2]
+                closest_ap = A[closest_ap_i]
+                res.val_func[age, a_i, z_i] = utility_w(closest_ap, a, prod, prim, param) + β*(Π[z_i, 1]*vf_interp[1](closest_ap) + Π[z_i, 2]*vf_interp[2](closest_ap))
+                res.cap_pf[age, a_i, z_i] = closest_ap
+                
+                res.labor_pf[age, a_i, z_i] = opt_l(closest_ap, a, prod, param)
+                
             end
         end
     end

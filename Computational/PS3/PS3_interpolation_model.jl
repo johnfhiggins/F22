@@ -1,5 +1,5 @@
-using Parameters, Plots
-include("PS3_functions.jl")
+using Parameters, Plots, Interpolations, Optim
+include("PS3_interpolation_func.jl")
 
 #initialize the Primitives and Results structs, respectively
 prim, res = Initialize()
