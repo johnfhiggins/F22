@@ -9,7 +9,7 @@
     σ :: Float64 = 2.0 #CRRA parameter
     α::Float64  = 0.36  #capital share in production function
     δ::Float64 = 0.06 #depreciation rate of capital
-    A :: Array{Float64} = collect(range(0.0, length=5000, stop=100.0)) #capital grid
+    A :: Array{Float64} = collect(range(0.0, length=1000, stop=100.0)) #capital grid
     na = Int64 = length(A) #number of grid points in capital grid
 end
 
@@ -91,12 +91,12 @@ function cons_opt(prim::Primitives, res::Results, param::Param)
                         break
                     else
                         val_prev = val
-                        cand_max = A[ap_i]
+                        res.cap_pf[age, a_i, :] .= A[ ap_i]
                     end
                 end
             end
             res.val_func[age, a_i, :] .= val_prev
-            res.cap_pf[age, a_i, :] .= cand_max
+            #res.cap_pf[age, a_i, :] .= cand_max
         end
     end
 
@@ -124,7 +124,7 @@ function cons_opt(prim::Primitives, res::Results, param::Param)
                             break
                         else
                             val_prev = val
-                            cand_max = ap
+                            res.cap_pf[age, a_i, z_i ] = A[ap_i]
                         end
                     end
                 end

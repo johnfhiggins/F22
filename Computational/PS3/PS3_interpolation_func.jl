@@ -20,7 +20,7 @@ mutable struct Param
     w :: Float64 #wage rate
     r ::Float64 #interest rate
     b :: Float64 #retirement benefits
-    Z :: Vector{Float64} #idiosyncratic productivity shock vector
+    Z :: Vector{Float64}#idiosyncratic productivity shock vector
     γ  :: Float64  #weight on consumption
 end
 
@@ -30,6 +30,8 @@ mutable struct Results
     labor_pf :: Array{Float64,3} #labor supply policy function struct
     μ :: Vector{Float64} #size of cohorts by age
     F :: Array{Float64,3} #ss dist of agents over age, prod, and assets
+    K :: Float64 #aggregate capital supply
+    L :: Float64 #aggregate labor supply
 end
 
 function Initialize()
@@ -38,8 +40,10 @@ function Initialize()
     cap_pf = zeros(prim.N, prim.na, 2) #initial policy function guess
     labor_pf = ones(prim.N, prim.na,2) #initial policy function guess index
     F = ones(prim.N, prim.na, 2) #create initial guess for F, will change later
-    μ = mu_finder(prim, 1.0) #find size of cohorts given mu_1 = 1 (we will rescale later)
-    res = Results(val_func, cap_pf, labor_pf, μ, F) #initialize results struct
+    μ = mu_finder(prim, 1.0) #find size of cohorts, will sum to one
+    K = 3.4#3.6239 #aggregate capital supply guess informed by model output with starting parameters
+    L = 0.34#0.3249 #aggregate labor supply guess informed by model output with starting parameters 
+    res = Results(val_func, cap_pf, labor_pf, μ, F, K, L) #initialize results struct
     prim, res #return structs
 end
 
@@ -174,4 +178,98 @@ function F_finder(prim::Primitives, res::Results, param::Param)
     res.F = F
 end
 
-#function agg_supply(prim::Primitives, res::Results, param::Param)
+function cap_supply(prim::Primitives, res::Results, param::Param)
+    @unpack N, A, na, η_arr = prim
+    K_agg = 0.0
+    for age = 1:N
+        for z_i = 1:2
+            K_agg += sum(res.F[age, :, z_i] .* A)
+        end
+    end
+    K_agg
+end
+
+function lab_supply(prim::Primitives, res::Results, param::Param)
+    @unpack A, na, jr, η_arr= prim
+    Z = param.Z
+    L_agg = 0.0
+    for age = 1:jr-1
+        for z_i = 1:2
+            prod = η_arr[age]*Z[z_i]
+            lab = res.labor_pf[age, :, z_i]
+            L_agg += sum(res.F[age, :, z_i] .* (prod*lab))
+        end
+    end
+    L_agg
+end
+
+function model_solver(prim::Primitives, res::Results, param::Param)
+    cons_opt(prim, res, param) #find value functions and policy functions for given parameters
+    res.F = F_finder(prim,  res, param) #find stationary distribution
+    cap = cap_supply(prim,  res, param) #find aggregate asset supply
+    lab = lab_supply(prim, res, param) #find aggregate labor supply
+    cap, lab
+end
+
+function eq_finder(prim::Primitives, res::Results, param::Param)
+    @unpack α, jr, N, δ = prim
+    L_0 = res.L
+    K_0 = res.K
+    param.r = α*(L_0/K_0)^(1-α)-δ #market clearing interest rate based on K_0 and L_0
+    param.w = (1-α)*(K_0/L_0)^α #market clearing wage based on K_0 and L_0
+    param.b = (param.θ * param.w * L_0)/(sum(res.μ[jr:N]))
+    #change param struct values accordingly
+    #then, solve model with parameters and find K_new and L_new
+    K_new, L_new = model_solver(prim, res,param)
+    #println("K_new: $(K_new), L_new: $(L_new)")
+    K_new, L_new
+end
+
+function kl_search(prim::Primitives, res::Results, param::Param)
+    K_new, L_new = eq_finder(prim, res, param)
+    tol = 0.0005
+    error = max(abs(K_new - res.K), abs(L_new - res.L))
+    n = 0
+    while error > tol
+        n +=1
+        println("Old K: $(res.K), New K: $(K_new); Old L: $(res.L), New L: $(L_new). Error = $(error)")
+        res.K = 0.5*res.K + 0.5*K_new 
+        res.L = 0.5*res.L + 0.5*L_new
+        K_new, L_new = eq_finder(prim, res, param)
+        error = max(abs(K_new - res.K), abs(L_new - res.L))
+    end
+    println("Convergence in $(n) iterations! K = $(K_new), L = $(L_new)")
+    K_new, L_new, res.w, res.r, res.b
+end
+
+function welfare(prim::Primitives, res::Results, param::Param)
+    @unpack N, A, na = prim
+    @unpack Z = param
+    @unpack F, val_func = res
+    #Z = param.Z
+    #F = param.F
+    val = 0.0
+    for age=1:N
+        for z_i =1:2
+            val += sum(F[age, :, z_i] .* val_func[age, :, z_i])
+        end
+    end
+    val
+end
+
+function coeff_of_var(prim::Primitives, res::Results, param::Param)
+    @unpack N, A, na = prim
+    @unpack Z = param
+    @unpack F, val_func = res
+    #Z = param.Z
+    #F = param.F
+    val = 0.0
+    for age=1:N
+        for z_i =1:2
+            val += ### \sigma/\mu - standard deviation of wealth over mean of wealth
+        end
+    end
+    val
+end
+
+function lambda(prim::Primitives, res::Results, param::Param)

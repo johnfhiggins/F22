@@ -5,8 +5,8 @@ include("PS3_functions.jl")
 prim, res = Initialize()
 param = init_param(θ=0.11, w=1.05, r = 0.05, b = 0.2, Z = [3.0, 0.5], γ = 0.42)
 
-@elapsed vf_test = cons_opt(prim, res, param)
-
+@profile vf_test = cons_opt(prim, res, param)
+Profile.print()
 F_finder(prim, res, param)
 
 
