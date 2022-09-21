@@ -1,0 +1,79 @@
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Do not alter this block of commands.  If you're proficient at LaTeX, you may include additional packages, create macros, etc. immediately below this block of commands, but make sure to NOT alter the header, margin, and comment settings here. 
+\documentclass[12pt]{article}
+ \usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,amsfonts, enumitem, fancyhdr, color, hyperref,comment, graphicx, environ,mathtools, bbm, tikz, setspace, cleveref,listings, dcolumn}
+\usepackage{array, multirow, caption, booktabs}
+\usepackage{ mathrsfs }
+\usetikzlibrary{matrix,positioning}
+\tikzset{bullet/.style={circle,draw=black,inner sep=8pt}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\Var}{\text{Var}}
+\DeclareMathOperator*{\Cov}{\text{Cov}}
+
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\DeclareMathOperator{\eps}{\varepsilon}
+\doublespacing
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\pagestyle{fancy}
+\setlength{\headheight}{65pt}
+\newenvironment{problem}[2][Problem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{sol}
+    {\emph{Solution:}
+    }
+    {
+    \qed
+    }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\usepackage{xcolor}
+ 
+ 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\rhead{Asha Bharadwaj, Caitlin Dutta, John Higgins, Alexis Smith\\Econ 899 \\ 29 September, 2022} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\section{I. Solving dynamic programming problem}
+
+\section{II. Solving for steady-state distribution}
+
+\section{III. Finding equilibrium prices}
+
+\section{IV. Economic consequences of eliminating Social Security}
+
+\begin{table}[!h]
+    \label{Welfare comparisons}
+    \begin{center}
+    \begin{tabular}{| c | c | c | c | c | c | c |}
+    \hline
+     & \multicolumn{2}{ c |}{\textbf{Benchmark model}} & \multicolumn{2}{ c |}{\textbf{No risk, $z^L = z^H = 0.5$}} & \multicolumn{2}{ c |}{\textbf{Exog. labor supply, $\gamma = 1$}}  \\ 
+    \cline{2-7}
+    & \textbf{With SS} & \textbf{w/o SS} & \textbf{With SS} & \textbf{w/o SS} & \textbf{With SS} & \textbf{w/o SS} \\
+    \hline
+    Capital $K$ &3.360 &4.604 & 1.043& 1.301&7.356 &10.487 \\ \hline
+    Labor $L$ & 0.343& 0.365& 0.160&0.169 &0.753 & 0.754\\ \hline
+    Wage $w$ & 1.455 & 1.594& 1.256& 1.333&1.454 & 1.651\\ \hline
+    Interest $r$ & 0.024& 0.011 & 0.049& 0.038&0.024 & 0.007\\ \hline
+    Benefit $b$ & 0.225& 0 & 0.091&0 &0.494 &0 \\ \hline
+    Total Welfare $W$ &-35.767 &-37.384 & -45.042& -45.112& -23.008& -25.756 \\ \hline
+    CV (wealth) & 1.530& 1.398& 0.6636&0.760& 1.510& 1.329\\ \hline
+    \end{tabular}
+    \end{center}
+    \end{table}
+\end{document}

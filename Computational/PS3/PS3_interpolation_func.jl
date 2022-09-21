@@ -11,7 +11,8 @@
     δ::Float64 = 0.06 #depreciation rate of capital
     na ::Int64 = 5000
     a_max = 100.0
-    a_range = range(0.0, length=na, stop=a_max)
+    a_min = 0.0001
+    a_range = range(a_min, length=na, stop=a_max)
     A :: Array{Float64} = collect(a_range) #capital grid
 end
 
@@ -32,6 +33,7 @@ mutable struct Results
     F :: Array{Float64,3} #ss dist of agents over age, prod, and assets
     K :: Float64 #aggregate capital supply
     L :: Float64 #aggregate labor supply
+    wealth_d :: Array{Float64, 3} #wealth distribution by age
 end
 
 function Initialize()
@@ -41,9 +43,10 @@ function Initialize()
     labor_pf = ones(prim.N, prim.na,2) #initial policy function guess index
     F = ones(prim.N, prim.na, 2) #create initial guess for F, will change later
     μ = mu_finder(prim, 1.0) #find size of cohorts, will sum to one
-    K = 3.4#3.6239 #aggregate capital supply guess informed by model output with starting parameters
+    K = 5.0#3.6239 #aggregate capital supply guess informed by model output with starting parameters
     L = 0.34#0.3249 #aggregate labor supply guess informed by model output with starting parameters 
-    res = Results(val_func, cap_pf, labor_pf, μ, F, K, L) #initialize results struct
+    wealth_d = ones(prim.N, prim.na, 2) #initial wealth distribution, will be changed later
+    res = Results(val_func, cap_pf, labor_pf, μ, F, K, L, wealth_d) #initialize results struct
     prim, res #return structs
 end
 
@@ -77,9 +80,10 @@ end
 
 function utility_w(ap::Float64, a::Float64, prod::Float64, prim::Primitives, param::Param )
     @unpack σ = prim
+    @unpack γ = param
     u = 0.0
-    if work_budget(ap, a, prod, param) > ap && opt_l(ap, a, prod, param) < 1
-        u = (((work_budget(ap, a, prod, param)-ap)^(param.γ) *(1-opt_l(ap, a, prod, param))^(1-param.γ))^(1-σ))/(1-σ)
+    if work_budget(ap, a, prod, param) > ap && (opt_l(ap, a, prod, param) < 1 || γ == 1.0)
+            u = (((work_budget(ap, a, prod, param)-ap)^(γ) *(1-opt_l(ap, a, prod, param))^(1-γ))^(1-σ))/(1-σ)
     else
         u = -Inf
     end
@@ -89,7 +93,7 @@ end
 
 #solve consumer's problem given w, r, and b fixed.
 function cons_opt(prim::Primitives, res::Results, param::Param)
-    @unpack na, A, N, jr, σ, δ, β, Π, η_arr, a_range, a_max = prim
+    @unpack na, A, N, jr, σ, δ, β, Π, η_arr, a_range, a_min, a_max = prim
     θ = param.θ
     w = param.w
     r = param.r
@@ -107,10 +111,10 @@ function cons_opt(prim::Primitives, res::Results, param::Param)
         vf_interp_h = scale(interpolate(res.val_func[age+1, :, 1],  BSpline(Linear())), a_range)
         vf_interp_l = scale(interpolate(res.val_func[age+1, :, 2],  BSpline(Linear())), a_range)
         vf_interp = [vf_interp_h, vf_interp_l]
-        print(age)
+        #print(age)
         for a_i=1:na
             budget = (1+r)*A[a_i] + b
-            val_opt = optimize(ap ->  -(budget - ap)^((1-σ)*γ)/(1-σ) - β*vf_interp[1](ap) , 0.0, min(budget, a_max))
+            val_opt = optimize(ap ->  -(budget - ap)^((1-σ)*γ)/(1-σ) - β*vf_interp[1](ap) , a_min, min(budget, a_max))
             val = -val_opt.minimum
             #find the corresponding optimal choice of n
             opt_ap = val_opt.minimizer
@@ -125,7 +129,7 @@ function cons_opt(prim::Primitives, res::Results, param::Param)
         vf_interp_h = scale(interpolate(res.val_func[age+1, :, 1], BSpline(Linear())), a_range)
         vf_interp_l = scale(interpolate(res.val_func[age+1, :, 2], BSpline(Linear())), a_range)
         vf_interp = [vf_interp_h, vf_interp_l]
-        print(age)
+        #print(age)
         η = η_arr[age]
         for a_i=1:na
             a = A[a_i]
@@ -138,7 +142,7 @@ function cons_opt(prim::Primitives, res::Results, param::Param)
                     budget_a = A[budget_a_i]
                 end
 
-                val_opt = optimize(ap ->  -utility_w(ap, a, prod, prim, param) - β*(Π[z_i, 1]*vf_interp[1](ap) + Π[z_i, 2]*vf_interp[2](ap))  , 0.0, budget_a )
+                val_opt = optimize(ap ->  -utility_w(ap, a, prod, prim, param) - β*(Π[z_i, 1]*vf_interp[1](ap) + Π[z_i, 2]*vf_interp[2](ap))  , a_min, budget_a )
                 val = -val_opt.minimum
                 #find the corresponding optimal choice of n
                 opt_ap = val_opt.minimizer
@@ -227,19 +231,21 @@ end
 
 function kl_search(prim::Primitives, res::Results, param::Param)
     K_new, L_new = eq_finder(prim, res, param)
-    tol = 0.0005
+    tol = 0.005
     error = max(abs(K_new - res.K), abs(L_new - res.L))
     n = 0
+    println("Finding market clearing K and L")
     while error > tol
         n +=1
-        println("Old K: $(res.K), New K: $(K_new); Old L: $(res.L), New L: $(L_new). Error = $(error)")
-        res.K = 0.5*res.K + 0.5*K_new 
-        res.L = 0.5*res.L + 0.5*L_new
+        print("Iteration: $(n), error: $(error). ")
+        #println("Old K: $(res.K), New K: $(K_new); Old L: $(res.L), New L: $(L_new). Error = $(error)")
+        res.K = 0.6*res.K + 0.4*K_new 
+        res.L = 0.6*res.L + 0.4*L_new
         K_new, L_new = eq_finder(prim, res, param)
         error = max(abs(K_new - res.K), abs(L_new - res.L))
     end
-    println("Convergence in $(n) iterations! K = $(K_new), L = $(L_new)")
-    K_new, L_new, res.w, res.r, res.b
+    println("Convergence in $(n) iterations! K = $(res.K), L = $(res.L)")
+    res.K, res.L, param.w, param.r, param.b
 end
 
 function welfare(prim::Primitives, res::Results, param::Param)
@@ -248,28 +254,56 @@ function welfare(prim::Primitives, res::Results, param::Param)
     @unpack F, val_func = res
     #Z = param.Z
     #F = param.F
-    val = 0.0
+    welfare = 0.0
     for age=1:N
         for z_i =1:2
-            val += sum(F[age, :, z_i] .* val_func[age, :, z_i])
+            welfare += sum(F[age, :, z_i] .* val_func[age, :, z_i])
         end
     end
-    val
+    welfare
+end
+
+function wealth_dist(prim::Primitives, res::Results, param::Param)
+    @unpack η_arr, na, N , A, jr= prim
+    @unpack w, r, b, θ, Z = param 
+    wd = zeros(N, na, 2)
+    for age = 1:N
+        for z_i = 1:2
+            for a_i=1:na
+                if age < jr
+                    prod = η_arr[age]*Z[z_i]
+                    wealth = w*(1-θ)*prod*res.labor_pf[age, a_i, z_i] + (1+r)*A[a_i] #find wealth level of agent of given age in state z_i with asset holding a
+                else
+                    wealth = b + (1+r)*A[a_i]
+                end
+                w_i = findmin(abs.(A .- wealth ))[2] #find the index of the asset grid corresponding to wealth level
+                wd[age, w_i, z_i] += res.F[age, a_i, z_i] #add the mass of agents with given wealth level
+            end
+        end
+    end
+    res.wealth_d = wd
 end
 
 function coeff_of_var(prim::Primitives, res::Results, param::Param)
     @unpack N, A, na = prim
     @unpack Z = param
-    @unpack F, val_func = res
-    #Z = param.Z
-    #F = param.F
-    val = 0.0
+    wealth_var = 0.0
+    mean_wealth = 0.0
+    wealth_dist(prim, res, param) #find stationary wealth distribution
+    @unpack wealth_d = res
     for age=1:N
         for z_i =1:2
-            val += ### \sigma/\mu - standard deviation of wealth over mean of wealth
+            mean_wealth += sum(wealth_d[age, :, z_i] .* A)
         end
     end
-    val
+    for age = 1:N
+        for z_i = 1:2
+            for a_i = 1:na
+                wealth_var += wealth_d[age, a_i, z_i] * (A[a_i] - mean_wealth)^2
+            end
+        end
+    end
+    wealth_sd = sqrt(wealth_var)
+    wealth_sd/mean_wealth #return coefficient of variation defined as the standard deviation over the mean
 end
 
-function lambda(prim::Primitives, res::Results, param::Param)

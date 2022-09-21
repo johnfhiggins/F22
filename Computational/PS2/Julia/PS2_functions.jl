@@ -61,7 +61,7 @@ end
         l_done = 0
         for ap_i=1:na #iterate over index of next period asset holdings
             ap = A[ap_i] #find corresponding asset level
-            if h_done ==0 #if the value has not started to decrease, keep iterating over choices of a prime
+            if h_done ==0
                 c_h = budget_h - q*ap #given the employed agent's budget and choice of a prime, find resulting consumption
                 val_h = -1e16
                 if c_h > 0
@@ -71,11 +71,11 @@ end
                     end
                 end
                 if val_h > val_prev_h #check if the value from choosing ap_i is higher than the value from choosing ap_i-1 
-                    val_prev_h = val_h #update highest value candidate
-                    pol_cand_h = ap #update policy candidate
-                    pol_cand_ind_h = ap_i #update policy index
+                    val_prev_h = val_h
+                    pol_cand_h = ap
+                    pol_cand_ind_h = ap_i
                 else
-                    h_done =1 #if value has started to decrease, we can stop iterating over a_prime because of concavity
+                    h_done =1
                 end
             end
             if l_done ==0
@@ -96,7 +96,6 @@ end
                 end
             end
         end
-        #update the policy functions and value functions
         res.pol_func[a_i, 1] = pol_cand_h
         res.pol_func_ind[a_i, 1] = pol_cand_ind_h
         res.pol_func[a_i, 2] = pol_cand_l
@@ -113,11 +112,10 @@ end
     n=0
     q = res.q
     #v_next= zeros(prim.na, 2)
-    println("Starting value function iteration...")
     while error > tol
         n+=1
-        v_next = Bellman(prim, res, q) #find next value function
-        error = maximum(abs.(res.val_func .- v_next))/maximum(abs.(v_next)) #find sup norm
+        v_next = Bellman(prim, res, q)
+        error = maximum(abs.(res.val_func .- v_next))/maximum(abs.(v_next))
         res.val_func = v_next #update value function held in results vector
         #println(n, "  ",  error) #iteration number and error level
     end
@@ -132,9 +130,9 @@ end
         for ap_i = 1:na
             ap_choosers = findall(==(ap_i), pf_ind) #find all indices a_i, s_i which lead to choice of ap 
             for x in ap_choosers #iterate over each element
-                ai = x[1] #find the corresponding a_i
-                si = x[2] #find corresponding s_i
-                Q[ai, si, ap_i, sp_i] = Π[si, sp_i] #set the entry equal to the probability of transitioning from si to sp_i
+                ai = x[1]
+                si = x[2]
+                Q[ai, si, ap_i, sp_i] = Π[si, sp_i]
             end
         end
     end
@@ -147,17 +145,17 @@ end
     @unpack A, na, Π, Π_st = prim
     μ_0 = res.μ #unpack the distribution mu
     Q = res.Q
-    μ_1 = SharedArray{Float64}(zeros(na, 2)) #initialize empty array for next guess of mu
-    @sync @distributed for ap_i =1:na #loop over states a_prime
+    μ_1 = SharedArray{Float64}(zeros(na, 2))
+    @sync @distributed for ap_i =1:na
         val_h = 0.0
-        val_l = 0.0 #initial values
-        for a_i = 1:na #iterate over a and s
+        val_l = 0.0
+        for a_i = 1:na
             for s_i = 1:2
-                val_h += Q[a_i, s_i, ap_i, 1]*μ_0[a_i, s_i] #add mass of agents in a_i, s_i who choose ap_i and become employed
-                val_l += Q[a_i, s_i, ap_i, 2]*μ_0[a_i, s_i] #add mass of agents in a_i, s_i who choose ap_i and become unemployed
+                val_h += Q[a_i, s_i, ap_i, 1]*μ_0[a_i, s_i] #employed
+                val_l += Q[a_i, s_i, ap_i, 2]*μ_0[a_i, s_i] #unemployed
             end
         end
-        μ_1[ap_i, 1] = val_h #update mu's
+        μ_1[ap_i, 1] = val_h
         μ_1[ap_i, 2] = val_l
     end
     μ_1
@@ -165,16 +163,18 @@ end
 
 @everywhere function invar_dist(prim::Primitives, res::Results)
     @unpack A, na, Π, Π_st = prim
+    println("Finding Q:")
     res.Q = Q_finder(prim::Primitives, res::Results)
+    println("Found Q")
     error = 100
     tol = 1e-6 #used -10 for mkt clearing
     n=0
     while error > tol
         n+=1
-        μ_1 = next_mu_finder(prim, res) #find next asset distribution given current distribution guess
-        error = maximum(abs.(μ_1 - res.μ))/maximum(abs.(res.μ))  #find sup norm
+        μ_1 = next_mu_finder(prim, res)
+        error = maximum(abs.(μ_1 - res.μ))/maximum(abs.(res.μ)) 
         res.μ = copy(μ_1) #update the distribution stored in results struct
-        if mod(n, 100) == 0 #irrelevant, just wanted to see a little progress-bar like thing
+        if mod(n, 100) == 0
             println(n, ": ", error)
         end
     end
@@ -187,13 +187,12 @@ end
     @unpack A, na = prim
     #q = res.q
     #prim, res = Initialize()
-    @elapsed solve_vf(prim, res) #solve the model with given parameters 
-    μ = invar_dist(prim, res) #find invariant asset distribution 
+    @elapsed solve_vf(prim, res)
+    μ = invar_dist(prim, res)
     excess = 0.0
-    #iterate over states and add the policy rule times the mass of agents in that state
     for a_i = 1:na
         for s_i = 1:2
-            excess += res.pol_func[a_i, s_i]*μ[a_i, s_i] 
+            excess += res.pol_func[a_i, s_i]*μ[a_i, s_i]
         end
     end
     excess
@@ -206,7 +205,7 @@ end
     res.q = (q_low + q_high)/2
     excess = excess_demand(prim, res)
     println("Price: $(res.q), Excess Demand: $(excess)")
-    tol = 1e-3
+    tol = 1e-4 
     while abs(excess) > tol
         if excess > 0
             q_low = res.q
@@ -240,14 +239,13 @@ function lorenz_curve(prim::Primitives, res::Results, w_dist::Array{Float64,2})
     total_wealth_dist = w_dist[:,1] + w_dist[:,2] #the total mass of agents with wealth level w is the sum of the measures of employed and unemployed with wealth w
     lorenz_num=zeros(na)
     prop_lower = zeros(na)
-    lorenz_num[1] = total_wealth_dist[1]*A[1]#initial entry
-    prop_lower[1] = total_wealth_dist[1] #proportion lower than the first wealth level is just the mass at the first level
+    lorenz_num[1] = total_wealth_dist[1]*A[1]
+    prop_lower[1] = total_wealth_dist[1]
     for a_i=2:na
         a = A[a_i]
-        lorenz_num[a_i] = total_wealth_dist[a_i] * a + lorenz_num[a_i-1] #iteratively define the lorenz curve entries
-        prop_lower[a_i] = total_wealth_dist[a_i] + prop_lower[a_i-1] #add the current mass to the previous value
+        lorenz_num[a_i] = total_wealth_dist[a_i] * a + lorenz_num[a_i-1]
+        prop_lower[a_i] = total_wealth_dist[a_i] + prop_lower[a_i-1]
     end
-    #normalize both to sum of 1
     x_grid = prop_lower ./ prop_lower[na]
     lorenz = lorenz_num ./ lorenz_num[na]
     x_grid, lorenz
@@ -255,9 +253,9 @@ end
 
 @everywhere function gini_finder(x_grid::Vector{Float64}, lorenz::Vector{Float64})
     unscaled_gini = 0.0
-    for i=2:length(x_grid)#iterate over x values
-        delta_x = x_grid[i]-x_grid[i-1] #find the difference between the x values in the grid
-        unscaled_gini += (x_grid[i] - lorenz[i])*delta_x #find the difference between the 45 degree line and the lorenz curve; multiply by delta_x to get the area of the rectangle
+    for i=2:length(x_grid)
+        delta_x = x_grid[i]-x_grid[i-1]
+        unscaled_gini += (x_grid[i] - lorenz[i])*delta_x
     end
     gini = unscaled_gini*2 #the area under the 45 degree line is 1/2. The Gini coefficient is the ratio of the area between the 45-degree line and the lorenz curve over the area under the 45-degree line. So we divide the area between the curves by the total area under the 45 degree line, which is 1/2. Equivalently, we multiply by 2
     gini
@@ -268,11 +266,12 @@ end
     @unpack A, na, α, β = prim
     λ = zeros(na, 2)
     μ = res.μ
-    wfb = -4.252556 #welfare from the planner
+    wfb = -4.252556
+    ab_frac = 1/((1-α)*(1-β))
     val_func = res.val_func
-    num = wfb + 1 /((1 - α)*(1 - β)) #numerator of the inside function
-    denom = val_func .+ (1 ./((1 .- α).*(1 .- β))) #denominator of inside function
+    num = wfb + 1 /((1 - α)*(1 - β))
+    denom = val_func .+ (1 ./((1 .- α).*(1 .- β)))
 
-    λ = (num./denom).^(1/(1 .- α)) .- 1 #define lambda
+    λ = (num./denom).^(1/(1 .- α)) .- 1
     λ
 end

@@ -1,5 +1,5 @@
 using Distributed
-addprocs(1)
+addprocs(6)
 
 @everywhere using Parameters, Plots, SharedArrays
 @everywhere include("PS2_functions.jl")
