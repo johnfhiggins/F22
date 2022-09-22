@@ -17,20 +17,23 @@
 end
 
 mutable struct Param
-    θ :: Float64 #social security tax rate
+    θ_seq :: Vector{Float64} #social security tax rate
     w :: Float64 #wage rate
     r ::Float64 #interest rate
-    b :: Float64 #retirement benefits
+    b :: Float64 #retirement benefit 
     Z :: Vector{Float64}#idiosyncratic productivity shock vector
     γ  :: Float64  #weight on consumption
+    t :: Int64 #current time period; necessary for exercise 2 because the benefit sequence depends on whether t < 21 or t >= 21
+    T :: Int64 #time index of steady state
 end
 
 mutable struct Results
-    val_func :: Array{Float64,3} #value function struct
+    val_func_next_t :: Array{Float64,3} #value function struct for value function in next period
+    val_func ::Array{Float64, 3} #value function for current period
     cap_pf :: Array{Float64,3} #capital policy function struct
     labor_pf :: Array{Float64,3} #labor supply policy function struct
     μ :: Vector{Float64} #size of cohorts by age
-    F :: Array{Float64,3} #ss dist of agents over age, prod, and assets
+    Γ :: Array{Float64,3} #ss dist of agents over age, prod, and assets
     K :: Float64 #aggregate capital supply
     L :: Float64 #aggregate labor supply
     wealth_d :: Array{Float64, 3} #wealth distribution by age
@@ -38,21 +41,22 @@ end
 
 function Initialize()
     prim = Primitives() #initialize primtiives
+    val_func_next = zeros(prim.N, prim.na, 2) #initial value function guess for next period
     val_func = zeros(prim.N, prim.na, 2) #initial value function guess; depends on age, asset, and productivity 
     cap_pf = zeros(prim.N, prim.na, 2) #initial policy function guess
     labor_pf = ones(prim.N, prim.na,2) #initial policy function guess index
-    F = ones(prim.N, prim.na, 2) #create initial guess for F, will change later
+    Γ = ones(prim.N, prim.na, 2) #create initial guess for F, will change later
     μ = mu_finder(prim, 1.0) #find size of cohorts, will sum to one
     K = 3.36#3.6239 #aggregate capital supply guess informed by model output with starting parameters
     L = 0.343#0.3249 #aggregate labor supply guess informed by model output with starting parameters 
     wealth_d = ones(prim.N, prim.na, 2) #initial wealth distribution, will be changed later
-    res = Results(val_func, cap_pf, labor_pf, μ, F, K, L, wealth_d) #initialize results struct
+    res = Results(val_func_next, val_func, cap_pf, labor_pf, μ, Γ, K, L, wealth_d) #initialize results struct
     prim, res #return structs
 end
 
 #this function allows us to change the relevant model parameters in a compact, systematic manner
-function init_param(;θ::Float64, w::Float64, r::Float64, b::Float64, Z::Vector{Float64}, γ::Float64)
-    param = Param(θ, w, r, b, Z, γ)
+function init_param(;θ_seq::Vector{Float64}, w::Float64, r::Float64, b::Float64, Z::Vector{Float64}, γ::Float64,t::Int64, T::Int64)
+    param = Param(θ_seq, w, r, b, Z, γ, t, T)
     param
 end
 
@@ -70,14 +74,16 @@ end
 
 #based on agent's productivity and chosen level of a_prime, find the optimal labor supply
 function opt_l(ap::Float64,a::Float64, prod::Float64, param::Param)
-    @unpack γ, θ, w, r = param
+    @unpack γ, θ_seq, w, r, t = param
+    θ = θ_seq[t+1] #based on the time index t (for exercise 2)
     val = max(0,min(1,(γ*(1-θ)*prod*w - (1-γ)*((1+r)*a - ap))/((1-θ)*w*prod))) #the agent's labor supply must be in [0,1]. If it is inside, it will be given by the following function
     val 
 end
 
 #based on a consumer's chosen level of a_prime, current assets, and productivity, find their income
 function work_budget(ap::Float64, a::Float64, prod::Float64, param::Param )
-    @unpack w, θ, r = param
+    @unpack w, θ_seq, r ,t = param
+    θ = θ_seq[t+1]
     #find income of agent
     budg = w*(1-θ)*prod*opt_l(ap, a, prod, param) + (1+r)*a
     budg
@@ -99,8 +105,7 @@ end
 #solve consumer's problem given w, r, and b fixed.
 function cons_opt(prim::Primitives, res::Results, param::Param)
     @unpack na, A, N, jr, σ, δ, β, Π, η_arr, a_range, a_min, a_max = prim
-    @unpack θ, w, r, b, Z, γ = param
-
+    @unpack θ_seq, w, r, b, Z, γ,t, T = param
     #solve problem for age 66 agents first
     for a_i=1:na #eat everything! 
         a = A[a_i]
@@ -110,8 +115,15 @@ function cons_opt(prim::Primitives, res::Results, param::Param)
     end
     for age in reverse(jr:N-1)#loop backwards over retirement ages
         #interpolate value functions
-        vf_interp_h = scale(interpolate(res.val_func[age+1, :, 1],  BSpline(Linear())), a_range)
-        vf_interp_l = scale(interpolate(res.val_func[age+1, :, 2],  BSpline(Linear())), a_range)
+        if (t == 0 || t == T) #if we are at t=0 or T, we want to use the same value function due to the fact that we will be at steady state
+            vf_interp_h = scale(interpolate(res.val_func[age+1, :, 1],  BSpline(Linear())), a_range)
+            vf_interp_l = scale(interpolate(res.val_func[age+1, :, 2],  BSpline(Linear())), a_range)
+        else #when we are not at steady state, the value function of the time t agent will depend on their value function at time t+1
+            vf_interp_h = scale(interpolate(res.val_func_next_t[age+1, :, 1],  BSpline(Linear())), a_range)
+            vf_interp_l = scale(interpolate(res.val_func_next_t[age+1, :, 2],  BSpline(Linear())), a_range)
+        end
+        #vf_interp_h = scale(interpolate(res.val_func_next_t[age+1, :, 1],  BSpline(Linear())), a_range)
+        #vf_interp_l = scale(interpolate(res.val_func_next_t[age+1, :, 2],  BSpline(Linear())), a_range)
         vf_interp = [vf_interp_h, vf_interp_l] #combine into one nice object
         #print(age)
         for a_i=1:na
@@ -135,8 +147,15 @@ function cons_opt(prim::Primitives, res::Results, param::Param)
 
     for age=reverse(1:jr-1)#loop backwards over working ages
         #interpolate value functions of high and low productivity agents
-        vf_interp_h = scale(interpolate(res.val_func[age+1, :, 1], BSpline(Linear())), a_range) 
-        vf_interp_l = scale(interpolate(res.val_func[age+1, :, 2], BSpline(Linear())), a_range)
+        if (t == 0 || t == T) #if we are at t=0 or T, we want to use the same value function due to the fact that we will be at steady state
+            vf_interp_h = scale(interpolate(res.val_func[age+1, :, 1],  BSpline(Linear())), a_range)
+            vf_interp_l = scale(interpolate(res.val_func[age+1, :, 2],  BSpline(Linear())), a_range)
+        else #when we are not at steady state, the value function of the time t agent will depend on their value function at time t+1
+            vf_interp_h = scale(interpolate(res.val_func_next_t[age+1, :, 1],  BSpline(Linear())), a_range)
+            vf_interp_l = scale(interpolate(res.val_func_next_t[age+1, :, 2],  BSpline(Linear())), a_range)
+        end
+        #vf_interp_h = scale(interpolate(res.val_func[age+1, :, 1], BSpline(Linear())), a_range) 
+        #vf_interp_l = scale(interpolate(res.val_func[age+1, :, 2], BSpline(Linear())), a_range)
         vf_interp = [vf_interp_h, vf_interp_l] #combine into one object for ease of use
         η = η_arr[age] #find efficiency level of agent
         for a_i=1:na #iterate over asset holdings
@@ -166,20 +185,20 @@ function cons_opt(prim::Primitives, res::Results, param::Param)
                 res.cap_pf[age, a_i, z_i] = closest_ap
                 #update labor policy function 
                 res.labor_pf[age, a_i, z_i] = opt_l(closest_ap, a, prod, param)
-                
             end
         end
     end
-    res.val_func
+    res.val_func_next_t = res.val_func #store the time t value function as the future value function for period t-1
+    res.val_func #return current value function
 end
 
 #this function finds the steady-state distribution over age, assets, and productivity levels
-function F_finder(prim::Primitives, res::Results, param::Param)
+function Γ_finder(prim::Primitives, res::Results, param::Param)
     @unpack N, n,na, A, Z_freq, Π = prim
     μ = res.μ
-    F = zeros(N, na, 2)
-    F[1, 1, 1] = Z_freq[1]*μ[1] #mass of agents of age one with zero assets and shock z_h 
-    F[1, 1, 2] = Z_freq[2]*μ[1] #above, but with shock z_l
+    Γ = zeros(N, na, 2)
+    Γ[1, 1, 1] = Z_freq[1]*μ[1] #mass of agents of age one with zero assets and shock z_h 
+    Γ[1, 1, 2] = Z_freq[2]*μ[1] #above, but with shock z_l
     for age=2:N
         for a_i=1:na
             a = A[a_i] #the selected capital level corresponding to a_i
@@ -188,12 +207,12 @@ function F_finder(prim::Primitives, res::Results, param::Param)
                 a_pre_i = az[1] #extract the previous a index
                 z_pre_i = az[2] #extract previous z index
                 #find mass of agents who chose a_i for each productivity type
-                F[age, a_i, 1] += F[age-1, a_pre_i, z_pre_i]*Π[z_pre_i, 1]/(1+n) #all agents who chose a_i and got z_h
-                F[age, a_i, 2] += F[age-1, a_pre_i, z_pre_i]*Π[z_pre_i, 2]/(1+n) #all agents who chose a_i and got z_l
+                Γ[age, a_i, 1] += Γ[age-1, a_pre_i, z_pre_i]*Π[z_pre_i, 1]/(1+n) #all agents who chose a_i and got z_h
+                Γ[age, a_i, 2] += Γ[age-1, a_pre_i, z_pre_i]*Π[z_pre_i, 2]/(1+n) #all agents who chose a_i and got z_l
             end
         end
     end
-    res.F = F
+    res.Γ = Γ
 end
 
 #this function computes the aggregate supply of capital 
@@ -202,7 +221,7 @@ function cap_supply(prim::Primitives, res::Results, param::Param)
     K_agg = 0.0
     for age = 1:N #iterate over all states, add the asset holdings weighted by mass of agents with that asset level
         for z_i = 1:2
-            K_agg += sum(res.F[age, :, z_i] .* A)
+            K_agg += sum(res.Γ[age, :, z_i] .* A)
         end
     end
     K_agg
@@ -217,7 +236,7 @@ function lab_supply(prim::Primitives, res::Results, param::Param)
         for z_i = 1:2
             prod = η_arr[age]*Z[z_i] #find productivity of worker of given age with given productivity level
             lab = res.labor_pf[age, :, z_i] #find optimal labor supply of agent
-            L_agg += sum(res.F[age, :, z_i] .* (prod*lab)) #add mass of agents times their labor supply
+            L_agg += sum(res.Γ[age, :, z_i] .* (prod*lab)) #add mass of agents times their labor supply
         end
     end
     L_agg
@@ -225,7 +244,7 @@ end
 
 function model_solver(prim::Primitives, res::Results, param::Param)
     cons_opt(prim, res, param) #find value functions and policy functions for given parameters
-    res.F = F_finder(prim,  res, param) #find stationary distribution
+    res.Γ = Γ_finder(prim,  res, param) #find stationary distribution
     cap = cap_supply(prim,  res, param) #find aggregate asset supply
     lab = lab_supply(prim, res, param) #find aggregate labor supply
     cap, lab
@@ -233,7 +252,8 @@ end
 
 function eq_finder(prim::Primitives, res::Results, param::Param)
     @unpack α, jr, N, δ = prim
-    @unpack θ, w = param
+    @unpack θ_seq, w,t = param
+    θ = θ_seq[t+1]
     L_0 = res.L
     K_0 = res.K
     param.r = α*(L_0/K_0)^(1-α)-δ #market clearing interest rate based on K_0 and L_0
@@ -263,112 +283,3 @@ function kl_search(prim::Primitives, res::Results, param::Param)
     res.K, res.L, param.w, param.r, param.b
 end
 
-#this function computes the aggregate welfare given the value function and the steady-state asset distribution
-function welfare(prim::Primitives, res::Results, param::Param)
-    @unpack N, A, na = prim
-    @unpack Z = param
-    @unpack F, val_func = res
-    #Z = param.Z
-    #F = param.F
-    welfare = 0.0
-    for age=1:N #loop over states and add the mass of agents in each state times the value function of those agents
-        for z_i =1:2
-            welfare += sum(F[age, :, z_i] .* val_func[age, :, z_i])
-        end
-    end
-    welfare
-end
-
-#this function computes the steady-state wealth distribution based on the steady-state asset distribution 
-function wealth_dist(prim::Primitives, res::Results, param::Param)
-    @unpack η_arr, na, N , A, jr= prim
-    @unpack w, r, b, θ, Z = param 
-    wd = zeros(N, na, 2) #initialize empty array to store wealth distribution
-    for age = 1:N #iterate over all ages, productivity levels, and asset holdings
-        for z_i = 1:2
-            for a_i=1:na
-                if age < jr #if the agent is working, their income will depend on their productivity, asset, and labor choice
-                    prod = η_arr[age]*Z[z_i]
-                    wealth = w*(1-θ)*prod*res.labor_pf[age, a_i, z_i] + (1+r)*A[a_i] #find wealth level of agent of given age in state z_i with asset holding a
-                else #if the agent is retired, their income will depend only on b and their level of assets
-                    wealth = b + (1+r)*A[a_i]
-                end
-                #find the point in the capital grid which corresponds to the agent's level of wealth
-                w_i = findmin(abs.(A .- wealth ))[2]
-                wd[age, w_i, z_i] += res.F[age, a_i, z_i] #add the mass of agents with given wealth level
-            end
-        end
-    end
-    res.wealth_d = wd
-end
-
-#this function finds the coefficient of variation for the wealth distribution. The coefficient of variation is defined as the ratio of the population standard deviation over the population mean 
-function coeff_of_var(prim::Primitives, res::Results, param::Param)
-    @unpack N, A, na = prim
-    @unpack Z = param
-    wealth_var = 0.0 #initial value for variance of the wealth distribution 
-    mean_wealth = 0.0 #initial value for mean of the wealth distribution
-    wealth_dist(prim, res, param) #find stationary wealth distribution
-    @unpack wealth_d = res #load the wealth dist
-    for age=1:N #iterate over states to find the mean level of wealth (weighted by wealth distribution)
-        for z_i =1:2
-            mean_wealth += sum(wealth_d[age, :, z_i] .* A)
-        end
-    end
-    for age = 1:N #iterate over states to find squared deviation of wealth from the mean, weighted by wealth dist
-        for z_i = 1:2
-            for a_i = 1:na
-                wealth_var += wealth_d[age, a_i, z_i] * (A[a_i] - mean_wealth)^2
-            end
-        end
-    end
-    wealth_sd = sqrt(wealth_var)
-    print("Mean wealth: ", mean_wealth,", Wealth SD: ", wealth_sd) #the standard deviation is the square root of the variance
-    wealth_sd/mean_wealth #return coefficient of variation defined as the standard deviation over the mean
-end
-
-function equivalent_variation_bench()
-    #first, solve model with social security and find value function
-    prim, res = Initialize()
-    param = init_param(θ=0.11, w=1.05, r = 0.05, b = 0.2, Z = [3.0, 0.5], γ = 0.42) #initialize benchmark model
-    k_e, l_e, w_e, r_e, b_e = kl_search(prim, res, param) #search for equilibrium quantities/parameters
-    val_ss = res.val_func
-
-    #now, solve model without social security and find value function
-    prim, res = Initialize()
-    param = init_param(θ=0.0, w=1.05, r = 0.05, b = 0.0, Z = [3.0, 0.5], γ = 0.42) #model without social security has θ = 0 (and thus b = 0)
-    k_e, l_e, w_e, r_e, b_e = kl_search(prim, res, param) #search for eq quantities/parameters
-    val_no_ss = res.val_func
-    @unpack γ = param
-    @unpack σ = prim
-    λ = (val_no_ss ./ val_ss).^(1/(γ*(1-σ))) .- 1
-    λ
-end
-
-function equivalent_variation_inelastic()
-    #first, solve model with inelastic labor and social security and find value function
-    prim, res = Initialize()
-    param = init_param(θ=0.11, w=1.05, r = 0.05, b = 0.2, Z = [3.0, 0.5], γ = 1.0) #initialize benchmark model
-    k_e, l_e, w_e, r_e, b_e = kl_search(prim, res, param) #search for equilibrium quantities/parameters
-    val_ss = res.val_func
-
-    #now, solve model without social security and find value function
-    prim, res = Initialize()
-    param = init_param(θ=0.0, w=1.05, r = 0.05, b = 0.0, Z = [3.0, 0.5], γ = 1.0) #model without social security has θ = 0 (and thus b = 0)
-    k_e, l_e, w_e, r_e, b_e = kl_search(prim, res, param) #search for eq quantities/parameters
-    val_no_ss = res.val_func
-    @unpack γ = param
-    @unpack σ = prim
-    λ = (val_no_ss ./ val_ss).^(1/(γ*(1-σ))) .- 1
-    λ
-end
-
-function prop_favor_age(prim,res, λ)
-    @unpack N = prim
-    @unpack F, μ = res
-    prop_age = zeros(N)
-    for age = 1:N
-        prop_age[age] = sum((λ[age, :, :] .>= 0) .* res.F[age, :, :])/μ[age]
-    end
-    prop_age
-end

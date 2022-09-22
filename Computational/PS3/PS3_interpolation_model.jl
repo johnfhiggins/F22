@@ -14,7 +14,8 @@ vfplot50 = plot(prim.A, val_func[50, :, 1], title="Value function of retired age
 savefig(vfplot50, "vfplot50.png")
 savplot20 = plot(prim.A, [cap_pf[20, :, :] .- prim.A], title="Savings function of worker at model-age 20", legend=false, xlabel="Capital", ylabel="Savings")
 savefig(savplot20, "savplot20.png")
-
+labplot20 = plot(prim.A, labor_pf[20, :, :], title="Labor supply at model-age 20 by productivity type", labels=["High productivity" "Low productivity"], legend=:topright, xlabel="Capital", ylabel="Labor supply")
+savefig(labplot20, "labplot20.png")
 #part 2
 F_finder(prim, res, param)
 
@@ -67,3 +68,19 @@ k_e, l_e, w_e, r_e, b_e = kl_search(prim, res, param) #search for equilibrium qu
 welf_e = welfare(prim, res, param) #find total welfare in equilibrium
 cv_e = coeff_of_var(prim, res, param) #find coefficient of variation
 println("Exogenous labor supply, without SS: K = $(k_e), L = $(l_e), w = $(w_e), r = $(r_e), b = $(b_e), welfare = $(welf_e), cv = $(cv_e)")
+
+lambda = equivalent_variation()
+
+prop_favor = sum((lambda .>= 0) .* res.F)
+
+prop_favor_by_age = prop_favor_age(prim, res, lambda)
+age_plot = plot(prop_favor_by_age, title="Prop. of each age voting to eliminate", legend=false)
+savefig(age_plot, "ageplot.png")
+
+lambda_inelast = equivalent_variation_inelastic()
+prop_favor_inelast = sum((lambda_inelast .>= 0) .* res.F)
+prop_favor_by_age_in = prop_favor_age(prim, res, lambda_inelast)
+
+
+age_plot_inelast = plot(1:66,[prop_favor_by_age, prop_favor_by_age_in], title="Prop. of each age voting to eliminate", legend=:topright, labels=["Benchmark" "Inelastic labor"])
+savefig(age_plot_inelast, "ageplot_in.png")
