@@ -9,7 +9,7 @@
     σ :: Float64 = 2.0 #CRRA parameter
     α::Float64  = 0.36  #capital share in production function
     δ::Float64 = 0.06 #depreciation rate of capital
-    na ::Int64 = 1000
+    na ::Int64 = 2000
     a_max = 100.0
     a_min = 0.0001
     a_range = range(a_min, length=na, stop=a_max)
@@ -33,10 +33,14 @@ mutable struct Results
     cap_pf :: Array{Float64,3} #capital policy function struct
     labor_pf :: Array{Float64,3} #labor supply policy function struct
     μ :: Vector{Float64} #size of cohorts by age
-    Γ :: Array{Float64,3} #ss dist of agents over age, prod, and assets
+    Γ :: Array{Float64,3} # dist of agents over age, prod, and assets
+    Γ_0 :: Array{Float64,3} #initial ss dist of agents over age, prod, and assets
     K :: Float64 #aggregate capital supply
     L :: Float64 #aggregate labor supply
     wealth_d :: Array{Float64, 3} #wealth distribution by age
+    cap_pf_path :: Array{Float64, 4}
+    lab_pf_path :: Array{Float64, 4}
+    k_path_guess :: Array{Float64,1}
 end
 
 function Initialize()
@@ -46,11 +50,18 @@ function Initialize()
     cap_pf = zeros(prim.N, prim.na, 2) #initial policy function guess
     labor_pf = ones(prim.N, prim.na,2) #initial policy function guess index
     Γ = ones(prim.N, prim.na, 2) #create initial guess for F, will change later
+    Γ_0 = ones(prim.N, prim.na, 2) #create initial guess for Gamma_0
     μ = mu_finder(prim, 1.0) #find size of cohorts, will sum to one
     K = 3.36#3.6239 #aggregate capital supply guess informed by model output with starting parameters
     L = 0.343#0.3249 #aggregate labor supply guess informed by model output with starting parameters 
     wealth_d = ones(prim.N, prim.na, 2) #initial wealth distribution, will be changed later
-    res = Results(val_func_next, val_func, cap_pf, labor_pf, μ, Γ, K, L, wealth_d) #initialize results struct
+
+    ##Note: not sure if I need these or not ###
+    cap_pf_path = zeros(30, prim.N, prim.na, 2) #empty array to store capital pf over time - will change T length later
+    lab_pf_path = zeros(30, prim.N, prim.na, 2) #empty array to store labor pf over time - will change T length later
+    k_path_guess = zeros(30)
+    
+    res = Results(val_func_next, val_func, cap_pf, labor_pf, μ, Γ, Γ_0, K, L, wealth_d, cap_pf_path, lab_pf_path, k_path_guess) #initialize results struct
     prim, res #return structs
 end
 
@@ -188,7 +199,7 @@ function cons_opt(prim::Primitives, res::Results, param::Param)
             end
         end
     end
-    res.val_func_next_t = res.val_func #store the time t value function as the future value function for period t-1
+    res.val_func_next_t = copy(res.val_func) #store the time t value function as the future value function for period t-1
     res.val_func #return current value function
 end
 
@@ -267,13 +278,13 @@ end
 #this funcion iteratively finds equilibrium aggregate quantities K and L
 function kl_search(prim::Primitives, res::Results, param::Param)
     K_new, L_new = eq_finder(prim, res, param) #using initial guess for K_0 and L_0 in the results struct, find the levels of capital and labor supplied in steady state
-    tol = 0.005
+    tol = 0.00001
     error = max(abs(K_new - res.K), abs(L_new - res.L)) #compute max difference between guesses and observed outputs
     n = 0
     println("Finding market clearing K and L") 
     while error > tol #iterate until guesses become sufficiently close together
         n +=1
-        print("Iteration: $(n), error: $(error). ") #little progress message :)
+        print("Iteration: $(n), K: $(K_new), error: $(error). ") #little progress message :)
         res.K = 0.6*res.K + 0.4*K_new #update guess of K as weighted average of previous guess and model output
         res.L = 0.6*res.L + 0.4*L_new #ditto for L
         K_new, L_new = eq_finder(prim, res, param) #find aggregate K and L given parameters implied by these new guesses
@@ -283,3 +294,95 @@ function kl_search(prim::Primitives, res::Results, param::Param)
     res.K, res.L, param.w, param.r, param.b
 end
 
+
+function path_guess(K_0::Float64, K_T::Float64, T::Int64)
+    k_hat = zeros(T+1)
+    for t=1:T+1
+        k_hat[t] = K_0 + (t-1)*(K_T - K_0)/(T)
+    end
+    k_hat
+end
+
+function backwards_policy(prim::Primitives, res::Results, param::Param, K_0::Float64, K_T::Float64, T_g::Int64)
+    @unpack N, na = prim
+    #K_T, L_T, w_T, r_T, b_T = kl_search(prim, res, param) #search for SS without social security at time T
+    lab_pf_path = zeros(T_g+1, N, na, 2)
+    cap_pf_path = zeros(T_g+1, N, na, 2)
+    param.T = T_g
+    for t in reverse(0:T_g)    #note to self: don't write reverse(T_g:0) unless you want to spend hours debugging code and wondering why things aren't working!
+        print(t, " ")
+        param.t = t #change time parameter
+        res.K = res.k_path_guess[t+1] #use guessed level of aggregate capital; note that due to 1-indexing, this corresponds to time t-1
+        cons_opt(prim, res, param) #find prices implied by K
+        #store pfs in array and index them by time t
+        cap_pf_path[t+1, :, :, :] = res.cap_pf
+        lab_pf_path[t+1, :, :, :] = res.labor_pf
+    end
+    cap_pf_path, lab_pf_path
+end
+
+function Γ_non_stat(prim::Primitives, res::Results, param::Param)
+    @unpack N, na, A, Z_freq, Π,n = prim
+    @unpack Γ = res
+
+    μ = res.μ
+    Γ_new = zeros(N, na, 2)
+    Γ_new[1, 1, 1] = Z_freq[1]*μ[1] #mass of agents of age one with zero assets and shock z_h 
+    Γ_new[1, 1, 2] = Z_freq[2]*μ[1] #above, but with shock z_l
+    for age=2:N
+        for a_i=1:na
+            a = A[a_i] #the selected capital level corresponding to a_i
+            a_i_sel = findall(az -> az == a, res.cap_pf[age-1, :, :]) #find all (a,z) pairs in the previous age which select a
+            for az in a_i_sel #iterate over all pairs in previous age which select a_i
+                a_pre_i = az[1] #extract the previous a index
+                z_pre_i = az[2] #extract previous z index
+                #find mass of agents who chose a_i for each productivity type
+                Γ_new[age, a_i, 1] += Γ[age-1, a_pre_i, z_pre_i]*Π[z_pre_i, 1]/(1+n) #all agents who chose a_i and got z_h
+                Γ_new[age, a_i, 2] += Γ[age-1, a_pre_i, z_pre_i]*Π[z_pre_i, 2]/(1+n) #all agents who chose a_i and got z_l
+            end
+        end
+    end
+    res.Γ = Γ_new
+end
+
+function path_compare(prim::Primitives, res::Results, param::Param, K_0::Float64, K_T::Float64, T_g::Int64)
+    print("Finding policies through backwards iteration...")
+    cap_pf_path, lab_pf_path = backwards_policy(prim, res, param, K_0, K_T, T_g)
+    K_path = zeros(T_g+1)
+    L_path = zeros(T_g+1)
+    res.Γ = res.Γ_0
+    for t=0:T_g
+        res.cap_pf = cap_pf_path[t+1, :, :, :]
+        res.labor_pf = lab_pf_path[t+1, :, :, :]
+        Γ_non_stat(prim, res, param) #apply operator H (basically T^*) to get Gamma_t
+        K_path[t+1] = cap_supply(prim, res, param)
+        L_path[t+1] = lab_supply(prim, res, param)
+    end
+    print(K_path)
+    error = maximum(abs.(K_path - res.k_path_guess))
+    K_path, L_path, error
+end
+
+function path_finder(prim::Primitives, res::Results, T_g::Int64)
+    tol = 0.0001
+    error = 100
+    θ_seq_SS = fill(0.11, T_g+1)
+    param = init_param(θ_seq = θ_seq_SS, w=1.05, r = 0.05, b = 0.2, Z = [3.0, 0.5], γ = 1.0, t =0, T = T_g)
+    k_0, l_0, w_0, r_0, b_0 = kl_search(prim, res, param) #search for equilibrium quantities/parameters
+    res.Γ_0 = res.Γ
+    θ_seq_T = vcat([0.11],  fill(0.0, T_g))
+    param = init_param(θ_seq = θ_seq_T, w=1.05, r = 0.05, b = 0.2, Z = [3.0, 0.5], γ = 1.0, t =T_g, T = T_g)
+    K_T, L_T, w_T, r_T, b_T = kl_search(prim, res, param) #search for SS without social security at time T
+    res.val_func_next_t = res.val_func
+    res.k_path_guess = path_guess(k_0, K_T, T_g) #create initial guess for sequence of aggregate capital which gets us within tolerance
+    K_path, L_path, error = path_compare(prim,res, param, k_0, K_T, T_g) #find max error between guessed path and first iteration
+    n = 0
+    while error > tol && n <= 1000
+        println("Iteration $(n), error = $(error)")
+        n+=1
+        res.k_path_guess = 0.6*res.k_path_guess + 0.4*K_path
+        K_path, L_path, error = path_compare(prim, res, param, k_0, K_T, T_g) #find max error between new guessed path and its implied path
+    end
+    println("I'm done! This could mean I found the right path or failed miserably - you decide!")
+    K_path
+end
