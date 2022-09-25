@@ -22,7 +22,22 @@ println("Social security benchmark: K = $(k_T), L = $(l_T), w = $(w_T), r = $(r_
 
 k_path_30 =path_finder(prim, res, param, k_0, 30)
 
-k_path_50 =path_finder(prim, res, 30)
+k_path_50 =path_finder(prim, res, 80)
+plot(k_path_50)
+
+
+#NOTE: clean up variable names
+
+k_path_50_test, l_path_50_test = path_finder(prim, res, 80)
+
+r_path, w_path = price_paths(k_path_50, k_path_50_test[2])
+rplot = plot(r_path, title="Evolution of interest rate", legend=false)
+wplot = plot(w_path, title="Evolution of wage", legend=false)
+kplot = plot(k_path_50_test, title="Evolution of capital", legend=false)
+savefig(kplot, "kplot.png")
+savefig(rplot, "rplot.png")
+savefig(wplot, "wplot.png")
+
 #T = 30: 10.30622 vs goal of 10.94903
 #T = 50: 10.48655 vs goal of 10.49403
 #T = 80: 10.49403 vs goal of 10.49403 :) 

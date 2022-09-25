@@ -381,8 +381,21 @@ function path_finder(prim::Primitives, res::Results, T_g::Int64)
         println("Iteration $(n), error = $(error)")
         n+=1
         res.k_path_guess = 0.6*res.k_path_guess + 0.4*K_path
+        res.l_path_guess = 0.6*res.l_path_guess + 0.4*L_path
         K_path, L_path, error = path_compare(prim, res, param, k_0, K_T, T_g) #find max error between new guessed path and its implied path
     end
     println("I'm done! This could mean I found the right path or failed miserably - you decide!")
-    K_path
+    K_path, L_path
+end
+
+function price_paths(K_path, L_path)
+    @unpack α, δ = prim
+    T = length(K_path)
+    w_path = zeros(T)
+    r_path = zeros(T)
+    for t=1:T
+        r_path[t] = α*(L_path[t]/K_path[t])^(1-α)-δ #market clearing interest rate based on K_0 and L_0
+        w_path[t] = (1-α)*(K_path[t]/L_path[t])^α #market clearing wage based on K_0 and L_0
+    end
+    r_path, w_path
 end

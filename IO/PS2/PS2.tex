@@ -1,0 +1,122 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Do not alter this block of commands.  If you're proficient at LaTeX, you may include additional packages, create macros, etc. immediately below this block of commands, but make sure to NOT alter the header, margin, and comment settings here. 
+\documentclass[12pt]{article}
+ \usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,amsfonts, enumitem, fancyhdr, color, hyperref,comment, graphicx, environ,mathtools, bbm, tikz, setspace, cleveref,listings, dcolumn}
+\usepackage{array, multirow, caption, booktabs}
+\usepackage{ mathrsfs }
+\usetikzlibrary{matrix,positioning}
+\tikzset{bullet/.style={circle,draw=black,inner sep=8pt}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\Var}{\text{Var}}
+\DeclareMathOperator*{\Cov}{\text{Cov}}
+
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\DeclareMathOperator{\eps}{\varepsilon}
+\doublespacing
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\pagestyle{fancy}
+\setlength{\headheight}{65pt}
+\newenvironment{problem}[2][Problem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{sol}
+    {\emph{Solution:}
+    }
+    {
+    \qed
+    }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\usepackage{xcolor}
+ 
+ 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\rhead{John Higgins\\Econ 761 \\ 29 September, 2022} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\begin{problem}{1}
+\end{problem}
+\begin{sol}
+\begin{enumerate}[label=\alph*) ]
+    \item Given that $P(Q) = a_0 - a_1 Q + \nu$, we compute that the elasticity of demand is given by
+    \[\eps(P) = -\frac{P(Q)}{P'(Q) Q} = - \frac{a_0 - a_1 Q + \nu}{- a_1 Q} = \frac{a_0 - a_1 Q + \nu}{a_1 Q} = \frac{a_0 + \nu}{a_1 Q} - 1\]
+    We observe that this is increasing in $a_0$ and $\nu$ and decreasing in $a_1$ and $Q$.
+    \item Using our result from the previous homework, we have that the first order condition for each firm is the following: 
+     \[q_i = \frac{a_0 - a_1 (q_i + q_{-i}) + \nu) - (b_0 - \eta)}{a_1}\]
+     By symmetry, we have that $q_i = q_{j} = q^*$ $\forall i \neq j$ in equilibrium. Hence, we can impose this to solve for $q^*$:
+     \begin{align*}
+        q^* &= \frac{(a_0 - a_1 Nq^* + \nu) - (b_0 - \eta)}{a_1}\\
+        \iff (1+N)q^* &= \frac{a_0 + \nu - (b_0 - \eta)}{a_1}\\
+        \iff q^* &= \frac{a_0 + \nu - (b_0 - \eta)}{(N+1)a_1}
+     \end{align*}
+     It follows that total industry output is given by
+     \[Q^* = N q^* = \frac{N}{N+1}\frac{a_0 + \nu - (b_0 - \eta)}{a_1}\]
+     Hence, the price is
+     \begin{align*}
+        P^* &= a_0 - a_1\left(\frac{N}{N+1}\frac{a_0 + \nu - (b_0 - \eta)}{a_1} \right) + \nu\\
+        &= a_0 - \frac{N}{N+1}(a_0 + \nu - (b_0 - \eta)) + \nu\\
+        &= \frac{a_0 + \nu + N(b_0 - \eta)}{N+1}
+     \end{align*}
+     We now use these to compute firm profits in equilibrium for fixed $N$ and $F$:
+     \begin{align*}
+        \Pi^* &= (P^* - (b_0 - \eta))q^* - F\\
+        &= \left(\frac{a_0 + \nu + N(b_0 - \eta)}{N+1} - (b_0 - \eta) \right) \frac{a_0 + \nu - (b_0 - \eta)}{(N+1)a_1} - F\\
+        &= \left(\frac{a_0 + \nu - (b_0 - \eta)}{N+1}\right)\frac{a_0 + \nu - (b_0 - \eta)}{(N+1)a_1} - F\\
+        &= \frac{1}{a_1}\left(\frac{(a_0 + \nu - (b_0 - \eta))}{N+1}\right)^2 - F
+     \end{align*}
+     \item The Lerner index $L_i$ is given by
+     \[L_i = \frac{P^* - C'(q^*)}{P^*} = \frac{\frac{a_0 + \nu + N(b_0 - \eta)}{N+1} - (b_0 - \eta)}{\frac{a_0 + \nu + N(b_0 - \eta)}{N+1} } = \frac{\frac{a_0 + \nu - (b_0 - \eta)}{N+1}}{\frac{a_0 + \nu + N(b_0 - \eta)}{N+1}} = \frac{a_0 + \nu - (b_0 - \eta)}{a_0 + \nu + N(b_0 - \eta)}\]
+     The industry Lerner index is thus
+     \[L_I = \sum_{i=1}^N s_i L_i = \frac{1}{N} \sum_{i=1}^N \frac{1}{N} \frac{a_0 + \nu - (b_0 - \eta)}{a_0 + \nu + N(b_0 - \eta)} =\frac{1}{N}\frac{a_0 + \nu - (b_0 - \eta)}{a_0 + \nu + N(b_0 - \eta)} \]
+     Similarly, we compute that
+     \[\eps(P^*) = \frac{a_0 - a_1 Q^* + \nu}{a_1 Q^*} = \frac{\frac{a_0 + \nu + N(b_0 - \eta)}{N+1}}{\frac{N}{N+1}(a_0 + \nu - (b_0 - \eta)} = \frac{a_0 + \nu + N(b_0 - \eta)}{N(a_0 + \nu - (b_0 - \eta))}\]
+     Finally, since firms have the same output, the HHI is simply $\frac{1}{N}$.
+     \item To see how many firms enter before it is no longer profitable to do so, we must find the $N^*$ such that firm profits are zero. That is, we need to solve for $N^*$ such that
+     \begin{align*}
+        &\frac{1}{a_1}\left(\frac{(a_0 + \nu - (b_0 - \eta))}{N^*+1}\right)^2 = F\\
+        \iff & (N^*+1)^2\frac{1}{a_1 F }\left((a_0 + \nu - (b_0 - \eta))\right)^2\\
+        \iff& N^* +1 = \frac{1}{\sqrt{a_1 F}}(a_0 + \nu - (b_0 - \eta))\\
+        \iff& N^* =  \frac{1}{\sqrt{a_1 F}}(a_0 + \nu - (b_0 - \eta)) - 1
+     \end{align*}
+     \item Under perfect collusion, firms agree to jointly produce the monopoly quantity and split the profits evenly. To determine the monopoly quantity, we solve
+     \[\max_{Q} P(Q)Q - C(Q)\]
+     This has first order condition
+     \begin{align*}
+        &P'(Q) Q + P(Q) - (b_0 - \eta) = 0\\
+        \iff & - a_1 Q + a_0 - a_1Q + \nu + (b_0 - \eta) = 0\\
+        \iff & 2 a_1 Q = a_0 + \nu + (b_0 - \eta)\\
+        \iff & Q = \frac{a_0 + \nu + (b_0 - \eta)}{2 a_1}
+     \end{align*}
+     Hence, $Q^c = \frac{a_0 + \nu + (b_0 - \eta)}{2 a_1}$ and thus each firm produces $q^c = \frac{a_0 + \nu + (b_0 - \eta)}{2 N a_1}$. The profit to each firm under collusion is given by
+     \begin{align*}\Pi^c &= \frac{1}{N} \left( P(Q^c) - (b_0 - \eta)\right)Q^c - F\\
+        &= \frac{1}{N} \left(\frac{a_0 + \nu - (b_0 - \eta)}{2} \right)\frac{a_0 + \nu + (b_0 - \eta)}{2 a_1} - F\\
+        &= \frac{1}{N}\left( \frac{(a_0 + \nu - (b_0 - \eta))^2}{4 a_1}\right) - F
+    \end{align*}
+    This implies that firms will enter until the number of firms is equal to $N^c$, where $N^c$ is defined so that profits under collusion are zero:
+\[\frac{1}{N^c}\left( \frac{(a_0 + \nu - (b_0 - \eta))^2}{4 a_1}\right) - F = 0 \iff N^c = \frac{1}{F}\left( \frac{(a_0 + \nu - (b_0 - \eta))^2}{4 a_1}\right)\]
+We then compute the elasticity of demand at the collusive price as follows:
+\[\eps(P^c) = \frac{a_0 + \nu}{\frac{a_0 + \nu - (b_0 - \eta)}{2}} - 1 = \frac{a_0 + \nu + (b_0 - \eta)}{a_0 + \nu - (b_0 - \eta)}\]
+The Lerner index for each firm is thus
+\[L_i = \frac{s_i}{\eps(P^c)} = \frac{1}{N^c} \frac{a_0 + \nu - (b_0 - \eta)}{a_0 + \nu + (b_0 - \eta)}\]
+Hence, the industry Lerner index is
+\[L_I = \sum_{i=1}^{N^c} \frac{1}{N^c^2 }\frac{a_0 + \nu - (b_0 - \eta)}{a_0 + \nu + (b_0 - \eta)} = \frac{1}{N^c}\frac{a_0 + \nu - (b_0 - \eta)}{a_0 + \nu + (b_0 - \eta)} \]
+\end{enumerate}
+
+
+\end{sol}
+\end{document}
