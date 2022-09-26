@@ -82,7 +82,7 @@
      \item The Lerner index $L_i$ is given by
      \[L_i = \frac{P^* - C'(q^*)}{P^*} = \frac{\frac{a_0 + \nu + N(b_0 - \eta)}{N+1} - (b_0 - \eta)}{\frac{a_0 + \nu + N(b_0 - \eta)}{N+1} } = \frac{\frac{a_0 + \nu - (b_0 - \eta)}{N+1}}{\frac{a_0 + \nu + N(b_0 - \eta)}{N+1}} = \frac{a_0 + \nu - (b_0 - \eta)}{a_0 + \nu + N(b_0 - \eta)}\]
      The industry Lerner index is thus
-     \[L_I = \sum_{i=1}^N s_i L_i = \frac{1}{N} \sum_{i=1}^N \frac{1}{N} \frac{a_0 + \nu - (b_0 - \eta)}{a_0 + \nu + N(b_0 - \eta)} =\frac{1}{N}\frac{a_0 + \nu - (b_0 - \eta)}{a_0 + \nu + N(b_0 - \eta)} \]
+     \[L_I = \sum_{i=1}^N s_i L_i = \sum_{i=1}^N \frac{1}{N} \frac{a_0 + \nu - (b_0 - \eta)}{a_0 + \nu + N(b_0 - \eta)} =\frac{a_0 + \nu - (b_0 - \eta)}{a_0 + \nu + N(b_0 - \eta)} \]
      Similarly, we compute that
      \[\eps(P^*) = \frac{a_0 - a_1 Q^* + \nu}{a_1 Q^*} = \frac{\frac{a_0 + \nu + N(b_0 - \eta)}{N+1}}{\frac{N}{N+1}(a_0 + \nu - (b_0 - \eta)} = \frac{a_0 + \nu + N(b_0 - \eta)}{N(a_0 + \nu - (b_0 - \eta))}\]
      Finally, since firms have the same output, the HHI is simply $\frac{1}{N}$.
@@ -114,21 +114,109 @@ We then compute the elasticity of demand at the collusive price as follows:
 The Lerner index for each firm is thus
 \[L_i = \frac{s_i}{\eps(P^c)} = \frac{1}{N^c} \frac{a_0 + \nu - (b_0 - \eta)}{a_0 + \nu + (b_0 - \eta)}\]
 Hence, the industry Lerner index is
-\[L_I = \sum_{i=1}^{N^c} \frac{1}{N^c^2 }\frac{a_0 + \nu - (b_0 - \eta)}{a_0 + \nu + (b_0 - \eta)} = \frac{1}{N^c}\frac{a_0 + \nu - (b_0 - \eta)}{a_0 + \nu + (b_0 - \eta)} \]
+\[L_I = \sum_{i=1}^{N^c} \frac{1}{N^c }\frac{a_0 + \nu - (b_0 - \eta)}{a_0 + \nu + (b_0 - \eta)} = \frac{a_0 + \nu - (b_0 - \eta)}{a_0 + \nu + (b_0 - \eta)} \]
+Finally, the HHI is given by $\frac{1}{N^c}$. By inspection, we observe that the industry Lerner index under collusion is higher than the Lerner index under Cournot competition. Indeed,
+\[L_I^c = \frac{a_0 + \nu - (b_0 - \eta)}{a_0 + \nu + (b_0 - \eta)} \leq \frac{a_0 + \nu - (b_0 - \eta)}{a_0 + \nu + N(b_0 - \eta)}\]
+Furthermore, we argue that $\eps(P^*) > \eps(P^c)$, since
+\[\eps(P^*) = \frac{a_0 + \nu + N(b_0 - \eta)}{N(a_0 + \nu - (b_0 - \eta))} =\frac{\frac{1}{N}(a_0 + \nu) + (b_0 - \eta)}{a_0 + \nu - (b_0 - \eta)} < \frac{a_0 + \nu + (b_0 - \eta)}{a_0 + \nu - (b_0 - \eta)} = \eps(P^c) \]
+Consequently, since $L_I = \frac{HHI}{\eps(p)}$, it follows that
+\begin{align*}L_I^* \leq L_I^c &\iff \frac{HHI^*}{\eps(P^*)} \leq \frac{HHI^c}{\eps(P^c)} \\
+&\iff HHI^* \eps(P^c) \leq HHI^c \eps(P^*)\\
+&\iff HHI^* \leq HHI^c
+\end{align*}
+Thus, $HHI^* \leq HHI^c$. Consequently, $N^* \geq N^c$.
+
+In summary, the industry Lerner index, the HHI, and the elasticity of demand are all greater under collusion than under Cournot competition. Furthermore, the number of firms is lower.
 \end{enumerate}
 \end{sol}
 \begin{problem}{2}
 \end{problem}
 \begin{sol}
-    
-\end{document}
+   We estimate the below SCP regression for each group of cities:
+    \[\ln(ObservedLerner_t) = \beta_0 + \beta_1 \ln(ObservedHHI_t) + \epsilon_t\]
+    Our results are included below:
+    \begin{table}[!ht] % Add the following just after the closing bracket on this line to specify a position for the table on the page: [h], [t], [b] or [p] - these mean: here, top, bottom and on a separate page, respectively
+      \centering % Centres the table on the page, comment out to left-justify
+      \begin{tabular}{l c c c c} % The final bracket specifies the number of columns in the table along with left and right borders which are specified using vertical pipes (|); each column can be left, right or center-justified using l, r or c. Columns will widen to hold the content in them by default, to specify a precise width, use p{width}, e.g. p{5cm}
+      \toprule % Top horizontal line
+      & \multicolumn{4}{c}{\textbf{Estimates}} \\ % Amalgamating several columns into one cell is done using the \multicolumn command with the number of columns to amalgamate as the first argument and then the justification (l, r or c)
+      \cmidrule(l){2-5} % Horizontal line spanning less than the full width of the table - you can add (r) or (l) just before the opening curly bracket to shorten the rule on the left or right side
+      \textbf{City group} & $\hat{\beta}_0$ & se($\hat{\beta}_0$) & $\hat{\beta}_1$ & se($\hat{\beta}_1$)\\ % Column names row
+      \midrule % In-table horizontal line
+      Full sample & -0.797 & 0.006 & 0.589 & 0.004 \\ % Content row 1
+      Active antitrust & -0.595 & 0.074 & 0.524 & 0.044 \\ % Content row 2
+      Inactive antitrust & -1.056 & 0.013 & 0.616 & 0.008 \\ % Content row 3
+      \bottomrule % Bottom horizontal line
+      \end{tabular}
+      \caption{SCP regression estimates by sample group, exogenous structure} % Table caption, can be commented out if no caption is required
+      \label{tab:reg_table} % A label for referencing this table elsewhere, references are used in text as \ref{label}
+      \end{table}
+      These results indicate that the natural log of the observed Lerner index is positively correlated with the natural log of the observed HHI. In the full sample, a one percent increase in the observed HHI is associated with a roughly 0.6 percent increase in the observed Lerner index. In the sample containing only cities with an active antitrust authority, each percent change in observed HHI is associated with an increase of 0.524 percent in the observed Lerner index. In the sample containing only cities without active antitrust enforcement, each percent change in observed HHI is associated with an increase of 0.616 percent in the observed Lerner index. 
+
+      This indicates that the HHI is generally correlated with the observed Lerner index. Furthermore, the correlation is stronger in cities where it is possible for firms to collude than in cities where collusion is not possible. 
+
+      $\beta_1 = 1$ would correspond to the case where market concentration has no impact on markups. To see this, we use the fact that $L_I$ is proportional to $HHI$. We know that $L_I = \frac{HHI}{\eps(p_t)}$, meaning that we can rewrite the SCP regression in the following manner:
+      \begin{align*}
+         \ln(ObservedLerner_t) = \beta_0 + \beta_1 \ln(ObservedHHI_t) + \epsilon_t\\
+         \iff \ln(HHI_t) - \ln(\eps(p_t)) = \beta_0 + \beta_1 \ln(HHI_t) + \epsilon_t\\
+         \iff \ln(\eps(p_t)) = -\beta_0 - (1-\beta_1 )\ln(HHI_t) + \epsilon_t
+      \end{align*}
+      Thus, $\beta_1 = 1$ would indicate that industry concentration (as quantified by HHI) would have no impact on the elasticity of demand and thus no impact on observed markups. This is essentially a null result for the SCP regression. Would we expect $\beta_1 = 1$? No, since we know that the HHI and elasticity of demand are decreasing in the number of firms $N$ for both the Cournot and collusive outcomes. As such, we would expect these to be correlated in the data. This is backed up by our regression results, which indicate that $\beta_1 \neq 1$ and therefore that the elasticity of demand (and thus markups) is positively associated with industry concentration. 
+
+      Another way to think about this is the following: $\beta_1$ is essentially the elasticity of $L_t$ with respect to $HHI_t$. As such, we have that 
+      \[\beta_1 = \frac{d \ln(L_t)}{d \ln(HHI_t)} = \frac{HHI_t}{L_t} \cdot \frac{d L_t}{d HHI_t}\]
+      If $\beta_1 = 1$, this would imply that a one percent change in $HHI_t$ is associated with a one percent change in $L_t$. 
+\end{sol}
+
 \begin{problem}{3}
 \end{problem}
 \begin{sol}
-    
-\end{document}
-\begin{problem}{4}
-\end{problem}
-\begin{sol}
+   We estimate the SCP regression across the 1000 cities assuming all firms compete in Cournot competition with $a_0 = 5, a_1 = 1, F = 1, $ and $b_0 = 1$. Furthermore, in each city we either have $\nu \sim U([-1, 1])$ and $\eta = 0$ or $\nu = 0$ and $\eta \sim U([-1,1])$. Additionally, we assume that firms enter until profits are zero, meaning that the number of firms in each city varies is endogeneously determined by the realized $\nu$ and $\eta$ parameters. The following table summarizes the results of these regressions.
+      \begin{table}[!ht] % Add the following just after the closing bracket on this line to specify a position for the table on the page: [h], [t], [b] or [p] - these mean: here, top, bottom and on a separate page, respectively
+         \centering % Centres the table on the page, comment out to left-justify
+         \begin{tabular}{l c c c c} % The final bracket specifies the number of columns in the table along with left and right borders which are specified using vertical pipes (|); each column can be left, right or center-justified using l, r or c. Columns will widen to hold the content in them by default, to specify a precise width, use p{width}, e.g. p{5cm}
+         \toprule % Top horizontal line
+         & \multicolumn{4}{c}{\textbf{Estimates}} \\ % Amalgamating several columns into one cell is done using the \multicolumn command with the number of columns to amalgamate as the first argument and then the justification (l, r or c)
+         \cmidrule(l){2-5} % Horizontal line spanning less than the full width of the table - you can add (r) or (l) just before the opening curly bracket to shorten the rule on the left or right side
+         \textbf{Parameter values} & $\hat{\beta}_0$ & se($\hat{\beta}_0$) & $\hat{\beta}_1$ & se($\hat{\beta}_1$)\\ % Column names row
+         \midrule % In-table horizontal line
+         $\nu \sim U([-1,1]), \eta = 0 $& -0.692 & 0.186 & 0.0008 & 0.172 \\ % Content row 1
+         $\nu =0, \eta \sim U([-1,1])$ & -2.301 & 0.074 & -1.532 & 0.067 \\ % Content row 1
+         \bottomrule % Bottom horizontal line
+         \end{tabular}
+         \caption{SCP regression estimates by parameter configurations, endogenous structure, Cournot competition} % Table caption, can be commented out if no caption is required
+         \label{tab:reg_table_b} % A label for referencing this table elsewhere, references are used in text as \ref{label}
+         \end{table}
+   \begin{enumerate}[label=\alph*) ]
+      \item When $\nu \sim U([-1, 1])$ and $\eta = 0$, we see that $\hat{\beta}_1$ is very small and statistically insignificant.
+      \item When $\nu = 0$ and $\eta \sim U([-1,1])$, we see that $\hat{\beta}_1$ is negative and statistically significant.
+      \item Why do we observe such a stark difference in estimates by varying $\eta$ instead of $\nu$? The answer lies in how each variable affects both the HHI and the Lerner index. The key difference from problem 2 is that we impose that market structure is endogenous. Namely, firms enter each city until it is no longer profitable to do so. From our answers to problem 1, we know that the number of firms entering is given by the following:
+      \[N^* = \frac{1}{\sqrt{a_1 F}}(a_0 + \nu - (b_0 - \eta)) - 1\]
+      Plugging in the parameter values for this problem, we obtain
+      \[N^* = 5 + \nu - 1 + \eta - 1 = 3 + \nu + \eta\]
+      We now want to determine the Lerner index for the industry as a function of $\eta$. Taking $\eta = 0$ and substituting the other parameter values into our result from the previous section, we have that 
+      \[L_I = \frac{5 + \nu -1 }{5 + \nu  + (3 + \nu)} = \frac{4 + \nu}{8 +2\nu}\]
+      We also compute that
+      \[HHI = \frac{1}{3 + \nu}\]
+      As before, we have that
+      \[\beta_1 = \frac{HHI}{L_I} \frac{d L_I/ d\nu}{d HHI/d \nu}\]
+      We can compute that 
+      \[\frac{d L_I}{d \nu} = \frac{(8 + 2\nu) - 2(4 + \nu)}{(8 + 2\nu)^2} = 0\]
+      Hence, we have that $\beta_1 = 0$ based on the model parameters. Of course, is different in the regression since the observations are noisy, but this is why we get a result which is very close to zero in our estimate for part a.
+      
+      A similar analysis holds for when $\eta \sim U([-1,1])$ and $\nu = 0$. We observe that
+      \[N^* = 3 + \eta\]
+      Consequently,
+      \[HHI = \frac{1}{3 + \eta}\]
+      Furthermore, 
+      \[L_I = \frac{4 + \eta}{5 + (3+\eta)(1-\eta)} = \frac{4 + \eta}{8 - 2\eta - \eta^2} = \frac{4+\eta}{(4 + \eta)(2-\eta )} = \frac{1}{2-\eta}\]
+      Hence,
+      \[\beta_1 = \frac{HHI}{L_I} \frac{d L_I/ d\nu}{d HHI/d \nu} =  \frac{2 - \eta}{3 + \eta} \frac{-(3+\eta)^2}{(2-\eta)^2} = -\frac{3 + \eta}{2 - \eta}\]
+      Taking the expectation over $\nu$ which is uniformly distributed over $[-1,1]$, we obtain
+      \[E[\hat{\beta}_1 ] = \int_{-1}^1 \frac{-(3 + \eta)}{2(2 - \eta)} \, d\eta \approx -1.746\]
+      which is reasonably close to our estimated value. Of course, the measurement error in the data-generating process can account for this discrepancy. But this is the theoretical reason why the coefficient for $\beta_1$ is so much lower when we allow $\eta$ to vary. 
+   \end{enumerate}
+\end{sol}
+
     
 \end{document}

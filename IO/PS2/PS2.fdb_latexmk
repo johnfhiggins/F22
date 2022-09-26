@@ -1,6 +1,6 @@
 # Fdb version 3
-["pdflatex"] 1664157985 "/Users/johnhiggins/Documents/F22/IO/PS2/PS2.tex" "PS2.pdf" "PS2" 1664157985
-  "/Users/johnhiggins/Documents/F22/IO/PS2/PS2.tex" 1664157983 7060 cbdd4945cbcea117168923f889c6341b ""
+["pdflatex"] 1664233556 "/Users/johnhiggins/Documents/F22/IO/PS2/PS2.tex" "PS2.pdf" "PS2" 1664233558
+  "/Users/johnhiggins/Documents/F22/IO/PS2/PS2.tex" 1664233555 17787 8836eba48aa3735fee172edac80230ed ""
   "/usr/local/texlive/2022/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2022/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/local/texlive/2022/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -181,9 +181,9 @@
   "/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1647878959 4410336 7d30a02e9fa9a16d7d1f8d037ba69641 ""
   "/usr/local/texlive/2022/texmf-var/web2c/pdftex/pdflatex.fmt" 1662516869 2826432 ecb848460933805e66da8cdf1f6945e4 ""
   "/usr/local/texlive/2022/texmf.cnf" 1647878952 577 209b46be99c9075fd74d4c0369380e8c ""
-  "PS2.aux" 1664157985 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "PS2.aux" 1664233557 1552 88cdb2aed35297412fb4701fe3c348e6 "pdflatex"
   "PS2.out" 0 -1 0 "pdflatex"
-  "PS2.tex" 1664157983 7060 cbdd4945cbcea117168923f889c6341b ""
+  "PS2.tex" 1664233555 17787 8836eba48aa3735fee172edac80230ed ""
   (generated)
   "PS2.aux"
   "PS2.log"

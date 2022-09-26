@@ -41,6 +41,7 @@ mutable struct Results
     cap_pf_path :: Array{Float64, 4}
     lab_pf_path :: Array{Float64, 4}
     k_path_guess :: Array{Float64,1}
+    l_path_guess :: Array{Float64,1}
 end
 
 function Initialize()
@@ -60,8 +61,9 @@ function Initialize()
     cap_pf_path = zeros(30, prim.N, prim.na, 2) #empty array to store capital pf over time - will change T length later
     lab_pf_path = zeros(30, prim.N, prim.na, 2) #empty array to store labor pf over time - will change T length later
     k_path_guess = zeros(30)
+    l_path_guess = zeros(30)
     
-    res = Results(val_func_next, val_func, cap_pf, labor_pf, μ, Γ, Γ_0, K, L, wealth_d, cap_pf_path, lab_pf_path, k_path_guess) #initialize results struct
+    res = Results(val_func_next, val_func, cap_pf, labor_pf, μ, Γ, Γ_0, K, L, wealth_d, cap_pf_path, lab_pf_path, k_path_guess, l_path_guess) #initialize results struct
     prim, res #return structs
 end
 
@@ -375,6 +377,32 @@ function path_finder(prim::Primitives, res::Results, T_g::Int64)
     K_T, L_T, w_T, r_T, b_T = kl_search(prim, res, param) #search for SS without social security at time T
     res.val_func_next_t = res.val_func
     res.k_path_guess = path_guess(k_0, K_T, T_g) #create initial guess for sequence of aggregate capital which gets us within tolerance
+    K_path, L_path, error = path_compare(prim,res, param, k_0, K_T, T_g) #find max error between guessed path and first iteration
+    n = 0
+    while error > tol && n <= 1000
+        println("Iteration $(n), error = $(error)")
+        n+=1
+        res.k_path_guess = 0.6*res.k_path_guess + 0.4*K_path
+        res.l_path_guess = 0.6*res.l_path_guess + 0.4*L_path
+        K_path, L_path, error = path_compare(prim, res, param, k_0, K_T, T_g) #find max error between new guessed path and its implied path
+    end
+    println("I'm done! This could mean I found the right path or failed miserably - you decide!")
+    K_path, L_path
+end
+
+function path_finder(prim::Primitives, res::Results, T_g::Int64, θ_seq_mod::Vector{Float64})
+    tol = 0.0001
+    error = 100
+    θ_seq_SS = fill(0.11, T_g+1)
+    param = init_param(θ_seq = θ_seq_SS, w=1.05, r = 0.05, b = 0.2, Z = [3.0, 0.5], γ = 1.0, t =0, T = T_g)
+    k_0, l_0, w_0, r_0, b_0 = kl_search(prim, res, param) #search for equilibrium quantities/parameters
+    res.Γ_0 = res.Γ
+    #θ_seq_T = vcat([0.11],  fill(0.0, T_g))
+    param = init_param(θ_seq = θ_seq_mod, w=1.05, r = 0.05, b = 0.2, Z = [3.0, 0.5], γ = 1.0, t =T_g, T = T_g)
+    K_T, L_T, w_T, r_T, b_T = kl_search(prim, res, param) #search for SS without social security at time T
+    res.val_func_next_t = res.val_func
+    res.k_path_guess = path_guess(k_0, K_T, T_g) #create initial guess for sequence of aggregate capital which gets us within tolerance
+    res.l_path_guess = fill(0.754, T_g+1)
     K_path, L_path, error = path_compare(prim,res, param, k_0, K_T, T_g) #find max error between guessed path and first iteration
     n = 0
     while error > tol && n <= 1000

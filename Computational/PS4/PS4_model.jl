@@ -38,6 +38,13 @@ savefig(kplot, "kplot.png")
 savefig(rplot, "rplot.png")
 savefig(wplot, "wplot.png")
 
+k_path_2, l_path_2 = path_finder(prim, res, 110, vcat(fill(0.11, 21) , fill(0.0, 90)))
+
 #T = 30: 10.30622 vs goal of 10.94903
 #T = 50: 10.48655 vs goal of 10.49403
 #T = 80: 10.49403 vs goal of 10.49403 :) 
+
+
+#pt 2: T = 50: 10.35369 vs goal of 10.49403
+#T = 80: 10.49378 vs 10.49403
+#T = 110: 10.49403 :)
