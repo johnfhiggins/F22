@@ -69,8 +69,9 @@ function OLS_est(Y_m::Array{Float64}, X_m::Array{Float64})
     β = inv(X_m'X_m)X_m'Y_m
     sse = sum((Y_m - X_m*β).^2)
     covar = inv(X_m'X_m)/sse
-    se = sqrt.(covar[2,2])
-    β[2], se
+    se_0 = sqrt.(covar[1,1])
+    se_1 = sqrt.(covar[2,2])
+    β[1], β[2], se_0, se_1
 end
 
 prim = Primitives()
@@ -81,19 +82,22 @@ function find_estimates_1(prim::Primitives)
     Y = add_noise(log.(L_test), -0.05, 0.05)
     X = hcat(ones(1000), log.(HHI_test)) #construct matrix for regression; will consist of a column of ones and a column of the HHI observations
 
-    β_1, se_beta_1 =  OLS_est(Y, X)
-    println("Pooled estimate: beta_1 = $(β_1), standard error = $(se_beta_1)")
+    β_0, β_1, se_beta_0, se_beta_1 =  OLS_est(Y, X)
+    println("Pooled estimate:  beta_0 = $(β_0), standard error = $(se_beta_0)")
+    println("beta_1 = $(β_1), standard error = $(se_beta_1)")
 
     X_act = X[1:500, :]
     Y_act = Y[1:500, :]
-    β_1_act, se_beta_1_act =  OLS_est(Y_act, X_act)
-    println("No collusion estimate: beta_1_act = $(β_1_act), standard error = $(se_beta_1_act)")
+    β_0_act, β_1_act, se_beta_0_act, se_beta_1_act =  OLS_est(Y_act, X_act)
+    println("No collusion estimate: beta_0_act = $(β_0_act), standard error = $(se_beta_0_act)")
+    println("beta_1_act = $(β_1_act), standard error = $(se_beta_1_act)")
 
 
     X_inact = X[501:1000, :]
     Y_inact = Y[501:1000, :]
-    β_1_inact, se_beta_1_inact =  OLS_est(Y_inact, X_inact)
-    println("Collusion possible estimate: beta_1 = $(β_1_inact), standard error = $(se_beta_1_inact)")
+    β_0_inact, β_1_inact, se_beta_0_inact, se_beta_1_inact =  OLS_est(Y_inact, X_inact)
+    println("Possible collusion estimate: beta_0_inact = $(β_0_inact), standard error = $(se_beta_0_inact)")
+    println("beta_1_inact = $(β_1_inact), standard error = $(se_beta_1_inact)")
 end
 
 find_estimates_1(prim)
@@ -134,9 +138,10 @@ function find_estimates_2(prim::Primitives,ν_draw::Vector{Float64}, η_draw::Ve
     param_2 = Parameters_2()
     L_test, HHI_test, elas_test = data_gen_2(prim,param_2, ν_draw, η_draw)
     Y = add_noise(log.(L_test), -0.05, 0.05)
-    X = hcat(ones(1000), HHI_test) #construct matrix for regression; will consist of a column of ones and a column of the HHI observations
+    X = hcat(ones(1000), log.(HHI_test)) #construct matrix for regression; will consist of a column of ones and a column of the HHI observations
 
-    β_1, se_beta_1 =  OLS_est(Y, X)
+    β_0, β_1, se_beta_0, se_beta_1 =  OLS_est(Y, X)
+    println("beta_0 = $(β_0), standard error = $(se_beta_0)")
     println("beta_1 = $(β_1), standard error = $(se_beta_1)")
 end
 
