@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.6)  27 SEP 2022 20:23
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.6)  27 SEP 2022 08:08
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**/Users/johnhiggins/Documents/F22/IO/PS2/PS2.tex
-(/Users/johnhiggins/Documents/F22/IO/PS2/PS2.tex
+**/Users/johnhiggins/Documents/F22/Computational/PS4/PS4.tex
+(/Users/johnhiggins/Documents/F22/Computational/PS4/PS4.tex
 LaTeX2e <2021-11-15> patch level 1
 L3 programming layer <2022-02-24> (/usr/local/texlive/2022/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2021/10/04 v1.4n Standard LaTeX document class
@@ -599,8 +599,8 @@ File: tikzlibrarypositioning.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 File: l3backend-pdftex.def 2022-02-07 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count327
 \l__pdf_internal_box=\box69
-) (./PS2.aux)
-\openout1 = `PS2.aux'.
+) (./PS4.aux)
+\openout1 = `PS4.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 50.
 LaTeX Font Info:    ... okay on input line 50.
@@ -687,43 +687,32 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 50.
 LaTeX Info: Redefining \pageref on input line 50.
 LaTeX Info: Redefining \nameref on input line 50.
- (./PS2.out) (./PS2.out)
+ (./PS4.out) (./PS4.out)
 \@outlinefile=\write5
-\openout5 = `PS2.out'.
+\openout5 = `PS4.out'.
 
 \c@lstlisting=\count335
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 56.
- (/usr/local/texlive/2022/texmf-dist/tex/latex/amsfonts/umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 56.
- (/usr/local/texlive/2022/texmf-dist/tex/latex/amsfonts/umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-LaTeX Font Info:    Trying to load font information for U+rsfs on input line 56.
- (/usr/local/texlive/2022/texmf-dist/tex/latex/jknapltx/ursfs.fd
-File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
-) [1{/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
+ [1{/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
-] [2] [3] [4] [5] [6] [7] [8] [9] (./PS2.aux)
-Package rerunfilecheck Info: File `PS2.out' has not changed.
-(rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
+] (./PS4.aux)
+Package rerunfilecheck Info: File `PS4.out' has not changed.
+(rerunfilecheck)             Checksum: 8B91B7E6975FBB1437BE6F8F6111AE0C;613.
  ) 
 Here is how much of TeX's memory you used:
- 26285 strings out of 478268
- 494213 string characters out of 5846348
- 761846 words of memory out of 5000000
- 44050 multiletter control sequences out of 15000+600000
- 475404 words of font info for 52 fonts, out of 8000000 for 9000
+ 26202 strings out of 478268
+ 492954 string characters out of 5846348
+ 747620 words of memory out of 5000000
+ 44006 multiletter control sequences out of 15000+600000
+ 470515 words of font info for 32 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,12n,89p,723b,514s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on PS2.pdf (9 pages, 142986 bytes).
+ 84i,11n,89p,482b,330s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb>
+Output written on PS4.pdf (1 page, 30638 bytes).
 PDF statistics:
- 119 PDF objects out of 1000 (max. 8388607)
- 85 compressed objects within 1 object stream
- 20 named destinations out of 1000 (max. 500000)
- 13 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 39 PDF objects out of 1000 (max. 8388607)
+ 31 compressed objects within 1 object stream
+ 5 named destinations out of 1000 (max. 500000)
+ 37 words of extra memory for PDF output out of 10000 (max. 10000000)
 

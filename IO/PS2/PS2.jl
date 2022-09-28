@@ -1,5 +1,5 @@
 using Random, Distributions, LinearAlgebra, Parameters, Plots
-Random.seed!(123)
+Random.seed!(125)
 
 #struct to hold primitives for both parts of the problem
 @with_kw struct Primitives

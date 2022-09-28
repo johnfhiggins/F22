@@ -98,13 +98,13 @@
      This has first order condition
      \begin{align*}
         &P'(Q) Q + P(Q) - (b_0 - \eta) = 0\\
-        \iff & - a_1 Q + a_0 - a_1Q + \nu + (b_0 - \eta) = 0\\
-        \iff & 2 a_1 Q = a_0 + \nu + (b_0 - \eta)\\
-        \iff & Q = \frac{a_0 + \nu + (b_0 - \eta)}{2 a_1}
+        \iff & - a_1 Q + a_0 - a_1Q + \nu - (b_0 - \eta) = 0\\
+        \iff & 2 a_1 Q = a_0 + \nu - (b_0 - \eta)\\
+        \iff & Q = \frac{a_0 + \nu - (b_0 - \eta)}{2 a_1}
      \end{align*}
-     Hence, $Q^c = \frac{a_0 + \nu + (b_0 - \eta)}{2 a_1}$ and thus each firm produces $q^c = \frac{a_0 + \nu + (b_0 - \eta)}{2 N a_1}$. The profit to each firm under collusion is given by
+     Hence, $Q^c = \frac{a_0 + \nu - (b_0 - \eta)}{2 a_1}$ and thus each firm produces $q^c = \frac{a_0 + \nu -(b_0 - \eta)}{2 N a_1}$. The profit to each firm under collusion is given by
      \begin{align*}\Pi^c &= \frac{1}{N} \left( P(Q^c) - (b_0 - \eta)\right)Q^c - F\\
-        &= \frac{1}{N} \left(\frac{a_0 + \nu - (b_0 - \eta)}{2} \right)\frac{a_0 + \nu + (b_0 - \eta)}{2 a_1} - F\\
+        &= \frac{1}{N} \left(\frac{a_0 + \nu - (b_0 - \eta)}{2} \right)\frac{a_0 + \nu - (b_0 - \eta)}{2 a_1} - F\\
         &= \frac{1}{N}\left( \frac{(a_0 + \nu - (b_0 - \eta))^2}{4 a_1}\right) - F
     \end{align*}
     This implies that firms will enter until the number of firms is equal to $N^c$, where $N^c$ is defined so that profits under collusion are zero:
@@ -143,17 +143,19 @@ In summary, the industry Lerner index, the HHI, and the elasticity of demand are
       \cmidrule(l){2-5} % Horizontal line spanning less than the full width of the table - you can add (r) or (l) just before the opening curly bracket to shorten the rule on the left or right side
       \textbf{City group} & $\hat{\beta}_0$ & se($\hat{\beta}_0$) & $\hat{\beta}_1$ & se($\hat{\beta}_1$)\\ % Column names row
       \midrule % In-table horizontal line
-      Full sample & -0.797 & 0.006 & 0.589 & 0.004 \\ % Content row 1
-      Active antitrust & -0.595 & 0.074 & 0.524 & 0.044 \\ % Content row 2
-      Inactive antitrust & -1.056 & 0.013 & 0.616 & 0.008 \\ % Content row 3
+      Full sample & -0.786 & 0.006 & 0.591 & 0.004 \\ % Content row 1
+      Active antitrust & -0.586 & 0.072 & 0.527 & 0.044 \\ % Content row 2
+      Inactive antitrust & -0.982 & 0.013 & 0.656 & 0.008 \\ % Content row 3
       \bottomrule % Bottom horizontal line
       \end{tabular}
       \caption{SCP regression estimates by sample group, exogenous structure} % Table caption, can be commented out if no caption is required
       \label{tab:reg_table} % A label for referencing this table elsewhere, references are used in text as \ref{label}
       \end{table}
-      These results indicate that the natural log of the observed Lerner index is positively correlated with the natural log of the observed HHI. In the full sample, a one percent increase in the observed HHI is associated with a roughly 0.6 percent increase in the observed Lerner index. In the sample containing only cities with an active antitrust authority, each percent change in observed HHI is associated with an increase of 0.524 percent in the observed Lerner index. In the sample containing only cities without active antitrust enforcement, each percent change in observed HHI is associated with an increase of 0.616 percent in the observed Lerner index. 
+      These results indicate that the natural log of the observed Lerner index is positively correlated with the natural log of the observed HHI. In the full sample, a one percent increase in the observed HHI is associated with a roughly 0.591 percent increase in the observed Lerner index. In the sample containing only cities with an active antitrust authority, each percent change in observed HHI is associated with an increase of 0.527 percent in the observed Lerner index. In the sample containing only cities without active antitrust enforcement, each percent change in observed HHI is associated with an increase of 0.656 percent in the observed Lerner index. 
 
       This indicates that the HHI is generally correlated with the observed Lerner index. Furthermore, the correlation is stronger in cities where it is possible for firms to collude than in cities where collusion is not possible. 
+
+      The reason for the difference in the estimates between cities with antitrust enforcement and those without is the fact that the equilibrium price and quantity under collusion do not depend on industry size in the city. This means that prices and quantities (and consequently, the Lerner index) will be constant across all cities with collusion. However, the observed HHI in each of those cities still depends on the number of firms in the city. Thus, in the data it will appear as if HHI has less of an impact on observed markups than it does in cities with Cournot competition.
 
       $\beta_1 = 1$ would correspond to the case where market concentration has no impact on markups. To see this, we use the fact that $L_I$ is proportional to $HHI$. We know that $L_I = \frac{HHI}{\eps(p_t)}$, meaning that we can rewrite the SCP regression in the following manner:
       \begin{align*}

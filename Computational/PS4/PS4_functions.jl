@@ -9,7 +9,7 @@
     σ :: Float64 = 2.0 #CRRA parameter
     α::Float64  = 0.36  #capital share in production function
     δ::Float64 = 0.06 #depreciation rate of capital
-    na ::Int64 = 2000
+    na ::Int64 = 1000
     a_max = 100.0
     a_min = 0.0001
     a_range = range(a_min, length=na, stop=a_max)
@@ -201,7 +201,9 @@ function cons_opt(prim::Primitives, res::Results, param::Param)
             end
         end
     end
-    res.val_func_next_t = copy(res.val_func) #store the time t value function as the future value function for period t-1
+    if t > 0
+        res.val_func_next_t = copy(res.val_func) #store the time t value function as the future value function for period t-1
+    end
     res.val_func #return current value function
 end
 
@@ -280,11 +282,11 @@ end
 #this funcion iteratively finds equilibrium aggregate quantities K and L
 function kl_search(prim::Primitives, res::Results, param::Param)
     K_new, L_new = eq_finder(prim, res, param) #using initial guess for K_0 and L_0 in the results struct, find the levels of capital and labor supplied in steady state
-    tol = 0.00001
+    tol = 0.001
     error = max(abs(K_new - res.K), abs(L_new - res.L)) #compute max difference between guesses and observed outputs
     n = 0
     println("Finding market clearing K and L") 
-    while error > tol #iterate until guesses become sufficiently close together
+    while error > tol && n < 50#iterate until guesses become sufficiently close together
         n +=1
         print("Iteration: $(n), K: $(K_new), error: $(error). ") #little progress message :)
         res.K = 0.6*res.K + 0.4*K_new #update guess of K as weighted average of previous guess and model output
@@ -306,16 +308,20 @@ function path_guess(K_0::Float64, K_T::Float64, T::Int64)
 end
 
 function backwards_policy(prim::Primitives, res::Results, param::Param, K_0::Float64, K_T::Float64, T_g::Int64)
-    @unpack N, na = prim
+    @unpack N, na, jr = prim
     #K_T, L_T, w_T, r_T, b_T = kl_search(prim, res, param) #search for SS without social security at time T
     lab_pf_path = zeros(T_g+1, N, na, 2)
     cap_pf_path = zeros(T_g+1, N, na, 2)
+    r_paths, w_paths = price_paths(res.k_path_guess, res.l_path_guess)
     param.T = T_g
     for t in reverse(0:T_g)    #note to self: don't write reverse(T_g:0) unless you want to spend hours debugging code and wondering why things aren't working!
         print(t, " ")
         param.t = t #change time parameter
+        param.r = r_paths[t+1]
+        param.w = w_paths[t+1]
+        param.b = (param.θ_seq[t+1] * param.w * 0.754)/(sum(res.μ[jr:N]))
         res.K = res.k_path_guess[t+1] #use guessed level of aggregate capital; note that due to 1-indexing, this corresponds to time t-1
-        cons_opt(prim, res, param) #find prices implied by K
+        cons_opt(prim, res, param) 
         #store pfs in array and index them by time t
         cap_pf_path[t+1, :, :, :] = res.cap_pf
         lab_pf_path[t+1, :, :, :] = res.labor_pf
@@ -366,7 +372,7 @@ function path_compare(prim::Primitives, res::Results, param::Param, K_0::Float64
 end
 
 function path_finder(prim::Primitives, res::Results, T_g::Int64)
-    tol = 0.0001
+    tol = 0.001
     error = 100
     θ_seq_SS = fill(0.11, T_g+1)
     param = init_param(θ_seq = θ_seq_SS, w=1.05, r = 0.05, b = 0.2, Z = [3.0, 0.5], γ = 1.0, t =0, T = T_g)
@@ -377,6 +383,7 @@ function path_finder(prim::Primitives, res::Results, T_g::Int64)
     K_T, L_T, w_T, r_T, b_T = kl_search(prim, res, param) #search for SS without social security at time T
     res.val_func_next_t = res.val_func
     res.k_path_guess = path_guess(k_0, K_T, T_g) #create initial guess for sequence of aggregate capital which gets us within tolerance
+    res.l_path_guess = fill(0.754, T_g+1)
     K_path, L_path, error = path_compare(prim,res, param, k_0, K_T, T_g) #find max error between guessed path and first iteration
     n = 0
     while error > tol && n <= 1000
@@ -426,4 +433,53 @@ function price_paths(K_path, L_path)
         w_path[t] = (1-α)*(K_path[t]/L_path[t])^α #market clearing wage based on K_0 and L_0
     end
     r_path, w_path
+end
+
+function equivalent_variation_bench(θ_seq_T, k_path)
+    #first, solve model with social security and find value function
+    prim, res = Initialize()
+    #update prices
+    param = init_param(θ_seq=fill(0.11, length(θ_seq_T)), w=1.454, r = 0.024, b = 0.494, Z = [3.0, 0.5], γ = 1.0, t = 0, T = length(k_path)-1)
+    param.t = 0
+    cons_opt(prim, res, param)
+    #backwards_policy(prim, res, param, res.K , K_T, 80)
+    val_ss = res.val_func
+    Γ_finder(prim, res, param)
+    Γ_0 = res.Γ
+    #model_solver(prim, res, param)
+    #now, solve model without social security and find value function
+    prim, res = Initialize()
+    res.K = k_path[1] #7.39758
+    param = init_param(θ_seq = θ_seq_T, w=1.456, r = 0.0235, b = 0.494, Z = [3.0, 0.5], γ = 1.0, t =80, T = length(k_path)-1)
+    K_T = 10.4940337
+    res.k_path_guess = k_path
+    res.l_path_guess = fill(0.7543, length(k_path))
+    #update mkt prices
+    #cons_opt(prim, res, param)
+    backwards_policy(prim, res, param, res.K , K_T, length(k_path)-1)
+    val_no_ss = res.val_func
+    @unpack γ = param
+    @unpack σ = prim
+    λ = (val_no_ss ./ val_ss).^(1/(γ*(1-σ))) #.- 1
+    λ, Γ_0
+end
+
+function ce_avg(prim, λ, Γ_0)
+    @unpack na, N = prim
+    EV = zeros(N)
+    for age=1:N
+        EV[age] =  (λ[age, :, 1]'Γ_0[age, :, 1] + λ[age, :, 2]'Γ_0[age, :, 2])/(sum(Γ_0[age, :, 1 ] + Γ_0[age, :, 2]))
+    end
+    EV
+end
+function prop_favor(prim,λ, Γ_0)
+    @unpack N = prim
+    @unpack μ = res
+    prop = 0.0
+    for age = 1:N
+        for z_i = 1:2
+            prop += (λ[age, :, z_i] .>= 0)'Γ_0[age, :, z_i]
+        end
+    end
+    prop
 end
