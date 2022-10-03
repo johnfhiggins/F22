@@ -9,7 +9,7 @@
     σ :: Float64 = 2.0 #CRRA parameter
     α::Float64  = 0.36  #capital share in production function
     δ::Float64 = 0.06 #depreciation rate of capital
-    na ::Int64 = 1000
+    na ::Int64 = 5000
     a_max = 100.0
     a_min = 0.0001
     a_range = range(a_min, length=na, stop=a_max)
@@ -87,8 +87,14 @@ function utility_w(ap::Float64, a::Float64, prod::Float64, prim::Primitives, par
     @unpack σ = prim
     @unpack γ = param
     u = 0.0
-    if work_budget(ap, a, prod, param) > ap && (opt_l(ap, a, prod, param) < 1 || γ == 1.0)
+    if work_budget(ap, a, prod, param) > ap
+        if opt_l(ap, a, prod, param) < 1
             u = (((work_budget(ap, a, prod, param)-ap)^(γ) *(1-opt_l(ap, a, prod, param))^(1-γ))^(1-σ))/(1-σ)
+        elseif opt_l(ap, a, prod, param) ==1 && γ==1.0
+            u = (((work_budget(ap, a, prod, param)-ap)^(γ))^(1-σ))/(1-σ)
+        else
+            u = 0
+        end
     else
         u = -Inf
     end

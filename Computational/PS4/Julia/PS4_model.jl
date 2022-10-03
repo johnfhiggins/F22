@@ -1,4 +1,4 @@
-using Parameters, Plots, Interpolations, Optim
+using Parameters, Plots, Interpolations, Optim, CSV
 include("PS4_functions.jl")
 
 #initialize the Primitives and Results structs, respectively
@@ -30,30 +30,35 @@ prim, res = Initialize()
 
 #k_path_50_test, l_path_50_test = path_finder(prim, res, 80)
 
-r_path, w_path = price_paths(k_path_50[1], fill(0.754, 81))
-rplot = plot(r_path, title="Evolution of interest rate", legend=false)
-wplot = plot(w_path, title="Evolution of wage", legend=false)
-kplot = plot(k_path_50[1], title="Evolution of capital", legend=false)
+
+
+tg = 80
+k_path, l_path = path_finder(prim, res, tg)
+
+
+r_path, w_path = price_paths(k_path, l_path)
+rplot = plot([r_path, fill(r_path[tg+1], tg+1)], title="Evolution of interest rate", legend=:topright, labels=["Transition path" "New steady state r"], xlabel = "t", ylabel="Interest rate")
+wplot = plot([w_path, fill(w_path[tg+1], tg+1)], title="Evolution of wage", legend=:bottomright, labels=["Transition path" "New steady state w"],  xlabel = "t", ylabel="Wage")
+kplot = plot([k_path, fill(k_path[tg+1], tg+1)], title="Evolution of capital", legend=:bottomright, labels=["Transition path" "New steady state K"],  xlabel = "t", ylabel="Capital")
+lplot = plot([l_path, fill(l_path[tg+1], tg+1)], title="Evolution of effective labor supply", legend=:topright, labels=["Transition path" "New steady state L"],  xlabel = "t", ylabel="Effective labor supply")
 savefig(kplot, "kplot.png")
 savefig(rplot, "rplot.png")
 savefig(wplot, "wplot.png")
+savefig(lplot, "lplot.png")
+CSV.write("output.csv", (k = k_path, l = l_path, r = r_path, w = w_path))
 
-tg = 30
-k_path, l_path = path_finder(prim, res, tg)
-
-#T = 30: 10.30622 vs goal of 10.94903
-#T = 50: 10.48655 vs goal of 10.49403
-#T = 80: 10.49403 vs goal of 10.49403 :) 
-k_path = res.k_path_guess
+#T = 30: 4.552 vs target of 4.62597
+#T = 50: 4.622 target of 4.62597
 
 
-lambd, gamm = equivalent_variation_bench(vcat([0.11],  fill(0.0, tg)), k_path_50[1])
+
+lambd, gamm = equivalent_variation_bench(vcat([0.11],  fill(0.0, tg)), k_path, l_path)
 ce_age = ce_avg(prim, lambd, gamm)
 ceavg = plot(ce_age, title="Average CE by model age", legend=false)
 savefig(ceavg, "ceavg2.png")
-prop_favor(prim, lambd .- 1 , gamm)
+prop_favor(prim, lambd, gamm)
 #
-#7.97 percent of the population votes in favor w transition path
+#11.45 percent of the population votes in favor w transition path :)
 
 pk_path_2, l_path_2 = path_finder(prim, res, 110, vcat(fill(0.11, 21) , fill(0.0, 90)))
 

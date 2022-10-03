@@ -41,7 +41,7 @@ end
 function collusion_results_1(param_1::Parameters_1, N::Int64)
     @unpack a_0, a_1, ν, F, b_0, b_1, η= param_1 #unpack relevant parameters
     elas = (a_0 + ν + (b_0 - η))/(a_0 + ν - (b_0 - η)) #compute elasticity of demand
-    L_I = 1/(N*elas) #find lerner index
+    L_I = 1/(elas) #find lerner index
     HHI = 1/N #find HHI
     L_I, HHI, elas #return quantities
 end

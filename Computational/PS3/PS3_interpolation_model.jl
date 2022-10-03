@@ -12,6 +12,8 @@ model_solver(prim, res, param)
 #part 1
 vfplot50 = plot(prim.A, val_func[50, :, 1], title="Value function of retired agent at model-age 50", legend=false, xlabel="Capital", ylabel="Value")
 savefig(vfplot50, "vfplot50.png")
+savplot20 = plot(prim.A, cap_pf[20, :, :])
+savefig(savplot20, "savplot20.png")
 savplot20 = plot(prim.A, [cap_pf[20, :, :] .- prim.A], title="Savings function of worker at model-age 20", legend=false, xlabel="Capital", ylabel="Savings")
 savefig(savplot20, "savplot20.png")
 labplot20 = plot(prim.A, labor_pf[20, :, :], title="Labor supply at model-age 20 by productivity type", labels=["High productivity" "Low productivity"], legend=:topright, xlabel="Capital", ylabel="Labor supply")
