@@ -1,0 +1,349 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Do not alter this block of commands.  If you're proficient at LaTeX, you may include additional packages, create macros, etc. immediately below this block of commands, but make sure to NOT alter the header, margin, and comment settings here. 
+\documentclass[12pt]{article}
+ \usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,amsfonts, enumitem, fancyhdr, color, hyperref,comment, graphicx, environ,mathtools, bbm, tikz, setspace, cleveref,listings, dcolumn}
+\usepackage{array, multirow, caption, booktabs}
+\usepackage{ mathrsfs }
+\usetikzlibrary{matrix,positioning}
+\tikzset{bullet/.style={circle,draw=black,inner sep=8pt}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\Var}{\text{Var}}
+\DeclareMathOperator*{\Cov}{\text{Cov}}
+
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\DeclareMathOperator{\eps}{\varepsilon}
+
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\pagestyle{fancy}
+\setlength{\headheight}{65pt}
+\newenvironment{problem}[2][Problem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{sol}
+    {\emph{Solution:}
+    }
+    {
+    \qed
+    }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\usepackage{xcolor}
+ 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\rhead{John Higgins\\Econ 761 \\ 6 October, 2022} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\begin{problem}{1}
+\end{problem}
+\begin{sol}
+    \begin{enumerate}[label=\alph*) ]
+        \item The location of the marginal consumer between the left Starbucks and Esquires is characterized by the following
+        \begin{align*}
+            u_{s_0}(x_1) = u_{E}(x_1) &\iff 3 - p_0 -(x_1)^2 = 3 - q - (x_1 - 1/2)^2 \\
+            &\iff x_1^2 - (1/2 - x_1)^2 + p_0 - q = 0\\
+            &\iff x_1^2 - \frac{1}{4} + x_1 - x_1^2 + p_0 - q = 0\\
+            &\iff x_1 = \frac{1}{4} - p_0 + q
+         \end{align*}
+         Similarly, we find that $x_2$ is characterized by
+         \[u_{s_1}(x_2) = u_E(x_2) \iff -(1-x^2)^2 - p_1 = -(1/2 - x_2)^2 - q \iff x_2 = \frac{3}{4} + p_1 - q\]
+         \item The profit function for the Starbucks at position zero is given by
+         \[\Pi_0(p_0, q) = \left( \frac{1}{4}- p_0 + q\right)p_0\]
+         This has first order condition
+         \[\frac{1}{4} - 2 p_0 + q = 0 \iff p_0 = \frac{1}{8} + \frac{q}{2}\]
+         Hence, the best response function of the Starbucks at location zero is $B_0(q) = \frac{1}{8} + \frac{q}{2}$.
+
+         The profit function for the Starbucks at position one is given by
+         \[\Pi_1(p_1, q) = \left(\frac{1}{4} - p_1 + q\right) p_1\]
+         since the demand is given by $1 - x_2 = 1- \frac{3}{4} - p_1 + q = \frac{1}{4} - p_1 + q$. This has the first order condition
+         \[\frac{1}{4} - 2 p_1 + q = 0 \iff p_1 = \frac{1}{8} + \frac{q}{2}\]
+         Hence, the best response function of the Starbucks at location one is $B_1(q) = \frac{1}{8} + \frac{q}{2}$.
+
+         Finally, the profit for Esquires is given by
+         \[\Pi_E(q, p_0, p_1) = \left(\frac{1}{2} - x_1 \right)q + \left(x_2- \frac{1}{2} \right)q = \left( \frac{1}{4} - q + p_0\right) q + \left( \frac{1}{4} - q + p_1\right)q\]
+         This has the following first order condition
+         \[\frac{1}{2} - 4q + p_0 + p_1 = 0 \iff q = \frac{1}{8} + \frac{p_0 + p_1}{4}\]
+         Hence, the best response function of Esquires is given by $B_E(p_0, p_1) = \frac{1}{8} + \frac{p_0 + p_1}{4}$.
+         \item Note that $B_0(q) = B_1(q)$ $\forall q$, implying that any equilibrium must have $p_0 = p_1$. We search for the Nash equilibrium by looking for $q^*$ such that $q^* = B_E(B_0(q^*), B_1(q^*))$. To do so, we let $p_0 = p_1 = p^*$ and find the best response of Esquires:
+         \[q^* = B_E(p^*,p^*) = \frac{1}{8} + \frac{p^*}{2}\]
+         We substitute this into the best response of either Starbucks location to solve for $p^*$:
+         \begin{align*}p^* &= \frac{1}{8} + \frac{\frac{1}{8} + \frac{p^*}{2}}{2} \\
+            \iff p^* &= \frac{1}{8} + \frac{1}{16} + \frac{p^*}{4}\\
+            \iff \frac{3}{4} p^* &= \frac{3}{16}\\
+            \iff p^* &= \frac{1}{4}
+        \end{align*}
+        It follows that $q^* = \frac{1}{8} + \frac{1/4}{2} = \frac{1}{4}$. In summary, we see that $p_0^* = p_1^* = q^* = \frac{1}{4}$. The Starbucks at 0 and 1 get market share of $\frac{1}{4}$ each (a total market share of $\frac{1}{2}$ for Starbucks), and Esquires gets market share of $\frac{1}{2}$.
+        \item 
+         Now suppose without loss of generality that Starbucks has the location in the center and the right endpoint. The marginal consumer for Esquires and the Starbucks at $\frac{1}{2}$ is given by
+        \[x_1 = \frac{1}{4} - q + p_{0.5}\]
+        Similarly, the marginal consumer between the two Starbucks locations is given by
+        \[x_2 = \frac{3}{4} + p_1 - p_{0.5} \]
+        Esquire's profit is given by
+        \[\Pi_E(q, p_{0.5}) = \left( \frac{1}{4} - q + p_{0.5}\right) q\]
+        This has first order condition
+        \[q = \frac{1}{8} + \frac{p_{0.5}}{2}\]
+        Hence, $B_E(p_{0.5}) = \frac{1}{8} + \frac{p_{0.5}}{2}$ is the best response function for Esquires.
+        Then, the joint profit of Starbucks is given by
+        \[\Pi_S(p_{0.5}, p_1) = \left( \frac{1}{4} + q - p_{0.5}\right) p_{0.5} + \left( \frac{1}{4} + p_{1} - p_{0.5}\right) p_{0.5} + \left( \frac{1}{4} - p_1 + p_{0.5}\right) p_{1}\]
+        This has the following first order conditions:
+        \begin{align*}
+            \frac{1}{2} + q - 4 p_{0.5} + 2 p_1 = 0 &\quad [p_{0.5}]\\
+            2p_{0.5} + \frac{1}{4} - 2 p_1 = 0 &\quad [p_1]
+        \end{align*}
+        Using the FOC for $p_1$, we find that 
+        \[p_1 = \frac{1}{8} + p_{0.5}\]
+        We then rearrange the FOC for $p_{0.5}$ to find that
+        \[p_{0.5} = \frac{1}{8} + \frac{q}{4} + \frac{p_1}{2}\]
+        Then, imposing the condition that $p_1 = \frac{1}{8} + p_{0.5}$, this implies that 
+        \begin{align*}&p_{0.5} = \frac{1}{8} + \frac{q}{4} + \frac{p_{0.5}}{2} + \frac{1}{16} \\
+            \iff&\frac{1}{2} p_{0.5} = \frac{3}{16} + \frac{q}{4}\\
+            \iff& p_{0.5} = \frac{3}{8} + \frac{q}{2}
+         \end{align*}
+         We now substitute this into $B_E(p_{0.5})$ to find $q^*$ such that $q^* = B_E(B_S(q^*))$:
+         \begin{align*}
+            &q^* = \frac{1}{8} + \frac{\frac{3}{8} + \frac{q^*}{2}}{2}\\
+            \iff& q^* = \frac{5}{16} + \frac{q^*}{4}\\
+            \iff& \frac{3}{4} q^* = \frac{5}{16}\\
+            \iff& q^* = \frac{5}{12}
+         \end{align*}
+         Consequently, we obtain that
+         \[p_{0.5}^* = \frac{3}{8} + \frac{5}{(12)(2)} = \frac{7}{12}\]
+         Thus,
+         \[p_{1}^* = \frac{1}{8} + \frac{7}{12} = \frac{17}{24}\]
+         This leads to market shares of $\frac{5}{12}$ for Esquires and $\frac{7}{12}$ for Starbucks. 
+
+         We observe that the equilibrium outcome is different than (c) because the Starbucks location at the endpoint is able to set high prices without having to worry about losing customers to Esquires - the consumers it loses from raising prices simply go to the Starbucks location at the center. This means that Starbucks can partially internalize the externality of raising prices. 
+         \item If instead Starbucks sells one of its coffee houses to Seattle's Best Coffee, then there will be three different coffee shops in the city. Suppose without loss of generality that they sell the location at the right endpoint. The marginal consumers will be given by the following
+         \[x_1 = \frac{1}{4} - p_0 + q\]
+         \[x_2 = \frac{3}{4} + p_{SB} - q\]
+         The FOC for Starbucks is given by
+         \[p_0 = \frac{1}{8} + \frac{q}{2}\]
+         The FOC for Esquire's is given by
+         \[\frac{1}{2} - 4q + p_0 + p_{SB} = 0 \iff q = \frac{1}{8} + \frac{p_0 + p_{SB}}{4}\]
+         The FOC for Seattle's Best is given by
+         \[p_{SB} = \frac{1}{8} + \frac{q}{2}\]
+         We see that $B_{SB}(q) = B_{S}(q) $ (i.e. Starbucks and Seattle's Best have the same best responses to price $q$ set by Esquire's). We note that the best responses are identical to those in part (b) and thus the equilibrium will be identical. That is, we have 
+         \[p_{0} = q = p_{SB} = \frac{1}{4}\]
+         Starbucks gets market share of $\frac{1}{4}$, Esquires gets $\frac{1}{2}$, and Seattle's Best gets $\frac{1}{4}$.
+
+         The prices and market share of each location does not change. Intuitively, this is because the locations at each endpoint do not compete with each other for customers and only compete with the middle location. Regardless of whether both endpoints are owned by Starbucks or each is owned by a different company, their actions don't affect each other and thus their profit maximization does not depend upon the decision made by the others. Thus, the prices and market shares don't change from part (c).
+    \end{enumerate}
+
+
+\end{sol}
+\begin{problem}{2}
+\end{problem}
+\begin{sol}
+    \begin{enumerate}[label=\alph*) ]
+        \item This can be described as a game with players $\{1,2\}$ with 1 corresponding to Jim Beam and 2 corresponding to Jack Daniels. Players choose $s_i \in [0,1]$ which describes their distance from their endpoint. Suppose Player 1 chooses relative to 0 and Player 2 chooses relative to 1. So if Player 1 chooses $a$, their location will be $a$. If Player 2 chooses $b$, their location will be $1-b$. The marginal consumer is characterized by the following:
+         \[(x - a)^2 = (1-b - x)^2 \iff x - a = 1-b - x \iff x = \frac{1 - b + a}{2}\]
+         In other words, the marginal consumer is merely the midpoint between the two locations.
+
+         We can thus derive the profit functions of each player. The profit of Player 1 when $a \leq 1- b$ is given by
+         \[\Pi_1(a,b) = \left( \frac{1 - b + a}{2}\right) p = \left(\frac{1 - b + a}{2}\right)p\]
+         The profit of Player 1 when $a > 1-b$ is given by
+         \[\Pi_1(a,b) = \left(1 - \frac{1 - b + a}{2}\right) p = \left(\frac{1 + b - a}{2}\right) p\]
+         The profit of Player 2 when $a \leq 1-b$ is given by
+         \[\Pi_2(a,b) = \left(1 - \frac{1 - b + a}{2}\right) p = \left(\frac{1 + b - a}{2}\right) p\]
+         Similarly, the profit of Player 2 when $a > 1-b$ is given by
+         \[\Pi_2(a,b) = \left(\frac{1 - b + a}{2}\right)p\]
+         \item To find the Nash equilibrium, we look at when players' best responses are increasing or decreasing. Observe that when $a \leq 1-b$, Player 1's profit function is increasing in $a$ and Player 2's profit function is increasing in $b$. Indeed,
+         \[\frac{\partial \Pi_1}{\partial a} = \frac{p}{2} > 0\]
+         \[\frac{\partial \Pi_2 }{\partial b} = \frac{p}{2} > 0\]
+         Thus, both firms' profits are increasing in their distance choice and will thus benefit from increasing their chosen distance (while preserving $a \leq 1-b$)
+
+         We now repeat the same analysis for $a > 1-b$. Note that the derivatives of the profit functions are the following:
+         \[\frac{\partial \Pi_1}{\partial a} = -\frac{p}{2} < 0\]
+         \[\frac{\partial \Pi_2 }{\partial b} = -\frac{p}{2} < 0\]
+         As such, both players strictly benefit from decreasing their chosen distance (so long as $a > 1-b$).
+
+         We combine these to cases to find the equilibrium locations. If $a < 1-b$, we see that Player 1 would strictly benefit from setting $a = 1-b$ (since their profit in increasing in $a$ as long as $a \leq 1-b$). Similarly, 2 would strictly benefit from setting $1- b = a$. This means that $a < 1-b$ cannot be an equilibrium (as each player has a profitable deviation). Similarly, if $a > 1-b$, 1 could improve by setting $a = 1-b$ (since their profit is decreasing in $a$ when $a > 1-b$). thus, $a > 1-b$ cannot be an equilibrium. This leaves $a = 1-b$. We see that neither firm has a profitable deviation from this. This holds when $a = b = \frac{1}{2}$. Thus, in equilibrium, we have that $a^* = b^* = \frac{1}{2}$. In other words, each firm locates at the center of the market and gets market share of $\frac{1}{2}$.
+         \item In short, these locations are not socially optimal. Economically, firms do not internalize travel costs in their profit maximization and thus this configuration will not generally minimize total travel costs. To see this more formally, we set up the planner's problem of choosing $a$ and $b$ to minimize total travel costs. That is, the planner solves the following:
+        \[\min_{a,b \in [0,1]} TC(a,b) = \min_{a, b \in [0,1]} \left[\int_{0}^{\frac{1-b + a}{2}} (x - a)^2 \, dx +\int_{\frac{1-b + a}{2}}^{1} (1-b - x)^2 \, dx  \right]\] 
+        Differentiating with respect to $a$ and $b$ using the Liebniz rule, we obtain that
+        \begin{align*}
+            \frac{\partial TC(a,b)}{\partial a} = \frac{1}{4}( 3a^2 + 2a(1-b) - (1-b)^2)\\
+            \frac{\partial TC(a,b)}{\partial b} = \frac{1}{4}( -a^2 + 2a(1-b) +3b^2 + 2b - 1)
+        \end{align*}
+        The first order condition requires that both of these equal zero. Setting them equal to each other, we find that
+        \begin{align*}
+            \frac{1}{4}( 3a^2 + 2a(1-b) - (1-b)^2) =& \frac{1}{4}( -a^2 + 2a(1-b) + 3b^2 + 2b - 1)\\
+            \iff & 3a^2 - 1 + 2b - b^2  = - a^2 + 3b^2 + 2b - 1\\
+            \iff& 4a^2 - 4b^2 = 0\\
+            \iff& a^2 = b^2\\
+            \iff& a = b
+        \end{align*}
+        where the following line comes from the fact that $a,b \in [0,1]$. Thus, the planner sets $a = b$. We still need to find which values of $a$ and $b$ minimize total transit costs; we just know that they are the same, but this could mean $a = 1/2 = b$ or $a = 0.01 = b$. As such, we need to substitute back into either of the planner's FOCs and solve for the optimal $a$ and $b$. We substitute $a = b$ into the FOC for $a$ and obtain:
+        \begin{align*}&3 a^2 + 2 a(1-a) - (1-a)^2 = 0 \\
+            \iff& 3a^2 + 2a -2a^2 - 1 + 2a - a^2 = 0\\
+            \iff&  4a = 1 \\
+            \iff& a = \frac{1}{4}\end{align*}
+        Thus, $a_P = b_P = \frac{1}{4}$, meaning that the planner will choose locations $a_P = \frac{1}{4}$ and $1-b_P = \frac{3}{4}$. We see that both firms split the market and sell to exactly the same consumers as before (Player 1 sells to all consumers at locations less than $\frac{1}{2}$, and Player 2 sellts to all consumers at locations from $\frac{1}{2} $ to 1). However, each company locates in the middle of the segment it sells to versus at the endpoint. This leads to lower transportation costs.
+        \end{enumerate}
+\end{sol}
+\begin{problem}{3}
+\end{problem}
+\begin{sol}
+    \begin{enumerate}[label=\alph*) ]
+        \item We first determine when consumers will buy from $R$ versus firm 2. Since the distance from any consumer to either store is the same, the only difference in consumers' utility from either choice is the price set by either firm. If $P_R \geq P_2$, then any consumer would rather buy from $2$ than from $R$. If $P_R < P_2$, then consumers would rather buy from $R$.
+        
+        We now determine the marginal consumer between $L$ and either of the firms at the right endpoint. A consumer will only be indifferent if the following holds
+        \begin{align*}
+            &1 - x - P_l = 1 - (1-x) - \min\{p_R, p_2\}\\
+            \iff& (1-x ) + \min\{p_R, p_2\} = x + p_L\\
+            \iff & 1 + \min\{p_R, p_2\} - p_L = 2x\\
+            \iff& x = \frac{1 + \min\{p_R, p_2\} - p_L}{2}
+        \end{align*}
+        We now argue that $P_R = P_2 = 0$ must hold in equilibrium. Suppose not. If $P_2 > 0$, then firm $R$ could benefit from setting $P_R = P_2 - \eps$. However, firm 2's best response would be to set $P_2 = P_R$ (as they then re-capture the demand they lost). Similarly, if $P_R > 0$, firm 2 would benefit from setting $P_2 = P_R$. However, $R$'s best response is to then set $P_R = P_2 - \eps$, showing that this also cannot be an equilibrium. The above analysis holds for any $P_2, P_R > 0$, meaning that neither can be observed in equilibrium. To analyze the stability at $P_R = 0$, we note that firm 2 gets the entire market and firm $R$ gets nothing. Firm $R$ cannot set a lower price, and gets no demand from raising their price. Firm 2 thus does not benefit from raising their price (as they would lose all demand given $P_R = 0$) and cannot lower further. As such, in equilibrium we must have that $P_R = P_2 = 0$.
+
+        Given this, we find that the marginal consumer in equilibrium must be located at 
+        \[x^* = \frac{1 - p_L}{2}\]
+        This means the profit function for firm $L$ is given by
+        \[\Pi_L(p_L) = \frac{1-p_L}{2} p_L\]
+        This has first order condition 
+        \[\frac{1}{2} = p_L^*\]
+        Hence, 
+        \[x^* = \frac{1 - 1/2}{2} = \frac{1}{4}\]
+        Consequently, the profits of firm $L$ are $\frac{1}{8}$, the profits of firm $R$ are 0, and the profits of firm 2 are 0.
+        \item Firm 1 is worse off with product $R$ and would benefit from dropping product $R$. Intuitively, the presence of firm $R$ at the same location as firm 2 leads to intense competition between the two firms in equilibrium, which means that a large number of nearby consumers will choose to buy from firm 2. This cannibalizes demand for the location at $L$. As a result, $L$ has to set a low price in order to get many consumers. If $R$ were not there, $L$ and firm 2 would price far less aggresively and split the market evenly. This will lead to higher profits. 
+        
+        To see this formally, we note that if only firms $L$ and 2 exist, the marginal consumer will be at $\frac{1 + p_2 - P_L}{2}$. The profit functions are as follows:
+        \[\Pi_L(p_L, p_2) = \left(\frac{1 + p_2 - p_L}{2}\right)p_l\]
+        \[\Pi_2(p_L, p_2) = \left(\frac{1 + p_L - p_2}{2}\right)p_2\]
+        The best responses are thus
+        \[B_L(p_2) = \frac{1}{2} + \frac{p_2}{2}\]
+        \[B_2(p_L) = \frac{1}{2} + \frac{p_L}{2}\]
+        This has solution $p_L^* = p_2^* = 1$, implying that $x^* = \frac{1}{2}$ and the firms split the market evenly. The profits to firm $L$ are consequently $\frac{1}{2}$, which is significantly higher than they were before. As such, they benefit from eliminating the location at $R$.
+    \end{enumerate}
+\end{sol}
+\begin{problem}{4}
+\end{problem}
+\begin{sol}
+    \begin{enumerate}[label=\alph*) ]
+        \item We first want to determine the conditions on prices under which every consumer will buy one product and each firm receives a positive market share. We first require that the consumer with the lowest $\theta$ be willing to buy $s_L$:
+        \[U(p_L, \theta_1) \geq 0 \iff \theta_1 s_L \geq p_L\]
+        Then, we need for there to exist some $\theta^* \in (\theta_1, \theta_2)$ such that $\forall \theta > \theta^*$, $U(p_H, \theta) > U(p_L, \theta)$. In other words, there is a marginal consumer in the interior of the support of consumers which is indifferent between good $L$ and good $H$, and for all consumers which lie above $\theta^*$, they strictly benefit by choosing good $H$. We compute $\theta^*$ as follows:
+        \begin{align*}
+            &U(p_H, \theta^*) = U(p_L, \theta^*) \\
+            \iff& \theta^* s_H - p_H = \theta^* s_L - p_L\\
+            \iff& \theta^*(s_H - s_L) = p_H - p_L\\
+            \iff& \theta^* = \frac{p_H - p_L}{s_H - s_L}
+        \end{align*}
+        We now require that $\theta^* \in (\theta_1, \theta_2)$, which is equivalent to the following:
+        \begin{align*}
+            &\theta_1 < \theta^* < \theta_2\\
+             \iff &\theta_1 < \frac{p_H - p_L}{s_H - s_L} < \theta_2\\
+             \iff & \theta_1 (s_H - s_L) < p_H - p_L < \theta_2 (s_H - s_L)
+        \end{align*}
+        We thus have the following two conditions:
+        \[p_L \leq \theta_1 s_L\]
+        and
+        \[ \theta_1 (s_H - s_L) < p_H - p_L < \theta_2 (s_H - s_L)\]
+        \item Assuming prices obey the above two conditions, we now wish to find firms' best response functions. First, we must find the demand for each product given prices $p_H$ and $p_L$. The demand for $L$ will be the mass of consumers with $\theta < \theta^*$. Given that consumers are distributed uniformly over $[\theta_1, \theta_2]$, it follows that the proportion less than $\theta^*$ is given by $\frac{\theta^* - \theta_1}{\theta_2 - \theta_1}$ and the proportion greater than $\theta^*$ is $\frac{\theta_2 - \theta^*}{\theta_2 - \theta_1}$. Given that we have derived the demand for each firm as a function of prices, we can set up profits and find firms' best response functions. Firm $L$'s profit function is the following:
+        \[\Pi_L(p_L, p_H) =\left(\frac{ \frac{p_H - p_L}{s_H - s_L} - \theta_1}{\theta_2 - \theta_1} \right)p_L \]
+        (where we substituted $\theta^* = \frac{p_H - p_L}{s_H - s_L}$).
+
+        This has the first order condition
+        \begin{align*}
+            &\frac{p_H - 2 p_L}{(s_H - s_L)(\theta_2 - \theta_1)} - \frac{\theta_1}{\theta_2 - \theta_1 } = 0\\
+            \iff& p_L = \frac{p_H}{2} - \frac{\theta_1(s_H - s_L)}{2}
+        \end{align*}
+        Thus, $L$'s best response is given by
+        \[B_L(p_H) =  \frac{p_H}{2} - \frac{\theta_1(s_H - s_L)}{2}\]
+        Similarly, for firm $H$, we get the profit function
+        \[\Pi_H(p_L, p_H) =\left(\frac{ \theta_2}{\theta_2 - \theta_1} - \frac{p_H - p_L}{s_H - s_L}  \right)p_H \]
+        This has first order condition
+        \[p_H = \frac{\theta_2 (s_H - s_L)}{2} + \frac{p_L}{2}\]
+        The Nash equilibrium must satisfy $p_H^* = B_H(B_L(p_H^*))$. Imposing this, we solve for $p_H^*$:
+        \begin{align*}
+            &p_H^* = \frac{\theta_2 (s_H - s_L)}{2} + \frac{\frac{p_H}{2} - \frac{\theta_1(s_H - s_L)}{2}}{2}\\
+            \iff& \frac{3}{4} p_H^* = \frac{(s_H - s_L)(2\theta_2 - \theta_1)}{4}\\
+            \iff & p_H^* = \frac{1}{3} (s_H - s_L)(2\theta_2 - \theta_1)
+        \end{align*}
+        We then use this to solve for $p_L^* = B_L(p_H^*)$:
+        \begin{align*}
+            p_L^* &= \frac{\frac{1}{3} (s_H - s_L)(2\theta_2 - \theta_1) - \theta_1(s_H - s_L)}{2}\\
+                &= \frac{1}{3} (s_H - s_L)(\theta_2 - 2 \theta_1)
+        \end{align*}
+        In summary, the Nash equilibrium is given by $p_L^* = \frac{1}{3} (s_H - s_L)(\theta_2 - 2 \theta_1)$ and $p_H^* =  \frac{1}{3} (s_H - s_L)(2\theta_2 - \theta_1)$.
+
+        We recall that we required $p_L \leq \theta_1 s_L$. Since $p_L^* = \frac{1}{3} (s_H - s_L)(\theta_2 - 2 \theta_1)$, we thus need the following bound:
+        \[\frac{1}{3} (s_H - s_L)(\theta_2 - 2 \theta_1) \leq \theta_1 s_L\]
+    \end{enumerate}
+\end{sol}
+\begin{problem}{5}
+\end{problem}
+\begin{sol}
+    \begin{enumerate}[label=\alph*) ]
+        \item We note that this setting is exactly the same as the setting of 3b, except for that agents have valuation $V$ instead of 1. However, in both cases we are to assume that the entire market is covered, meaning that the two games are effectively identical. The Nash equilibrium is thus $p_1^* = p_2^* = 1$, and all consumers at location less that $\frac{1}{2}$ will buy from 1 and all those at location greater than $\frac{1}{2}$ will buy from 2. Thus, firms split the market evenly.
+        \item Consumer surplus is given by the following:
+        \begin{align*}CS &= \int_{0}^{1/2} (V - x - 1) \, dx + \int_{1/2}^{1} (V - (1-x) - 1) \, dx\\
+            &= \int_{0}^{1/2} ((V-1) - x ) \, dx + \int_{1/2}^{1} ((V -2) + x) \, dx\\
+            &= \frac{V-1}{2} - \frac{1}{2}\left(\frac{1}{2}\right)^2 + \frac{V-2}{2} + \frac{1}{2}(1 - 1/4)\\
+            &= V - \frac{3}{2} - \frac{1}{8} + \frac{3}{8}\\
+            &= V - \frac{5}{4}
+        \end{align*}
+        Profits are the following:
+        \[\Pi_1(1,1) = \Pi_2(1,1) = \frac{1}{2} \]
+        Welfare is thus
+        \[CS + \Pi_1 + \Pi_2 = V - \frac{5}{4} + 1 = V - \frac{1}{4}\]
+        \item Under personalized pricing, firm 1 sets $p_1(x)$ and firm 2 sets $p_2(x)$, both of which depend on the location of the consumer $x$. The consumer at location $x$ will be indifferent between $1$ and 2 only if the following holds:
+        \[V - x - p_1(x) = V - (1-x) - p_2(x) \iff p_2(x) = p_1(x) + x - (1-x) \iff p_2(x) = p_1(x) -1 + 2x\]
+        At $x = 0$, this means that $x$ will be indifferent only when $p_2(0) = p_1(0) - 1$. Thus, if $p_1(0) < 1$, $x$ will always buy from 1 (since $p_2$ cannot be negative). We wish to repeat this analysis for all $x$: if $p_1(x)$ is sufficiently low for a given $x$, there may be no $p_2(x) \geq 0$ such that consumer $x$ would be willing to buy from firm 2. As such, there would be no incentive for firm 2 to undercut firm 1's price (and this this would be consistent with our notion of equilibrium).
+
+        Formally, define $\varphi_2(x, p_1(x)) = p_1(x) - 1 + 2x$ as the price firm 2 would have to set in order to make consumer $x$ indifferent between buying between firm 1 and 2. We search for $X_1$ and $p_1(\cdot)$ such that 1) $p_1(x) \geq 0$ $\forall x \in X_1$ and 2) $\varphi_2(x, p_1(x)) \leq 0$ $\forall x \in X_1$. That is, $X_1 = \{x \in [0,1] \mid \varphi_2(x, p_1(x)) \leq 0, p_1(x) \geq 0\}$. Intuitively, $X_1$ is the region where, given firm 1's pricing strategy, it is impossible for firm 2 to steal consumers from firm 1.
+
+        Note that
+        \[\varphi_2(x, p_1(x)) \leq 0 \iff  p_1(x) - 1 + 2x \leq 0 \iff p_1(x) \leq 1 - 2x\]
+        We also require that $p_1(x) \geq 0$. These conditions jointly imply that $0 \leq p_1(x) \leq 1-2x$, which requires that $x \leq \frac{1}{2}$ and $p_1(x) \leq 1-2x$. Firm 1 optimizes by setting $p_1(x) = 1-2x$ for $x \leq \frac{1}{2}$. 
+
+        Similarly, define $\varphi_1(x, p_2(x)) = p_2(x) + 1 - 2x$ as the price firm 1 would have to set in order to make consumer $x$ indifferent between buying between 1 and 2 given pricing function $p_2(x)$ of firm 2. We search for $X_2$ and $p_2(\cdot)$ such that $p_2(x) \geq 0$ $\forall x \in X_2$ and $\varphi_1(x, p_2(x)) \leq 0$ $\forall x \in X_2$. Formally, $X_2 = \{x \in [0,1] \mid \varphi_1(x, p_2(x)) \leq 0, p_2(x) \geq 0\}$.
+
+        Similar to before, we have that 
+        \[\varphi_1(x, p_2(x)) \leq 0 \iff p_2(x) + 1 - 2x \leq 0 \iff p_2(x) \leq 2x - 1\]
+        Combining this with the condition that $p_2(x) \geq 0$, we must have that
+        \[0 \leq p_2(x) \leq 2x - 1\]
+        Firm 2 optimizes by setting $p_2(x) = 2x-1$. This is greater than 0 so long as $x > \frac{1}{2}$. 
+
+        We now put it all together. We claim that the equilibrium has firm 1 and 2 using the following pricing functions:
+        \[p_1^*(x) = \max\{1 - 2x, 0\}\]
+        \[p_2^*(x) = \max\{2x-1, 0\}\]
+        As such, when $x \leq \frac{1}{2}$, we have that $p_1^*(x) = 1-2x$ and $p_2^*(x) = 0$. When $x > \frac{1}{2}$, $p_1^*(x) = 0$ and $p_2^*(x) = 2x-1$. By the above analysis, we know that firm 2 cannot steal demand from firm 1 when $x \leq \frac{1}{2}$, and firm 1 cannot steal demand from firm 2 when $x > \frac{1}{2}$. Furthermore, firm 1 is setting the optimal price $1 - 2x$ for $x \leq \frac{1}{2}$, since firm 2 cannot undercut them and thus they benefit from setting the maximum possible price. The same analysis holds for firm 2 when $x > \frac{1}{2}$.
+
+        In summary, with individual pricing, firms perfectly split the market and charge a price which varies by consumer. 
+        \item The consumer surplus can be expressed as
+        \begin{align*}
+            CS &= \int_{0}^{1/2} (V - x - (1-2x)) \, dx + \int_{1/2}^{1} (V - (1-x) - (2x-1))\, dx\\
+                &= \frac{V - 1}{2} + \frac{1}{2}\left(\frac{1}{4}\right) + \frac{V}{2} - \frac{1}{2}\left(\frac{3}{4}\right)\\
+                &= V - \frac{1}{2} + \frac{1}{8} - \frac{3}{8}\\
+                &= V - \frac{3}{4}
+        \end{align*}
+        We note that this is higher than it previously was! Intuitively, consumers benefit in the following sense: the consumers with the highest willingness to pay (i.e. those by the endpoints) pay a higher price than those with a lower willingness to pay (those in the middle). When firms were initially constrained to uniform pricing, they were not able to adjust prices in this way.
+
+        We now find profits. Firm 1's profit is given by
+        \[\Pi_1 = \int_{0}^{1/2} 1 - 2x \, dx = \frac{1}{2} - \frac{1}{4} = \frac{1}{4}\]
+        Similarly, firm 2's profit is given by
+        \[\Pi_2 = \int_{1/2}^{1} 2x -1 \, dx = 1 - 1 - \frac{1}{4} + \frac{1}{2} = \frac{1}{4}\]
+        Thus, total welfare can be computed as the following:
+        \[W = CS + \Pi_1 + \Pi_2 = V - \frac{3}{4} + \frac{1}{4} + \frac{1}{4} = V - \frac{1}{4}\]
+        Here, we see that consumers are better off and producers are worse off. Why is this the case? It's because the ability to charge individual-specific prices means that firms compete more intensely for consumers. If $x < \frac{1}{2}$ and firm 1 charges a price greater than $1-2x$ (say, the equilibrium price in part (b) of $p_1 = 1)$, then firm 2 would benefit from setting $p_2(x) = p_1(x) - \eps$. This means that when we start from the equilibrium price of the previous game (where we had uniform prices), we see that firm 1 will optimally decrease their price $p_1(x)$ down to the point where it is impossible for firm 2 to steal that consumer. This provides the intuition for why consumers are better off: the increased degree of competition between firms leads to Bertrand-like behavior (to a certain extent). 
+        \item The above analysis pivots on the assumption that the entire market is covered. Firms had to worry about the other firm potentially stealing demand at any location $x$, which meant that they priced more aggressively. If we assume the entire market isn't covered, then each firm acts as a local monopoly. Under uniform pricing, each firm would set the monopoly price based on the region of the line they can potentially serve. However, under personalized pricing, firm 1 can set a price equal to $V - x$ and firm 2 can set a price equal to $V - (1-x)$. This is essentially perfect price discrimination. Firms would thus extract all of the consumer surplus, leaving consumers with zero surplus. As such, we can see that producers, rather than consumers, benefit from personalized pricing under the assumption that the market isn't covered.
+    \end{enumerate}
+\end{sol}
+
+    
+\end{document}

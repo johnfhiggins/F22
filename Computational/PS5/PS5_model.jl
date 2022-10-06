@@ -1,5 +1,9 @@
-using Distributions
+using Distributed
+addprocs(4)
+@everywhere using Distributions, Parameters, SharedArrays, Plots, Interpolations, Optim
 
 @everywhere include("PS5_func.jl")
 
-prim = Initialize()
+@everywhere prim, res = Initialize()
+
+iterate(prim, res)
