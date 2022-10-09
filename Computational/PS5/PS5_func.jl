@@ -1,4 +1,3 @@
-@everywhere begin
 
 #first, construct pi transition matrix
 #find sequence of z_t's given transition probability
@@ -30,10 +29,11 @@
     T::Int64 = 11000 #number of time periods
     Π ::Array{Float64, 2} = pi_init()[1]
     Π_z::Array{Float64, 2} = pi_init()[2]
-    Π_st ::Array{Float64,2} = Π^10000
+    Π_cond::Array{Array{Float64, 2}} = pi_init()[3]
+    #Π_st ::Array{Float64,2} = Π^10000
     #Π_z = pi_z_gen(Π)
-    Z ::Array{Float64,1} = z_generator(T, Π_z)
-    E :: Array{Float64, 2} = E_generator(N, T, Z, Π)
+    Z ::Array{Int64,1} = z_generator(T, Π_z)
+    E :: Array{Int64, 2} = E_generator(N, T, Z, Π, Π_cond)
     nk::Int64 = 40
     nkb::Int64 = 30
     k_min ::Float64 = 0.0001
@@ -51,7 +51,7 @@ mutable struct Results
     g_coeff :: Vector{Float64} #coefficient guess for good state
     b_coeff :: Vector{Float64} #coefficient guess for bad state
     vf_i :: Array{Float64, 4} #value function array
-    pf_i :: SharedArray{Float64, 4} #policy function array
+    pf_i :: Array{Float64, 4} #policy function array
     K_mat :: Array{Float64,2} #matrix containing K_t' for each household and time index
 end
 
@@ -115,11 +115,18 @@ function pi_init()
     Π[3,4] = pgb*pgb00
     Π[4,4] = pbb*pbb00
 
+    Π_gg = [pgg11 pgg10; pgg01 pgg00]
+    Π_gb = [pgb11 pgb10; pgb01 pgb00]
+    Π_bg = [pbg11 pbg10; pbg01 pbg00]
+    Π_bb = [pbb11 pbb10; pbb01 pbb00]
+    Π_cond = [Π_gg, Π_gb, Π_bg, Π_bb]
+    
+
     Π_z[1,1] = pgg
-    Π_z[1,2] = pgb
-    Π_z[2,1] = pbg
+    Π_z[2,1] = pgb
+    Π_z[1,2] = pbg
     Π_z[2,2] = pbb
-    Π, Π_z
+    Π, Π_z, Π_cond
 end
 
 function z_generator(T::Int64, Π_z::Array{Float64})
@@ -127,43 +134,43 @@ function z_generator(T::Int64, Π_z::Array{Float64})
     Z = zeros(Int64, T)
     Z[1] = 1
     for t = 2:T
-        p = Π_z[Z[t-1],1] #probability of z_g given z_{t-1} in previous period
-        z_dist = Bernoulli(p) #probability distribution of whether z_g is observed in next period
+        p = Π_z[Z[t-1],2] #probability of z_b given z_{t-1} in previous period
+        z_dist = Bernoulli(p) #probability distribution of whether z_b is observed in next period
         z_next = Int64(rand(z_dist) + 1) #draw a random value from dist. Will be 0 if z_g, 1 if z_b. We add 1 to get the correct index for the next value of z (index is 1 for z_g and 2 for z_b)
         Z[t] = z_next
     end
     Z
 end
 
-function pi_index(z, zp, e, ep)
+function pi_index(z::Int64, zp::Int64, e::Int64, ep::Int64)
     ind = []
     if z==1 && zp == 1 && e == 2 && ep==2
         ind = [1,1]   
     elseif z==2 && zp == 1 && e == 2 && ep==2
         ind = [2,1]    
-    elseif z==1 && zp == 1 && e == 1 && ep==2
+    elseif z==1 && zp == 1 && e == 2 && ep==1
         ind = [3,1]  
-    elseif z==2 && zp == 1 && e == 1 && ep==2
+    elseif z==2 && zp == 1 && e == 2 && ep==1
         ind = [4,1]   
     elseif z==1 && zp == 2 && e == 2 && ep==2
         ind = [1,2]  
     elseif z==2 && zp == 2 && e == 2 && ep==2
         ind = [2,2]  
-    elseif z==1 && zp == 2 && e == 1 && ep==2
+    elseif z==1 && zp == 2 && e == 2 && ep==1
         ind = [3,2]
-    elseif z==2 && zp == 2 && e == 1 && ep==2
+    elseif z==2 && zp == 2 && e == 2 && ep==1
         ind = [4,2]  
-    elseif z==1 && zp == 1 && e == 2 && ep==1
+    elseif z==1 && zp == 1 && e == 1 && ep==2
         ind = [1,3]    
-    elseif z==2 && zp == 1 && e == 2 && ep==1
+    elseif z==2 && zp == 1 && e == 1 && ep==2
         ind = [2,3]  
     elseif z==1 && zp == 1 && e == 1 && ep==1
         ind = [3,3]  
     elseif z==2 && zp == 1 && e == 1 && ep==1
         ind = [4,3]  
-    elseif z==1 && zp == 2 && e == 2 && ep==1
+    elseif z==1 && zp == 2 && e == 1 && ep==2
         ind = [1,4]  
-    elseif z==2 && zp == 2 && e == 2 && ep==1
+    elseif z==2 && zp == 2 && e == 1 && ep==2
         ind = [2,4]  
     elseif z==1 && zp == 2 && e == 1 && ep==1
         ind = [3,4]  
@@ -173,7 +180,7 @@ function pi_index(z, zp, e, ep)
     ind
 end
 
-function E_generator(N, T, Z, Π)
+function E_generator(N::Int64, T::Int64, Z::Vector{Int64}, Π, Π_cond)
     ε_mat = zeros(Int64, N,T)
     ε_mat[:,1] .= 2
     for t = 2:T
@@ -181,13 +188,34 @@ function E_generator(N, T, Z, Π)
             print(t)
         end
         for n = 1:N
-            ind = pi_index(Z[t-1], Z[t], ε_mat[n, t-1], 2) #find index in Pi matrix corresponding to going from z_t-1 to z_t and eps_t-1 to eps-t = 1
-            #print(ind)
-            prob_z_1 = Π[ind[1], ind[2]] #find corresponding probability in pi matrix
-            ε_dist = Bernoulli(prob_z_1)
-            ε_next = Int64(rand(ε_dist) + 1) #draw random variable based on probability in Pi matrix
-            ε_mat[n, t] = ε_next
+            if Z[t-1] == 1 && Z[t] ==1
+                p_mat = Π_cond[1]
+            elseif Z[t-1] == 1 && Z[t] == 2
+                p_mat = Π_cond[2]
+            elseif Z[t-1] == 2 && Z[t] == 1
+                p_mat = Π_cond[3]
+            else 
+                p_mat = Π_cond[4]
+            end
+            p_11 = p_mat[1,1]
+            p_01 = p_mat[2,1]
+            if ε_mat[n, t-1] == 2
+                dist = Bernoulli(p_11)
+                ε_mat[n, t] = Int64(rand(dist) + 1)
+            else
+                dist = Bernoulli(p_01)
+                ε_mat[n,t] = Int64(rand(dist) + 1)
+            end
         end
+
+
+        #for n = 1:N
+        #    ind = pi_index(Z[t-1], Z[t], ε_mat[n, t-1], 2) #find index in Pi matrix corresponding to going from z_t-1 to z_t and eps_t-1 to eps-t = 1
+        #    #print(ind)
+        #    prob_e_1 = Π[ind[1], ind[2]]#/Π_z[Z[t-1], Z[t]] #find corresponding probability in pi matrix, divide by pi_zz'
+        #    ε_next = Int64(rand(Bernoulli(prob_e_1)) + 1) #draw random variable based on probability in Pi matrix
+        #    ε_mat[n, t] = ε_next
+        #end
     end
     ε_mat
 end
@@ -225,7 +253,7 @@ end
 function Bellman(prim::Primitives, res::Results)
     @unpack k_grid, k_bar_gr, nk, nkb, k_min, k_max, kb_min, β, δ, z_grid, e, u_g, u_b = prim
     @unpack b_coeff, g_coeff = res
-    v_next = SharedArray{Float64, 4}(zeros(nk, 2, nkb, 2))
+    v_next = zeros(nk, 2, nkb, 2)
 
     vf_int_11 = interpolate((k_grid, k_bar_gr),res.vf_i[:, 1, :, 1], Gridded(Linear()))
     vf_int_12 = interpolate((k_grid, k_bar_gr),res.vf_i[:, 1, :, 2], Gridded(Linear()))
@@ -238,17 +266,17 @@ function Bellman(prim::Primitives, res::Results)
             z = z_grid[z_i]
             #forecast next K_bar
             if z_i == 1
-                kb_pred = b_coeff[1] + b_coeff[2]*K #next period's expected K_bar in bad state
+                kb_pred = exp(g_coeff[1] + g_coeff[2]*log(K)) #next period's expected K_bar in good state
                 L = e*(1-u_g)
             else
-                kb_pred = g_coeff[1] + g_coeff[2]*K #next period's expected K_bar in good state
+                kb_pred = exp(b_coeff[1] + b_coeff[2]*log(K)) #next period's expected K_bar in bad state
                 L = e*(1-u_b)
             end
             kb_i = findmin(abs.(k_bar_gr .- kb_pred))[2] #find the closest grid point to predicted k_bar
             #kb = k_bar_gr[kb_i] #set k_bar equal to corresponding value
-            kb = min(kb_pred, k_max)
+            kb = max(kb_min, min(kb_pred, k_max)) #make sure our forecasted value for aggregate capital stays within bounds. If it exceeds them, set it equal to endpoints
             r, w = prices(prim, K, L, z)
-            @sync @distributed for k_i = 1:nk
+            for k_i = 1:nk
                 k = k_grid[k_i]
                 for e_i = 1:2
                     budget = r*k + w*(e_i - 1) + (1-δ)*k
@@ -259,9 +287,9 @@ function Bellman(prim::Primitives, res::Results)
                     #find the corresponding level of k in the grid
                     closest_kp = k_grid[closest_kp_i]
                     #update the value function evaluated at the closest point in the grid to the optimal k_prime
-                    v_next[k_i, e_i, kb_i, z_i] = -val_opt.minimum #utility(budget - closest_kp) + β*ev(prim, z_i, e_i, vf_int, closest_kp, kb)
+                    v_next[k_i, e_i, K_i, z_i] = -val_opt.minimum #utility(budget - closest_kp) + β*ev(prim, z_i, e_i, vf_int, closest_kp, kb)
                     #update policy function for capital
-                    res.pf_i[k_i, e_i, kb_i, z_i] = opt_kp
+                    res.pf_i[k_i, e_i, K_i, z_i] = opt_kp #closest_kp_i
                 end
             end
         end
@@ -271,7 +299,7 @@ end
 
 function iterate(prim::Primitives, res::Results)
     @unpack nk, k_grid, k_bar_gr = prim
-    tol = 1e-4
+    tol = 1e-3
     n = 0
     error = 100
     while error > tol
@@ -284,6 +312,33 @@ function iterate(prim::Primitives, res::Results)
     print("Convergence!")
 end
 
+function panel_sim(prim::Primitives, res::Results)
+    @unpack N, T, E, Z, k_grid, k_bar_gr= prim
+    @unpack pf_i = res
+    pf_int_11 = interpolate((k_grid, k_bar_gr), pf_i[:, 1, :, 1], Gridded(Linear()))
+    pf_int_12 = interpolate((k_grid, k_bar_gr), pf_i[:, 1, :, 2], Gridded(Linear()))
+    pf_int_21 = interpolate((k_grid, k_bar_gr), pf_i[:, 2, :, 1], Gridded(Linear()))
+    pf_int_22 = interpolate((k_grid, k_bar_gr), pf_i[:, 2, :, 2], Gridded(Linear()))
+    pf_int = [[pf_int_11, pf_int_21] [pf_int_12,  pf_int_22]]
+    K = zeros(T)
+    V = zeros(N, T)
+    K[1] = 11.55
+    V[:, 1] .= 11.55
+    k_grid_int = interpolate(k_grid, BSpline(Linear()))
+    for t = 2:T
+        if mod(t, 1000)==0
+            print(t)
+        end
+        for n =1:N
+            prev_k = k_grid[findmin(abs.(k_grid .- V[n, t-1] ))[2]]
+            prev_K = k_bar_gr[findmin(abs.(k_bar_gr .- K[t-1]))[2]]
+            V[n,t] = pf_int[E[n,t], Z[t]](prev_k, prev_K)
+        end
+        K[t] = sum(V[:,t])/N #find aggregate capital at time t
+    end
+    K, V
+end
+
 function coeff_finder(prim::Primitives)
     
 
@@ -291,5 +346,4 @@ function coeff_finder(prim::Primitives)
     #start with initial guess for h_1 coefficients
     #given initial guess, solve HH DP problem
     #given policy functions, 
-end
 end

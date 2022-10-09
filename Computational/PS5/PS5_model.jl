@@ -1,9 +1,10 @@
-using Distributed
-addprocs(4)
-@everywhere using Distributions, Parameters, SharedArrays, Plots, Interpolations, Optim
+#using Distributed
+#addprocs(4)
+using Distributions, Parameters, Plots, Interpolations, Optim
 
-@everywhere include("PS5_func.jl")
+include("PS5_func.jl")
 
-@everywhere prim, res = Initialize()
+prim, res = Initialize()
 
 iterate(prim, res)
+K_test, V_test = panel_sim(prim, res)
