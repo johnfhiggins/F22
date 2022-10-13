@@ -1,0 +1,157 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Do not alter this block of commands.  If you're proficient at LaTeX, you may include additional packages, create macros, etc. immediately below this block of commands, but make sure to NOT alter the header, margin, and comment settings here. 
+\documentclass[12pt]{article}
+ \usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,amsfonts, enumitem, fancyhdr, color, hyperref,comment, graphicx, environ,mathtools, bbm, tikz, setspace, cleveref,listings, dcolumn}
+\usepackage{array, multirow, caption, booktabs}
+\usepackage{ mathrsfs }
+\usetikzlibrary{matrix,positioning}
+\tikzset{bullet/.style={circle,draw=black,inner sep=8pt}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\Var}{\text{Var}}
+\DeclareMathOperator*{\Cov}{\text{Cov}}
+
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\DeclareMathOperator{\eps}{\varepsilon}
+
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\pagestyle{fancy}
+\setlength{\headheight}{65pt}
+\newenvironment{problem}[2][Problem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{sol}
+    {\emph{Solution:}
+    }
+    {
+    \qed
+    }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\usepackage{xcolor}
+ 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\rhead{John Higgins\\Econ 715 \\ 26 October, 2022} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\begin{problem}{1}
+\end{problem}
+\begin{sol}
+    \begin{enumerate}[label=\alph*) ]
+        \item We consider a continuous rv $Y^*$ with density $f_{Y^*}(\cdot)$ alongside a censored version of $Y^*$ given by $Y = \min\{Y^*, C\}$ for a known $C$. We make the assumption that $Y^*$ has a density function that is everywhere positive.
+        
+        We seek to find the $c$ which solves $\min_{c \in \mathbb{R}} E[\rho_{\tau}(Y - c)]$, where $\rho_{\tau}(u) = (\tau - \mathbbm{1}(u < 0))u$ for a given $\tau \in (0,1)$. We begin by computing the expectation for a given value of $c$. Suppose first that $P(Y < C) > \tau$.
+
+        We note that when $P(Y < C) > \tau$, we must have that $q_{\tau}(Y^*) < C$. That is, the $100\tau\%$ quantile of $Y^*$ is less than $C$. We also remark that $\forall y < C$, $f_{Y^*}(y) = f_{Y}(y)$. We consequently have that $q_{\tau}(Y) = q_{\tau}(Y^*)$, since $\forall c \leq C$, it follows that
+        \[\int_{-\infty}^{c} f_{Y^*}(y) \, dy = \int_{-\infty}^{c} f_Y(y) \, dy \iff \tau = \int_{-\infty}^{q_{\tau}(Y^*)} f_{Y^*}(y) \, dy = \int_{-\infty}^{q_{\tau}(Y^*)} f_{Y^*}(y) \, dy\]
+        Thus, $q_{\tau}(Y^*) = q_{\tau}(Y)$ provided $P(Y < C) > \tau$. 
+
+        Our approach will be as follows: we seek to show that $E[\rho_{\tau}(Y - c)]$ is increasing on the interval $(-\infty, c^*]$ and decreasing on the interval $(c^*, \infty)$, where $q_{\tau}(Y^*)$ is the 100$\tau$\% quantile of $Y^*$. To start, we consider the case where $c \leq c^* = q_{\tau}(Y^*)$. We then have that
+        \begin{align*}
+            E[\rho_{\tau}(Y - c)] =& E[\rho_{\tau}(Y - c) \mid Y < c]P(Y < c) + E[\rho_{\tau}(Y-c) \mid Y \in [c, c^*)]P(Y \in [c, c^*)) \\
+            &+ E[\rho_{\tau}(Y-c) \mid Y \geq c^*]\\
+            =& E[(\tau - \mathbbm{1}(Y < c))(Y-c)\mid Y < c]P(Y < c) \\&+ E[(\tau - \mathbbm{1}(Y < c))(Y - c) \mid Y \in [c, c^*)]P(Y \in [c, c^*)) \\
+            &+ E[(\tau - \mathbbm{1}(Y < c))(Y - c)\mid Y \geq c^*]\\
+            =& E[(\tau - 1)(Y-c)\mid Y < c]P(Y < c) + E[\tau(Y - c) \mid Y \in [c, c^*)]P(Y \in [c, c^*)) \\
+            &+ E[(\tau(Y - c)\mid Y \geq c^*]\\
+            =& E[(\tau -1 )(Y - c+ c^* -c^*) \mid Y < c]P(Y < c) \\&+ E[\tau(Y - c + c^* - c^*) \mid Y \in [c, c^*)]P(Y \in [c, c^*)) \\
+            &+  E[(\tau(Y - c + c^* - c^*)\mid Y \geq c^*]P(Y \geq c^*)\\
+            =& E[(\tau -1)(Y - c^*) \mid Y < c]P(Y < c) + (\tau-1)(c^* - c)P(Y < c) \\&+ E[\tau(Y - c^*)\mid Y \in [c, c^*)]P(Y \in [c, c^*)) + \tau (c^* - c) P(Y \in [c, c^*)) \\
+            &+ E[\tau(Y - c^*) \mid Y \geq c^*]P(Y \geq c^*) + \tau (c^* - c)P(Y \geq c^*)\\
+            =& E[\abs{Y - c^*}] + 2 E[Y - c^* \mid Y \in [c, c^*)]P(Y \in [c, c^*)) \\
+            &+ (c^* - c)[(\tau - 1) P(Y < c) + \tau P(Y \geq c)]\\
+            =& E[\abs{Y - c^*}] + 2 E[Y - c^* \mid Y \in [c, c^*)]P(Y \in [c, c^*)) + (c^* - c)[\tau - P(Y < c)]
+        \end{align*}
+        We now observe that $E[Y - c^*\mid  Y \in [c, c^*)]$ is negative and thus minimized when $Y = c$ (since $c \leq c^*)$. As such, we have the following bound:
+    \begin{align*}
+        E[\rho_{\tau}(Y - c)] &\geq  E[\abs{Y - c^*}]  + (c^* - c)P(Y \in [c,c^*)) + (c^* - c)(\tau - P(Y < c))\\
+        &= E[\abs{Y - c^*}] + (c^* - c)[P(Y \leq c^*) - P(Y < c) + \tau - P(Y < c)]\\
+        &= E[\abs{Y - c^*}] + (c^* - c)[P(Y \leq c^*) + \tau - 2P(Y < c)]
+    \end{align*}
+    We note that $E[\abs{Y - c^*}]$ is constant with respect to $c$. Furthermore, $\forall c \leq c^*$, we have that $P(Y < c) \leq P(Y \leq c^*) = \tau$, implying that $P(Y \leq c^*) + \tau - 2 P(Y < c) > 0$ (the strict inequality holds when $P(Y < c) < P(Y \leq c^*)$ - i.e. when $f_{Y}(\cdot)$ has positive mass on $[c, c^*)$. We have that $f_{Y^*}(\cdot)$ is everywhere positive, and we also have that $f_{Y}(\cdot) = f_{Y^*}(\cdot)$ on $[c, c^*)$ and is thus also positive. Hence, this condition is satisfied). Thus, given that $c \leq c^*$, the expression on the right is minimized by setting $c = c^*$!
+
+    We now must also check $c > c^*$. Consider $c_1, c_2$ such that $c^* < c_2  < c_1$. We will claim that $E[\rho_{\tau}(Y - c_2 )] \leq E[\rho_{\tau}(Y - c_1)]$. To see this, we can compute (in a very similar fashion to the above example):
+    \begin{align*}
+        E[\rho_{\tau}(Y - c_1)] =& E[\abs{Y - c_2}] + (c_2- c_1)(P(Y \leq c_2) + \tau - 2P(Y < c_1))\\
+        &> E[\abs{Y - c_2}]
+    \end{align*}
+    since $P(Y \leq c_2) \leq P(Y < c_1)$ and also $\tau \leq P(Y < c_1)$, which both imply that $P(Y \leq c_2) + \tau - 2 P(Y < c_1) < 0$. Similarly, as $c_2 < c_1$, we have that $(c_2 - c_1 ) < 0$, which makes the right expression positive. This implies that $E[\rho_{\tau}(Y - c)]$ is decreasing in $c$ $\forall c > c^*$. In summary, we have shown that $c^* = q_{\tau}(Y^*) = \argmin_{c \in \mathbb{R}} E[\rho_{\tau}(Y-c)]$. So, in the case where $P(Y < C) > \tau$, the minimizer is unique.
+
+    We now assume that $P(Y < C) \leq \tau$. This implies that $q_{\tau}(Y^*) > C$. We then compute that
+    \begin{align*}
+        E[\rho_{\tau}(Y - c)] &= E[(\tau - \mathbbm{1}(Y < c))(Y-c)]\\
+        &= \tau E[Y - c] - E[(Y-c) \mathbbm{1}(Y < c)]\\
+        &= \tau E[Y -c] - E[(Y - c ) \mid Y < c] P(Y < c)\\
+        &= \tau E[Y - c] - E[Y - c] P(Y < c)\\
+        &= E[Y - c] (\tau - P(Y < c))
+    \end{align*}
+    Note that $E[Y - c]$ is decreasing in $c$ and $P(Y < c)$ is increasing in $c$ (thus $- P(Y < c)$ is decreasing in $c$), implying that this will be minimized when $c = C$.
+    \item We now let $Y^* = X'\beta_0 + \eps$ for finite dimensional vector of independent random variables $X$ and $\beta_0 \in B$, where $B \subseteq \mathbb{R}^{d_x}$ is a parameter space which is assumed to be compact. We assume that the $100\tau\%$ quantile of $\eps$ given $X$ is zero: that is, $q_{\tau}(\eps \mid X) = 0$. We additionally make the assumption that the conditional density $f{\eps \mid X}(\cdot \mid X) $ is everywhere positive $\forall x \in supp(X)$. We consider the criterion function
+    \[\hat{Q}_n(\beta) = \frac{1}{n} \sum_{i=1}^n \rho_{\tau}(Y_i - \min\{X_i'\beta, C\})\]
+    where $\{(Y_i, X_i)\}_{i=1}^n$ is an i.i.d. random sample of random variables $(Y, X')'$. We also impose that $E[\abs{\eps}] < \infty$ and $E[\norm{X}] < \infty$. We wish to show the uniform convergence of the criterion function as $n \rightarrow \infty$ and to find the limiting criterion function.
+
+    To demonstrate uniform convergence, it suffices to verify that some Uniform Law of Large Numbers holds and use this to show uniform convergence in probability of the criterion function. In particular, we verify that the assumptions of the Newey and McFadden (94) ULLN (referred to in the notes as ULLN1) hold in our context. We must verify the following four conditions:
+    \begin{enumerate} \item The parameter space $B$ is compact
+        \item $\forall \beta \in B$, $\hat{Q}_n(\beta)$ is continuous with probability 1
+        \item $\forall \beta \in B$, $\hat{Q}_n(\beta)$ is dominated by a measurable function $G(\beta)$ 
+        \item $ E[\abs{G(\beta)}] < \infty$
+    \end{enumerate}
+    If all of these are satisfied, then we have that $\sup_{\beta \in B}\lVert \hat{Q}_n(\beta) - E[\hat{Q}_n(\beta)]\rVert \rightarrow_p 0$. 
+
+    We start with 1 - the easiest one! We assume $B$ is compact, so this is not too arduous to verify. We now must show that $\hat{Q}_n$ is continuous in $X_i$ and $Y_i$ with probability $1$. It suffices to show that $\rho_{\tau}(Y_i - \min\{X_i'\beta, C\})$ is continuous at each point $\beta$ with probability 1. We note that
+    \[\rho_{\tau}(Y_i - \min\{X_i'\beta, C\})) = (\tau - \mathbbm{1}(Y_i < \min\{X_i'\beta, C\}))(Y_i - \min\{X_i'\beta, C\})\]
+    For a fixed $(Y_i, X_i)$, this function is discontinuous only at the point $\beta$ such that where $Y_i = X_i'\beta \leq C$. Since we assume that $Y_i = X_i'\beta + \eps_i$ and $f_{\eps \mid X}(\cdot\mid X)$ is everywhere positive $\forall X$ and $Y^*$ is continuous, it follows that $Y_i = X_i'\beta$ with probability zero. Thus, condition 2 is satisfied.
+
+    For condition 3, we must find a dominating function for $\hat{Q}_n(\beta)$. Again, it suffices to find a dominating function for $\rho_{\tau}(Y_i - \min\{X_i'\beta, C\})$, since $\hat{Q}_n(\beta)$ is an average of these evaluated at different $(X_i, Y_i)$ pairs. We observe that
+    \begin{align*}
+        \norm{ \rho_{\tau}(Y_i - \min\{X_i'\beta, C\})} &= \norm{(\tau - \mathbbm{1}(Y_i < \min\{X_i'\beta, C\}))(Y_i - \min\{X_i'\beta, C\})}\\
+        &\leq \norm{(\tau - \mathbbm{1}(Y_i < \min\{X_i'\beta, C\}))} \norm{Y_i - \min\{X_i'\beta, C\}} \\
+        &\leq \norm{\tau + 1}(\norm{Y_i - X_i'\beta} + \norm{Y_i - C})\\
+        &\leq 2 (\norm{Y_i} + \norm{X_i ' \beta} + \norm{Y_i} + \abs{C})\\
+        &\leq 2 (2 \norm{Y_i} + \norm{X_i'} \norm{\beta} + \abs{C})\\
+        &\leq 2 (2 y + x \cdot \text{diam}(B) + \abs{C})
+    \end{align*}
+    In other words, we have found a function $G(x,y) = 2(2 y + x \text{diam}(B) + \abs{C})$ which dominates $\hat{Q}_n(\beta)$ [it may not be the tightest bound ever constructed, but it works :)]. We let $y = \norm{Y_i}$, $x = \norm{X_i}$, and $\text{diam}(B)$ refer to the diameter of the parameter space $B$ (which we know is finite due to the fact that $B$ is compact). 
+
+    Finally, we must show that his dominating function is integrable. We assumed that $E[\norm{X_i}] < \infty$, and furthermore that $E[\abs{\eps}] < \infty$. Since $Y_i = \min\{X_i'\beta + \eps, C\}$ and $\abs{C} <\infty$, we have that 
+    \begin{align*}
+        E[\norm{Y_i}] &= E[\norm{X_i' \beta + \eps}] \vee E[\abs{C}] \leq E[\norm{X_i}]\norm{\beta} + E[\norm{\eps}]\vee E[\abs{C}] \\
+        &\leq (E[\norm{X_i}]\text{diam}(B) + E[\norm{\eps}])\vee E[\abs{C}]  \\
+        &< \infty\end{align*}
+    Thus, $E[\norm{Y_i}] < \infty$ as well. Putting this together, we have that
+    \[E[\norm{G(x,y)}] = E[2 (2 \norm{Y_i} + \norm{X_i} \cdot \text{diam}(B) + \abs{C})] < \infty\]
+    which demonstrates that condition 4 is satisfied. We are done! We have verified the four conditions of the ULLN and thus we conclude that
+    \[\hat{Q}_n(\beta) \rightarrow_p Q(\beta)\]
+    where 
+    \[Q(\beta) = E[\rho_{\tau}(Y - \min\{X'\beta, C\})]\]
+    \item We would like to show that $\beta_0 = \argmin_{\beta \in B} E[\rho_{\tau}(Y - \min\{X'\beta, C\})]$. We note that since $Y = \min\{Y^*, C\}$ and $Y^* = X'\beta_0 + \eps$, it follows that $Y^* - X'\beta_0 = \eps$. We know that the conditional $100\tau\%$ quantile of $\eps$ given $X$ is zero. This fits exactly into the framework of the first problem! Here, we have that $c = \min\{X'\beta, C\}$. From $(a)$, we know that when $P(Y < C) \geq \tau$ the expectation is minimized when $c = q_{\tau}(Y^*)$ (the $100\tau\%$ percentile of $Y^*$ given $X$). It is therefore minimized at $\beta_0$, since the $100\tau\%$ quantile of $Y^*$ will be $X'\beta_0$.
+    When $P(Y < C)\geq \tau$, the expectation will be minimized by $\beta_0 = C$ in a similar argument as part (a).
+\item We know that if $E[XX' \mathbbm{1}(X\beta_0 < C)]$ has full rank, then $X$ is invertible and $\beta_0$ is the unique solution to $X' \beta_0 = q_{\tau}(Y)$. This implies that $\beta_0$ is the unique parameter value which minimizes $Q(\beta)$. 
+    \end{enumerate}
+\end{sol}
+\begin{problem}{2}
+\end{problem}
+\begin{sol}
+    \begin{enumerate}[label=\alph*) ]
+        \item 
+        \end{enumerate}
+
+
+\end{sol}
+
+    
+\end{document}

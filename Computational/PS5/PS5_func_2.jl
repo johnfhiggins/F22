@@ -315,52 +315,50 @@ function iterate(P::Params, G::Grids, S::Shocks, R::Results)
     @unpack n_k, n_K = G
     n = 0
     error = 100
-    R.pf_v = zeros(n_k, 2, n_K, 2)
+    R.pf_v = zeros(n_k, 2, n_K, 2) #empty value function guess
     println("Finding VF...")
     while error > tol_vfi
         n +=1
-        v_next = Bellman(P, G, S, R)
-        error = maximum(abs.(R.pf_v - v_next))/maximum(abs.(v_next))
+        v_next = Bellman(P, G, S, R) #iterate bellman equation
+        error = maximum(abs.(R.pf_v - v_next))/maximum(abs.(v_next)) #find max error
         #println("n = $(n), error = $(error)")
-        R.pf_v = v_next
+        R.pf_v = v_next #update policy function
     end
     println("Found VF!")
 end
 
+#this function creates a pseudopanel given the random shocks and policy functions
 function create_panel(P::Params, G::Grids, S::Shocks, R::Results)
     @unpack N, T = P
     @unpack k_grid, K_grid, n_k, n_K, k_ub, k_lb, K_ub, K_lb = G
     @unpack pf_v, pf_k, Z, E = R
+    #I created a separate interpolation for each (e,z) combo - there may be a better, more concise way, but I got this to work and don't really want to mess around with it
     pf_int_11 = interpolate((k_grid, K_grid), pf_k[:, 1, :, 1], Gridded(Linear()))
     pf_int_12 = interpolate((k_grid, K_grid), pf_k[:, 1, :, 2], Gridded(Linear()))
     pf_int_21 = interpolate((k_grid, K_grid), pf_k[:, 2, :, 1], Gridded(Linear()))
     pf_int_22 = interpolate((k_grid, K_grid),  pf_k[:, 2, :, 2], Gridded(Linear()))
-    pf_int = [[pf_int_11, pf_int_21] [pf_int_12,  pf_int_22]]
-    K = zeros(T)
-    V = zeros(N, T)
-    K[1] = 11.55
-    V[:, 1] .= 11.55
-    for t = 2:T
-        #if mod(t, 1000)==0
-        #    print(t)
-        #end
+    pf_int = [[pf_int_11, pf_int_21] [pf_int_12,  pf_int_22]] #create a lil array for each interpolated policy function
+    K = zeros(T) #empty aggregate capital array
+    V = zeros(N, T) #empty capital choice grid
+    K[1] = 11.55 #initial aggregate capital guess from steady state
+    V[:, 1] .= 11.55 #initial individual capital guess 
+    for t = 2:T #iterate over all time periods and individuals
         for n =1:N
-            k_prev = max(k_lb, min(k_ub, V[n, t-1]))#k_grid[findmin(abs.(k_grid .- V[n, t-1] ))[2]]
-            K_prev = max(K_lb, min(K_ub, K[t-1]))#k_grid[findmin(abs.(k_grid .- K[t-1] ))[2]]
-            V[n,t] = pf_int[Int(E[n,t-1]), Int(Z[t-1])](k_prev, K_prev)
+            k_prev = max(k_lb, min(k_ub, V[n, t-1])) #find capital holdings from previous period, make sure it's on grid
+            K_prev = max(K_lb, min(K_ub, K[t-1]))#find aggregate capital holdings from previous period, make sure it's on grid
+            V[n,t] = pf_int[Int(E[n,t-1]), Int(Z[t-1])](k_prev, K_prev) #evaluate policy function given previous values to get next period's capital
         end
         K[t] = sum(V[:,t])/N #find aggregate capital at time t
     end
     K, V
 end
 
+#this function finds OLS estimates for both states
 function coeff_estimates(P::Params, G::Grids, S::Shocks, R::Results, K_full::Vector{Float64})
     @unpack T = P
-    Z = R.Z[1000:T]
+    Z = R.Z[1000:T] #throw out first 1000 observations
     K = K_full[1000:T]
-    dat = zeros(T-1001, 4)
-    #good_data = zeros(length(good_states), 2)
-    #bad_data = zeros(length(bad_states),2)
+    dat = zeros(T-1001, 4) #empty array to store data
     for t in 1:length(dat[:, 1])
         dat[t,1] = log(K[t+1])
         dat[t, 2] = 1.0 #want regression with intercept, so need column of ones
@@ -369,45 +367,55 @@ function coeff_estimates(P::Params, G::Grids, S::Shocks, R::Results, K_full::Vec
     end
     dat_g = dat[dat[:,4] .== 1.0, :] #find subset of data which corresponds to good state
     dat_b = dat[dat[:,4] .== 2.0, :] #find subsed of data corresponding to bad state
+    #Y and X for good states
     Y_g = dat_g[:,1]
     X_g = dat_g[:,2:3]
+    #Y and X for bad states
     Y_b = dat_b[:,1]
     X_b = dat_b[:,2:3]
+    #find OLS coefficients
     β_g = inv(X_g'X_g)*X_g'Y_g
     β_b = inv(X_b'X_b)*X_b'Y_b
+    #find prediction for each state
     pred_yg = X_g*β_g
     pred_yb = X_b*β_b
+    #find residual sum of squares by state
     err_g = sum((Y_g - pred_yg).^2)
     err_b = sum((Y_b - pred_yb).^2)
+    #find total sum of squares
     ssy_g = sum((Y_g .- mean(Y_g)).^2)
     ssy_b = sum((Y_b .- mean(Y_b)).^2)
+    #find overall R^2
     R2 = 1- (err_g + err_b)/(ssy_g + ssy_b)
+    #stack coefficients
     coeff_vec = vcat(β_g, β_b)
     coeff_vec, R2, X_b, Y_b, X_g, Y_g, pred_yg, pred_yb
 end
 
 function coeff_finder(P::Params, G::Grids, S::Shocks, R::Results)
     @unpack tol_coef, tol_r2 = P
-    iterate(P, G, S, R)
-    K, V = create_panel(P, G, S, R)
-    c_new, R2, xb, yb, xg, yg = coeff_estimates(P, G, S, R, K)
-    print(c_new)
-    error = abs(c_new[1] - R.a0)+ abs(c_new[2] - R.a1)+ abs(c_new[3] - R.b0)+ abs(c_new[4] - R.b1)
-    λ = 0.6
+    iterate(P, G, S, R) #do value function iteration
+    K, V = create_panel(P, G, S, R) #create pseudopanel
+    c_new, R2, xb, yb, xg, yg = coeff_estimates(P, G, S, R, K) #find coefficient estimates for each state
+    print(c_new) #see what they are!
+    error = abs(c_new[1] - R.a0)+ abs(c_new[2] - R.a1)+ abs(c_new[3] - R.b0)+ abs(c_new[4] - R.b1) #compute total error
+    λ = 0.6 #weight parameter
+    #find convex combination of old coefficients and new ones
     R.a0 = λ*R.a0 + (1-λ)*c_new[1]
     R.a1 = λ*R.a1 + (1-λ)*c_new[2]
     R.b0 = λ*R.b0 + (1-λ)*c_new[3]
     R.b1 = λ*R.b1 + (1-λ)*c_new[4]
     R.R2 = R2
     n = 0
-    while error > tol_coef || R.R2 < tol_r2
+    while error > tol_coef || R.R2 < tol_r2 #iterate until both convergence criteria are met
         n += 1
         println("Iteration $(n), error = $(error)")
-        iterate(P, G, S, R)
-        K, V = create_panel(P, G, S, R)
-        c_new, R2 = coeff_estimates(P, G, S, R, K)
-        println("$(R.a0) $(R.a1) $(R.b0) $(R.b1) $(R.R2)")
-        error = abs(c_new[1] - R.a0)+ abs(c_new[2] - R.a1)+ abs(c_new[3] - R.b0)+ abs(c_new[4] - R.b1)
+        iterate(P, G, S, R) #do value function iteration
+        K, V = create_panel(P, G, S, R) #generate corresponding pseudopanel
+        c_new, R2 = coeff_estimates(P, G, S, R, K) #find new coeffs
+        println("$(R.a0) $(R.a1) $(R.b0) $(R.b1) $(R.R2)") #check out their progress :)
+        error = abs(c_new[1] - R.a0)+ abs(c_new[2] - R.a1)+ abs(c_new[3] - R.b0)+ abs(c_new[4] - R.b1) #find max error
+        #find convex combination to get new updated coefficient
         R.a0 = λ*R.a0 + (1-λ)*c_new[1]
         R.a1 = λ*R.a1 + (1-λ)*c_new[2]
         R.b0 = λ*R.b0 + (1-λ)*c_new[3]
