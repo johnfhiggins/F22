@@ -30,7 +30,6 @@ function SLL(X::Vector{Float64}, Y, theta_g::Vector{Float64}, z_seq::Vector{Floa
     end
     val
 end
-eee
 #this function is identical to the above function except that it takes an array of shocks, one for each observation. 
 function SLL2(X::Vector{Float64}, Y, theta_g::Vector{Float64}, z_seq::Array{Float64})
     val = 0.0
@@ -56,7 +55,7 @@ function max_like(X::Vector{Float64},Y, S::Int64, norm::Int64)
         z_pre = rand(d2, S)
         z_seq = (z_pre .- mean(z_pre))./std(z_pre)
     end
-    sll = optimize(theta_g ->  -SLL(X, Y, theta_g, z_seq), [-Inf, -Inf, 0.00001], [Inf, Inf, Inf], [0.5,0.5,0.5]) #find theta_hat which maximizes log likelihood (by minimizing negative log likelihood)
+    sll = optimize(theta_g ->  -SLL(X, Y, theta_g, z_seq), [-Inf, -Inf, 0.00001], [Inf, Inf, 10], [0.5,0.5,0.5]) #find theta_hat which maximizes log likelihood (by minimizing negative log likelihood)
     theta_hat = sll.minimizer #find argmin
     theta_hat_trans = theta_hat 
     #theta_hat_trans[3] = theta_hat[3]^2
@@ -74,7 +73,7 @@ function max_like_2(X::Vector{Float64}, Y, S::Int64, norm::Int64)
             z_seq[:,i] = (z_pre[:,i] .- mean(z_pre[:,i]))./std(z_pre[:,i])
         end
     end
-    sll = optimize(theta_g ->  -SLL2(X, Y, theta_g, z_seq), [-Inf, -Inf, 0.00001], [Inf, Inf, Inf], [0.5,0.5,0.5]) #find theta_hat which maximizes log likelihood (by minimizing negative log likelihood)
+    sll = optimize(theta_g ->  -SLL2(X, Y, theta_g, z_seq), [-Inf, -Inf, 0.00001], [Inf, Inf, 10], [0.5,0.5,0.5]) #find theta_hat which maximizes log likelihood (by minimizing negative log likelihood)
     theta_hat = sll.minimizer #find argmin
     theta_hat_trans = theta_hat
     #theta_hat_trans[3] = theta_hat[3]^2
@@ -91,7 +90,8 @@ function gen_theta_S(N::Int64, M::Int64, S::Int64, norm::Int64)
         dist = Normal()
         X_m = rand(dist, N)
         eps = rand(dist,N)
-        Y_pre = 1.0*X_m + eps
+        β = rand(Normal(1,1), N)
+        Y_pre = β .* X_m + eps
         Y_m = (Y_pre .> 0.0)
         θ_S[m,:] .= max_like(X_m, Y_m, S, norm)
     end
@@ -107,14 +107,15 @@ function gen_theta_S2(N::Int64, M::Int64, S::Int64, norm::Int64)
         dist = Normal()
         X_m = rand(dist, N)
         eps = rand(dist,N)
-        Y_pre = 1.0*X_m + eps
+        β = rand(Normal(1,1), N)
+        Y_pre = β .* X_m + eps
         Y_m = (Y_pre .> 0.0)
         θ_S[m,:] .= max_like_2(X_m, Y_m, S, norm)
     end
     θ_S
 end
-theta_S1 = gen_theta_S(500, 1000,50,0)
-theta_S2 = gen_theta_S2(500, 1000, 50,0)
+theta_S1 = gen_theta_S(500, 10,50,0)
+theta_S2 = gen_theta_S2(500, 10, 50,0)
 
 theta_S1_n = gen_theta_S(500, 100,25, 1)
 theta_S2_n = gen_theta_S2(500, 100, 25,1)
