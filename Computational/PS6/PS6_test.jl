@@ -1,30 +1,29 @@
 @with_kw struct Primitives
-    β::Float64 = 0.8
-    θ::Float64 = 0.64
+    β::Float64 = 0.8 #discount factor
+    θ::Float64 = 0.64 #production parameter
     ns::Int64 = 5 #number of grid pts
-    s_grid ::Vector{Float64} = [3.98e-4, 3.58, 6.82, 12.18, 18.79]
-    n_grid::Vector{Float64} = [1.3e-9, 10.0, 60.0, 300.0, 1000.0]
-    F::Array{Float64,2} = [0.6598 0.2600 0.0416 0.0331 0.0055;
+    s_grid ::Vector{Float64} = [3.98e-4, 3.58, 6.82, 12.18, 18.79] #grid of productivities
+    F::Array{Float64,2} = [0.6598 0.2600 0.0416 0.0331 0.0055; 
                            0.1997 0.7201 0.0420 0.0326 0.0056;
                            0.2000 0.2000 0.5555 0.0344 0.0101;
                            0.2000 0.2000 0.2502 0.3397 0.0101; 
-                           0.2000 0.2000 0.2500 0.3400 0.0100]
-    ent_dist::Vector{Float64} = [0.37, 0.4631, 0.1102, 0.0504, 0.0063]
-    A::Float64 = 0.005
-    cf::Float64 = 10.0
-    ce::Float64 = 5.0
+                           0.2000 0.2000 0.2500 0.3400 0.0100] #transition matrix
+    ent_dist::Vector{Float64} = [0.37, 0.4631, 0.1102, 0.0504, 0.0063] #entrant distribution
+    A::Float64 = 0.005 #consumer labor disutility parameter
+    cf::Float64 = 10.0 #per-period fixed cost
+    ce::Float64 = 5.0 #entry cost
 end
 
 mutable struct Res_standard
-    W::Vector{Float64}
-    exit_pol::Vector{Float64}
-    labor_pol::Vector{Float64}
-    p::Float64
-    μ::Vector{Float64}
-    M::Float64
-    M_exit::Float64
-    L_I::Float64
-    L_E::Float64
+    W::Vector{Float64} #value function 
+    exit_pol::Vector{Float64} #exit decision 
+    labor_pol::Vector{Float64} #labor demand 
+    p::Float64 #price level
+    μ::Vector{Float64} #invariant distribution
+    M::Float64 #mass of entrants
+    M_exit::Float64 #mass of exits
+    L_I::Float64 #labor of incumbents
+    L_E::Float64 #labor of entrants
 end
 
 function Init_standard()
@@ -42,34 +41,36 @@ function Init_standard()
     prim, res
 end
 
+#finds the optimal n based on the price level and productivity
 function opt_n(prim::Primitives, p::Float64,s::Float64)
     @unpack θ = prim
-    n_opt = max(0, (θ*p*s)^(1/(1-θ)))
+    n_opt = max(0, (θ*p*s)^(1/(1-θ))) #find optimal n using firm's first order condition
     n_opt
 end
 
 function W_comp(prim::Primitives, res::Res_standard, p::Float64)
     @unpack s_grid,ns, n_grid,β, θ, F, A, cf, ce = prim
-    vf_new = zeros(length(s_grid))
+    vf_new = zeros(length(s_grid)) #initialize blank value function array
     for s_i = 1:ns #iterate over firm size index
         s = s_grid[s_i] #find corresponding firm size
         n = opt_n(prim, p, s) #find optimal labor demand for firm
-        res.labor_pol[s_i] = n
-        val = p*s*n^θ - n - p*cf
-        cont_val = 0.0
+        res.labor_pol[s_i] = n #update labor policy function
+        val = p*s*n^θ - n - p*cf #find firm's static profits
+        cont_val = 0.0 #initial continuation value
         for sp_i = 1:ns #iterate over future states
-            cont_val += β*F[s_i, sp_i]*res.W[sp_i]
+            cont_val += β*F[s_i, sp_i]*res.W[sp_i] #add the discounted value at state s_prime multiplied by probability of transitioning to s_prime
         end
-        if cont_val < 0
-            res.exit_pol[s_i] = 1
-            vf_new[s_i] = val
-        else
-            res.exit_pol[s_i] = 0
-            vf_new[s_i] = val + cont_val
+        if cont_val < 0 #if the firm has negative expected value of staying in, they should exit
+            res.exit_pol[s_i] = 1 #set the firm's exit policy function equal to 1 to indicate they exit
+            vf_new[s_i] = val #update value function to be only static profits
+        else #otherwise, they choose to stay
+            res.exit_pol[s_i] = 0 #set exit pf equal to 1 to indicate they stay
+            vf_new[s_i] = val + cont_val #set their value function equal to static profit + continuation value
         end
     end
     vf_new
 end
+
 
 function Bellman(prim::Primitives, res::Res_standard, p::Float64)
     error = 100
