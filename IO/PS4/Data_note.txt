@@ -1,0 +1,3 @@
+Note: the original demographics csv actually contains the random coefficients for each of the 20 individuals (labeled v1-v80, there are 20 draws for each of the 4 coefficients) in each market and does not contain the demographic variables! The real demographic data (age, income, income^2, etc) is contained in the PS2.mat file. I have extracted it as a csv and included it here. I have also renamed the coefficient csv to “v.csv” and included it. 
+
+Also: You'll want to import demog.csv without row names!
