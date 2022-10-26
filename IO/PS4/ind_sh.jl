@@ -8,7 +8,7 @@ function ind_sh(expmval, expmu, data::Data)
     sum1[2:length(sum1[:,1]), :] = diff(sum1, dims=1) #not entirely sure my syntax is right here
 
     denom1 = 1 ./(1 .+ sum1)
-    denom = denom1[cdid]
+    denom = denom1[cdid,:]
     f = eg .*denom
     f
 end

@@ -44,15 +44,6 @@ end
 Data()
 Data().vfull
 
-#I think this is all of them lol
-include("mufunc.jl")
-include("meanval.jl")
-include("gmm.jl")
-inculde("jacob.jl")
-include("mktsh.jl")
-include("ind_sh.jl")
-include("var_cov.jl")
-
 mutable struct Results
     mvalold ::Array{Float64}
     oldt2 :: Vector{Float64}
@@ -75,6 +66,19 @@ function Initialize()
 end
 
 res = Initialize()
+#I think this is all of them lol
+include("mufunc.jl")
+include("meanval.jl")
+include("gmm.jl")
+include("jacob.jl")
+include("ind_sh.jl")
+include("mktsh.jl")
+include("var_cov.jl")
+include("ols.jl")
+include("IV.jl")
+include("Mergers.jl")
+
+
 function iv_initial(data::Data, res::Results)
     @unpack x1, IV, invA,s_jt,y = data
     mid = x1'*IV*invA*IV'
@@ -98,7 +102,7 @@ vcov = var_cov(Data(), res)
 se = sqrt.(diag(abs.(vcov)))
 theta2w = Array(sparse(theti, thetj,theta2 ))
 t = size(se,1) - size(theta2,1)
-se2w = Array(sparse(theti, thetj, se[t+1:size]))
+se2w = Array(sparse(theti, thetj, se[t+1:size(se,1)]))
 
 omega = inv(vcov[2:25, 2:25])
 xmd = [x2[1:24,1] x2[1:24, 3:4]]
