@@ -6,10 +6,10 @@ cereal_ps3 <- cereal_ps3 %>%
   group_by(city,quarter) %>% 
   mutate(in_share= sum(share))
 
-cereal_ps3$y <- log(cereal_ps3$share) - log(1-df1$in_share)
+cereal_ps3$y <- log(cereal_ps3$share) - log(1-cereal_ps3$in_share)
 
 #ols_model <- lm(y ~ price + sugar + mushy, data=cereal_ps3 )
-ols_model <- lm(y ~ price, data=cereal_ps3 )
+ols_model <- lm(y ~ price - 1, data=cereal_ps3 )
 summary(ols_model)
 
 library(plm)
@@ -19,7 +19,7 @@ summary(ols_model_brand)
 
 library(ivreg)
 inst_range <- paste("z", 1:20, sep="")
-(inst_form <- as.formula(paste("y ~ price | ", paste(inst_range, collapse= "+"))))
+(inst_form <- as.formula(paste("y ~ price -1| ", paste(inst_range, collapse= "+"))))
 IV_model <- ivreg(inst_form, data = cereal_ps3)
 summary(IV_model)
 

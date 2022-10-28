@@ -1,7 +1,8 @@
-function gmmobj(theta2::Vector{Float64},data::Data, res::Results)
+function gmmobj(theta2::Vector{Float64},data::Data, res::Results, df_out)
     @unpack invA, x1, IV = data
     res.theta2 = theta2
     delta = meanval(data, res)
+    df = fill(100.0, 13)
     if maximum(isnan.(delta)) ==1
         f = 1e10
     else
@@ -16,5 +17,9 @@ function gmmobj(theta2::Vector{Float64},data::Data, res::Results)
         temp = jacob(data,res)'
         df = 2*temp*IV*invA*IV'*gmmresid
     end
-    f, df
+    if df_out==0
+        return f
+    else
+        return f, vec(df)
+    end
 end

@@ -1,0 +1,427 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Do not alter this block of commands.  If you're proficient at LaTeX, you may include additional packages, create macros, etc. immediately below this block of commands, but make sure to NOT alter the header, margin, and comment settings here. 
+\documentclass[12pt]{article}
+ \usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,amsfonts, enumitem, fancyhdr, color, hyperref,comment, graphicx, environ,mathtools, bbm, tikz, setspace, cleveref,listings, dcolumn}
+\usepackage{array, multirow, caption, booktabs}
+\usepackage{ mathrsfs }
+\usetikzlibrary{matrix,positioning}
+\tikzset{bullet/.style={circle,draw=black,inner sep=8pt}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\Var}{\text{Var}}
+\DeclareMathOperator*{\Cov}{\text{Cov}}
+
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\DeclareMathOperator{\eps}{\varepsilon}
+
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\pagestyle{fancy}
+\setlength{\headheight}{65pt}
+\newenvironment{problem}[2][Problem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{sol}
+    {\emph{Solution:}
+    }
+    {
+    \qed
+    }
+
+\lstdefinestyle{myCustomMatlabStyle}{
+    %basicstyle=\ttfamily
+  language=Matlab,
+  numbers=left,
+  stepnumber=1,
+  numbersep=10pt,
+  tabsize=4,
+  showspaces=false,
+  showstringspaces=false
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\usepackage{xcolor}
+ 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\rhead{John Higgins\\Econ 761 \\ 27 October, 2022} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\begin{problem}{1}
+\end{problem}
+\begin{sol}
+    I estimate (i) OLS without brand fixed effects, (ii) OLS with brand fixed effects, (iii) IV using the instrumental variables provided in the data, and (iv) IV with brand fixed effects. My procedure for doing so is contained in the Mergers.jl file as well as ols.jl and IV.jl. I include the estimates for $\alpha$ for each regression in Table 1, in addition to their standard errors.
+    \begin{center}
+        \begin{table}[htbp]
+            \centering
+            \caption{Price sensitivity parameter estimates by regression specification}
+              \begin{tabular}{lcc}
+                  \toprule
+                    Regression                & $\hat{\alpha}$             & Standard error            \\
+                  \midrule
+                    OLS    &  -29.4550  & 0.2208\\
+                    OLS w/ FE  & -28.9474& 0.9854   \\
+                    IV  &   -29.3336  & 0.2208  \\
+                    IV w/ FE  & -18.6012 & 0.7693    \\
+                  \bottomrule
+              \end{tabular}
+            \label{tab:reg_est}
+          \end{table}
+    \end{center}
+\end{sol}
+\begin{problem}{2}
+\end{problem}
+\begin{sol}
+I use these estimates to compute the markups predicted by a multi-product Nash-Bertrand equilibrium. To do so, I substitute the estimate for $\alpha$ into each firm's first order condition and solve for the implied markups based on the equilibrium prices and shares. Specifically, following Nevo, we begin by noting that firm $f$'s profits from brands $\mathcal{F}_f$ within a given market are given by
+\[\Pi_f = \sum_{j \in \mathcal{F}_f} (p_j - mc_j)M s_j(p) - C_f\]
+where $s_j(p)$ is brand $j$'s market share, $M$ is the market size, and $C_f$ is the firm's fixed cost. The first order condition for any firm is thus the following:
+\[s_j(p) + \sum_{r \in \mathcal{F}_f} (p_r - mc_r) \frac{\partial s_r(p)}{\partial p_j} = 0\]
+As this must hold $\forall j$, the set of all firms' first order conditions can be expressed in the following succinct vector representation:
+\[s(p) - \Omega(p - mc) = 0\]
+where $\Omega = \Omega^* \odot S$, where $S_{jk} = \frac{\partial s_i}{\partial p_k}$, $\Omega^*$ is the ownership matrix with $\Omega^*_{jk} = 1$ if $j,k \in \mathcal{F}_f$ and 0 otherwise, and $\odot$ is the Hadamard (element-wise) product. We note that under the MNL framework, $\frac{\partial s_i}{\partial p_i} = -\alpha s_i (1-s_i)$ and $\frac{\partial s_i}{\partial p_j} = \alpha s_i s_j$. This is where we will plug in our estimate $\hat{\alpha}$ obtained from our regressions.
+
+We can then invert the system of first order conditions to find the vector of markups $\kappa = p - mc$ (note: I am interpreting markup to mean $p - mc$ and margin to mean $\frac{p - mc}{p}$ and will be using this throughout):
+\[\kappa = p - mc = -\Omega^{-1}s(p)\]
+The markup of product $j$ in market $t$ is thus given by
+\[\kappa_{jt} = -\Omega^{-1}s_{jt}(p)\]
+The margins for product $j$ in market $t$ are found by $m_{jt}$, where
+\[m_{jt} = \frac{\kappa_{jt}}{p_{jt}} = \frac{p_{jt} - mc_{jt}}{p_{jt}}\]
+Finally, the inferred marginal costs for product $j$ in market $t$ are given by
+\[mc_{jt} = \kappa_{jt} + p_{jt}\]
+We compute all of these quantities for each regression specification and report their mean, median, and standard deviation in Table 2:
+\begin{center}
+    \begin{table}[htbp]
+        \centering
+        \caption{Summary statistics of markups, margins, and inferred marginal costs, by regression:}
+          \begin{tabular}{lcccc}
+              \toprule
+                Statistic    & OLS          & OLS w/ FE & IV & IV w/ FE         \\
+              \midrule
+                E$[\kappa_{jt}]$   &0.0402 &0.0409&0.0404&0.0637 \\
+                med$[\kappa_{jt}]$ &0.0395 &0.0402&0.0396&0.0624   \\
+                 sd$(\kappa_{jt})$ &0.0050 &0.0050&0.0050&0.0079  \\
+                \midrule
+                E$[m_{jt}]$        &0.3400 &0.3460&0.3414&0.5385 \\
+                med$[m_{jt}]$      &0.3217 &0.3274&0.3231&0.5095   \\
+                 sd$(m_{jt})$      &0.1040 &0.1058&0.1044&0.1646  \\
+                 \midrule
+                 E$[mc_{jt}]$      &0.0855 &0.0848&0.0854&0.0606 \\
+                med$[mc_{jt}]$     &0.0837 &0.0830&0.0836&0.0601   \\
+                 sd$(mc_{jt})$     &0.0300 &0.0301&0.0300&0.0310  \\
+              \bottomrule
+          \end{tabular}
+        \label{tab:moments}
+      \end{table}
+\end{center}
+\end{sol}
+\begin{problem}{3}
+\end{problem}
+\begin{sol}
+I now use the pre-merger estimates of marginal costs, estimated price elasticities, and the continued assumption of multi-product firm Nash-Bertrand post-merger equilibrium to simulate the post-merger equilibrium. The post-merger price vector $p^*$ is the solution to the following equation:
+\[p^* = \Omega_m(p^*) s(p^*)\]
+where $\Omega_m(p^*)$ is $\Omega_m \odot S(p^*)$ is the element-wise product of the post merger ownership matrix with the matrix $S(p^*)$ (which is the substitution matrix $S(p)$ evaluated at price vector $p^*)$. This is a system of 24 nonlinear equations, and there is not a closed form solution for this. However, our approach will iteratively update prices based on firm optimality starting from the initial pre-merger price vector $p_0$ and shares $s(p_0)$. I explicitly outline the procedure below:
+\begin{enumerate}
+    \item Change the ownership matrix $\Omega_m^*$ so that, if firms $f$ and $g$ merge, then $\forall j \in \mathcal{F}_f$ and $\forall k \in \mathcal{F}_g$, $\Omega_m^*_{jk} = 1$.
+    \item For each $t \geq 1$, construct the matrix $\Omega_m^t$ defined as the following:
+    \[\Omega_m^t = \Omega_m^* \odot S(p_{t-1})\]
+    \item Using the firms' FOC as well as our inferred marginal costs, we know that the optimal markups are given by
+    \[\kappa_t = p_t - \hat{mc} = \Omega_m^t s(p_t)\]
+    We can rearrange this to solve for the optimal price for product $j$ in market $t$:
+    \[p_{t} = \hat{mc} + \Omega_m^t s_{jt}(p_{t-1})\]
+    This gives us an updated price vector $p_t$.
+    \item Find the next iteration's predicted market shares $s(p_{t})$ using our regression model to be used in the next iteration of this procedure.
+    \item We then check if $\norm{p_t - p_{t-1}}_{\infty}< \varepsilon$ for some tolerance parameter $\eps > 0$. If so, then we stop! If not, then we repeat from steps 2-5 until convergence.
+\end{enumerate}
+While the above operator is not generally a contraction, we will use it nevertheless and see if we converge to a new equilibrium price. I do this procedure for each of the mergers and each of the regression specifications and report the changes in equilibrium price, markups, margins, and market shares relative to the pre-merger case. I first consider the Post-Nabisco merger and include my results in Table 3.
+\begin{center}
+    \begin{table}[htbp]
+        \centering
+        \caption{Post-Nabisco merger changes in equilibrium results by regression type:}
+          \begin{tabular}{lcccc}
+              \toprule
+                Change in moment    & OLS          & OLS w/ FE & IV & IV w/ FE         \\
+              \midrule
+                $\Delta$ E$[p_{jt}]$       &-0.0003&-0.0010&-0.0003&-0.0022\\
+                $\Delta$ med$[p_{jt}]$      &-0.0006&-0.0011&-0.0005&-0.0022   \\
+                \midrule
+                $\Delta$ E$[\kappa_{jt}]$   &-0.0003&-0.0010&-0.0003&-0.0022\\
+                $\Delta$ med$[\kappa_{jt}]$ &0.0005 &-0.0002&0.0005 & -0.0006 \\
+                \midrule
+                $\Delta$ E$[m_{jt}]$        &-0.0049&-0.0049&-0.0009&-0.0051\\
+                $\Delta$ med$[m_{jt}]$      &-0.0037&-0.0037&0.0002 &-0.0054  \\
+                 \midrule
+                $\Delta$  E$[s_{jt}]$      &-0.0026&-0.0026&-0.0008&-0.0037 \\
+                $\Delta$ med$[s_{jt}]$     &-0.0037&-0.0026&0.0034 &0.0028   \\
+              \bottomrule
+          \end{tabular}
+        \label{tab:pn_merger}
+      \end{table}
+\end{center}
+I now do the same for the General Mills-Quaker merger and include my results in Table 4.
+\begin{center}
+    \begin{table}[htbp]
+        \centering
+        \caption{General Mills-Quaker merger changes in equilibrium results by regression type:}
+          \begin{tabular}{lcccc}
+              \toprule
+                Change in moment    & OLS          & OLS w/ FE & IV & IV w/ FE         \\
+              \midrule
+                $\Delta$ E$[p_{jt}]$       &0.0014 &0.0002 &0.0014 &-0.0005\\
+                $\Delta$ med$[p_{jt}]$      &0.0010 &-0.0001&0.0010 &-0.0007\\
+                \midrule
+                $\Delta$ E$[\kappa_{jt}]$   &0.0014 &0.0002 &0.0014 &-0.0005\\
+                $\Delta$ med$[\kappa_{jt}]$ &0.0025 &0.0016 &0.0025 &0.0012\\
+                \midrule
+                $\Delta$ E$[m_{jt}]$        &0.0079 &0.0017 &0.0082 &0.0013\\
+                $\Delta$ med$[m_{jt}]$      &0.0097 &0.0038 &0.0100 &0.0012\\
+                 \midrule
+                $\Delta$  E$[s_{jt}]$      &-0.0014&-0.0029&-0.0013&-0.0040\\
+                $\Delta$ med$[s_{jt}]$     &0.0029 &0.0023 &0.0030 &0.0024\\
+              \bottomrule
+          \end{tabular}
+        \label{tab:gmq_merger}
+      \end{table}
+\end{center}
+\end{sol}
+\begin{problem}{4}
+\end{problem}
+\begin{sol}
+One problem with the above analysis is that the MNL framework implies restrictive substitution patterns between goods which may not be realistic. Furthermore, it assumes that consumers' price sensitivity and preferences for product characteristics are independent as well as orthogonal to the Logit shocks. Also, it assumes that the price sensitivity and preference parameters are common across each market, which is not the most reasonable assumption. For example, a market with a large number of affluent people is likely going to have a different level of price sensitivity than a market where consumers tend to have lower wealth. Furthermore, it is reasonable to assume that one's preferences over one product characteristic may be correlated with their preferences over another product characteristic. All of these factors will potentially lead to shortcomings in the predictions of the above analysis. We aim to resolve some of these problems by allowing for correlated consumer heterogeneity using the random coefficients BLP model estimated in the following problem.
+\end{sol}
+\begin{problem}{5}
+\end{problem}
+\begin{sol}
+    I estimate the random coefficients model in Julia using my code listed in model.jl. I used the provided Matlab code to help write my own version. The file has a number of dependencies, which are also included. The results from my own code are summarized in Table 5:
+    \begin{center}
+        \begin{table}[htbp]
+            \centering
+            \caption{Random Coefficients Estimates - Julia code (standard errors in parentheses)}
+              \begin{tabular}{lcccccc}
+                  \toprule
+                        & Mean          & $\sigma$ & Income & Income$^2$ & Age & Child        \\
+                    \midrule
+                    Constant &    -3.475 & 0.3772 & 3.0888 & 0.0 & 1.1859 & 0.0   \\
+                    & (0.0790) & (269.846) & (1.526)& - & (8.889) & -\\
+                    Price &    -32.497  & 1.848 & 16.598 & -0.659 & 0.0 & 11.625 \\
+                    &  (1.794) & (890.125) & (22.447) & (3.082) & - & (396.291)        \\
+                    Sugar & 0.088& -0.004 & -0.193 & 0.0&  0.030& 0.0\\
+                    & (0.079)& (1.580) & (1.976) & - & (3.655)& -\\
+                    Mushy &  -0.533 & 0.081 & 1.468 & 0.0 & -1.514 & 0.0   \\
+                    & (0.003)& (1.104) & (18.051)&-& (9.040) & -\\
+                  \bottomrule
+              \end{tabular}
+            \label{tab:blp_julia}
+          \end{table}
+    \end{center}
+    We can see that the coefficients are generally very similar to those reported in the results.txt file. There are a few differences (namely, the mean of the sugar and mushy coefficients are a bit off, and the standard errors do differ), the rest of the estimates are consistent with the given results. I also ran the Matlab code and was able to perfectly replicate the results in the results.txt file, which I have included below in Table 6 for completeness:
+    \begin{center}
+        \begin{table}[htbp]
+            \centering
+            \caption{Random Coefficients Estimates - provided Matlab code (standard errors in parentheses)}
+              \begin{tabular}{lcccccc}
+                  \toprule
+                        & Mean          & $\sigma$ & Income & Income$^2$ & Age & Child        \\
+                    \midrule
+                    Constant &    -1.860& 0.377 & 3.089 & 0.0 & 1.186 & 0.0   \\
+                    & (0.2586) & (0.1295) & (1.207)& - & (1.018) & -\\
+                    Price &    -32.437  & 1.848 & 16.598 & -0.659 & 0.0 & 11.625 \\
+                    &  (7.760) & (1.078) & (172.721) & (8.975) & - & (5.220)        \\
+                    Sugar & 0.144& -0.004 & -0.193 & 0.0&  0.030& 0.0\\
+                    & (0.259)& (0.0124) & (0.045) & - & (0.0363)& -\\
+                    Mushy &  0.773 & 0.081 & 1.468 & 0.0 & -1.514 & 0.0   \\
+                    & (0.013)& (0.207) & (0.700)&-& (1.107) & -\\
+                  \bottomrule
+              \end{tabular}
+            \label{tab:blp_matlab}
+          \end{table}
+    \end{center}
+\end{sol}
+\begin{problem}{6}
+\end{problem}
+\begin{sol}
+I use my estimates of the random coefficients model to repeat question 2 and include the estimates (alongside the previous estimates for comparison) in Table 7:
+\begin{center}
+    \begin{table}[htbp]
+        \centering
+        \caption{Summary statistics of markups, margins, and inferred marginal costs, by regression (including BLP):}
+          \begin{tabular}{lccccc}
+              \toprule
+                Statistic    & OLS          & OLS w/ FE & IV & IV w/ FE &BLP       \\
+              \midrule
+                E$[\kappa_{jt}]$   &0.0402 &0.0409&0.0404&0.0637&0.0419 \\
+                med$[\kappa_{jt}]$ &0.0395 &0.0402&0.0396&0.0624&0.0404   \\
+                 sd$(\kappa_{jt})$ &0.0050 &0.0050&0.0050&0.0079&0.0079  \\
+                \midrule
+                E$[m_{jt}]$        &0.3400 &0.3460&0.3414&0.5385&0.3557 \\
+                med$[m_{jt}]$      &0.3217 &0.3274&0.3231&0.5095&0.3290   \\
+                 sd$(m_{jt})$      &0.1040 &0.1058&0.1044&0.1646&0.1293  \\
+                 \midrule
+                 E$[mc_{jt}]$      &0.0855 &0.0848&0.0854&0.0606&0.0839 \\
+                med$[mc_{jt}]$     &0.0837 &0.0830&0.0836&0.0601&0.0829   \\
+                 sd$(mc_{jt})$     &0.0300 &0.0301&0.0300&0.0310&0.0314  \\
+              \bottomrule
+          \end{tabular}
+        \label{tab:moments_blp}
+      \end{table}
+\end{center}
+We see that the the estimated markups are higher under BLP than all of the specifications other than IV with FE, with higher variance as well. Both mean and median margins are also higher (again, except for IV with FE). Finally, the estimated marginal costs under BLP are lower than other specifications (except for IV with FE). This is generally what we'd expect: if certain markets have lower price sensitivity, then firms will set higher prices in equilibrium in response. When firms are able to account for heterogeneity in consumer preferences and price sensitivity, their first order condition will be different than it was in the standard Logit model. Not surprisingly, BLP yields different estimates of markups and inferred marginal costs. (As to why my results for IV with FE seem to be anomalous, I would attribute this to a likely coding error on my part and the true price sensitivity is likely to be higher, which would lead to lower estimates)
+\end{sol}
+\begin{problem}{7}
+\end{problem}
+\begin{sol}
+I now repeat the merger simulations using BLP. The results for the Post-Nabisco merger are included in Table 8, whereas the results for the General Mills-Quaker merger are included in Table 9. 
+\begin{center}
+    \begin{table}[htbp]
+        \centering
+        \caption{Post-Nabisco merger changes in equilibrium results by regression type, including BLP:}
+          \begin{tabular}{lccccc}
+              \toprule
+                Change in moment    & OLS          & OLS w/ FE & IV & IV w/ FE&BLP         \\
+              \midrule
+                $\Delta$ E$[p_{jt}]$       &-0.0003&-0.0010&-0.0003&-0.0022&0.0002\\
+                $\Delta$ med$[p_{jt}]$      &-0.0006&-0.0011&-0.0005&-0.0022&0.0000  \\
+                \midrule
+                $\Delta$ E$[\kappa_{jt}]$   &-0.0003&-0.0010&-0.0003&-0.0022&0.0002\\
+                $\Delta$ med$[\kappa_{jt}]$ &0.0005 &-0.0002&0.0005 & -0.0006&0.0001 \\
+                \midrule
+                $\Delta$ E$[m_{jt}]$        &-0.0049&-0.0049&-0.0009&-0.0051&0.0011\\
+                $\Delta$ med$[m_{jt}]$      &-0.0037&-0.0037&0.0002 &-0.0054&0.0005  \\
+                 \midrule
+                $\Delta$  E$[s_{jt}]$      &-0.0026&-0.0026&-0.0008&-0.0037&0.0000 \\
+                $\Delta$ med$[s_{jt}]$     &-0.0037&-0.0026&0.0034 &0.0028&0.0000   \\
+              \bottomrule
+          \end{tabular}
+        \label{tab:pn_merger}
+      \end{table}
+\end{center}
+
+\begin{center}
+    \begin{table}[htbp]
+        \centering
+        \caption{General Mills-Quaker merger changes in equilibrium results by regression type, including BLP:}
+          \begin{tabular}{lccccc}
+              \toprule
+                Change in moment    & OLS          & OLS w/ FE & IV & IV w/ FE &BLP        \\
+              \midrule
+                $\Delta$ E$[p_{jt}]$       &0.0014 &0.0002 &0.0014 &-0.0005&0.0027\\
+                $\Delta$ med$[p_{jt}]$      &0.0010 &-0.0001&0.0010 &-0.0007&0.0023\\
+                \midrule
+                $\Delta$ E$[\kappa_{jt}]$   &0.0014 &0.0002 &0.0014 &-0.0005&0.0027\\
+                $\Delta$ med$[\kappa_{jt}]$ &0.0025 &0.0016 &0.0025 &0.0012&0.0034\\
+                \midrule
+                $\Delta$ E$[m_{jt}]$        &0.0079 &0.0017 &0.0082 &0.0013&0.0138\\
+                $\Delta$ med$[m_{jt}]$      &0.0097 &0.0038 &0.0100 &0.0012&0.0167\\
+                 \midrule
+                $\Delta$  E$[s_{jt}]$      &-0.0014&-0.0029&-0.0013&-0.0040&0.0000\\
+                $\Delta$ med$[s_{jt}]$     &0.0029 &0.0023 &0.0030 &0.0024&0.0000\\
+              \bottomrule
+          \end{tabular}
+        \label{tab:gmq_merger_blp}
+      \end{table}
+
+\end{center}
+We see that both mergers increase markups, but the GM-Quaker one leads to bigger changes than the Post-Nabisco one. This makes sense, as the GM-Quaker merger is merging two relatively large firms in terms of market share, whereas Post and Nabisco are the smallest two firms in the dataset. It is not surprising that merging two larger firms leads to an increase in markups and margins, as the merged firms experience a greater increase in market power than two smaller firms would, especially when firms are able to take into account how consumer heterogeneity affects substitution patterns.
+\end{sol}
+\begin{problem}{8}
+\end{problem}
+\lstset{basicstyle=\tiny,style=myCustomMatlabStyle}
+\begin{sol}
+I now estimate the same model using the pyblp Python package. I use tolerance parameter $1e-5$ for the below estimates. I have included my code in the pyblp$_$code.py file. The output is included below (sorry it is a bit ugly when pasted directly here):
+\begin{lstlisting}
+    Problem Results Summary:
+=======================================================================================================
+GMM   Objective  Gradient      Hessian         Hessian     Clipped  Weighting Matrix  Covariance Matrix
+Step    Value      Norm    Min Eigenvalue  Max Eigenvalue  Shares   Condition Number  Condition Number 
+----  ---------  --------  --------------  --------------  -------  ----------------  -----------------
+ 2    +6.1E+00   +9.1E-07     +3.3E-05        +2.3E+04        0         +4.8E+07          +7.4E+08     
+=======================================================================================================
+
+Cumulative Statistics:
+===========================================================================
+Computation  Optimizer  Optimization   Objective   Fixed Point  Contraction
+   Time      Converged   Iterations   Evaluations  Iterations   Evaluations
+-----------  ---------  ------------  -----------  -----------  -----------
+ 00:01:34       Yes          91           105         77589       241680   
+===========================================================================
+
+Nonlinear Coefficient Estimates (Robust SEs in Parentheses):
+=====================================================================================================================
+Sigma:      1         prices      sugar       mushy     |   Pi:      income    income_squared     age        child   
+------  ----------  ----------  ----------  ----------  |  ------  ----------  --------------  ----------  ----------
+  1      +5.4E-01                                       |    1      +2.3E+00      +0.0E+00      +1.3E+00    +0.0E+00 
+        (+1.6E-01)                                      |          (+1.2E+00)                  (+6.5E-01)            
+                                                        |                                                            
+prices   +0.0E+00    +3.1E+00                           |  prices   +5.5E+02      -2.8E+01      +0.0E+00    +1.1E+01 
+                    (+1.2E+00)                          |          (+2.5E+02)    (+1.3E+01)                (+4.1E+00)
+                                                        |                                                            
+sugar    +0.0E+00    +0.0E+00    -5.0E-03               |  sugar    -3.7E-01      +0.0E+00      +5.1E-02    +0.0E+00 
+                                (+1.3E-02)              |          (+1.1E-01)                  (+2.5E-02)            
+                                                        |                                                            
+mushy    +0.0E+00    +0.0E+00    +0.0E+00    +7.9E-02   |  mushy    +8.1E-01      +0.0E+00      -1.4E+00    +0.0E+00 
+                                            (+1.8E-01)  |          (+7.6E-01)                  (+6.8E-01)            
+=====================================================================================================================
+
+Beta Estimates (Robust SEs in Parentheses):
+==========
+  prices  
+----------
+ -6.0E+01 
+(+1.4E+01)
+==========
+\end{lstlisting}
+We see that the coefficients are different than the ones we found previously. This could be due to a different tolerance set for the optimization procedure, or due to differences in optimization implementation. Or, it could be the case that my optimization algorithm in the previous part found a local minimum of the objective function which wasn't the true minimum, so we may have found a `false' solution. I played around with changing the tolerance parameter, and the coefficient estimates (for example, price sensitivity) did change. However, I wasn't able to get them as small as $-32$ or so that we previously estimated. 
+
+The summary statistics for markups, margins, and marginal costs are included below:
+\begin{center}
+    \begin{table}[htbp]
+        \centering
+        \caption{Summary statistics, pyblp (compared with prior estimates):}
+          \begin{tabular}{cccccccccc}
+              \toprule
+                 &E$[\kappa_{jt}]$ &med$[\kappa_{jt}]$ & sd$(\kappa_{jt})$ & E$[m_{jt}]$ &  med$[m_{jt}]$ & sd$(m_{jt})$& E$[mc_{jt}]$ &  med$[mc_{jt}]$ & sd$(mc_{jt})$   \\
+              \midrule
+                 pyblp&  0.0432 & 0.0425 & 0.0100& 0.3631&0.3354&0.1274&    0.0825 &0.0814 & 0.0299 \\
+                 Julia blp :)&  0.0419 & 0.0404 & 0.0079& 0.3557&0.3290&0.1293&    0.0839 &0.0829 & 0.0314 \\
+              \bottomrule
+          \end{tabular}
+        \label{tab:moments_pyblp}
+      \end{table}
+\end{center}
+It is clear that they differ somewhat, which is understandable since the estimated coefficients are different (which will lead to differences in elasticities, which consequently affects firms' first order conditions). However, they are still pretty similar! 
+
+I now repeat the merger simulation for both mergers in include the results below in the same table, separated by merger type and compared with my prior estimates using my own code:
+\begin{center}
+    \begin{table}[htbp]
+        \centering
+        \small
+        \caption{Changes in equilibrium results after Post-Nabisco merger (top rows) and GM-Quaker (bottom rows), pyblp (compared with prior estimates):}
+          \begin{tabular}{cccccccccc}
+              \toprule
+                 &$\Delta$ E$[p_{jt}]$ & $\Delta$ med$[p_{jt}]$ &$\Delta$  E$[\kappa_{jt}]$ & $\Delta$  med$[\kappa_{jt}]$ & $\Delta$ E$[m_{jt}]$ &  $\Delta$ med$[m_{jt}]$ & $\Delta$ E[$s_{jt}$] & $\Delta$ med[$s_{jt}$]  \\
+              \midrule
+                 pyblp, Post&  0.0002 & 0.0002 & 0.0002& 0.0005&0.0011&0.0012&    0.0 &0.0 \\
+                 Julia blp :)&  0.0002 & 0.0000 & 0.0002& 0.0001&0.0011&0.0005&    0.0 &0.0  \\
+                 \midrule
+                 pyblp&  0.0028 & 0.0026 & 0.0028& 0.0033&0.0143&0.0202&  -0.0005 &-0.0004 \\
+                 Julia blp :)&  0.0027 & 0.0023 & 0.0027& 0.0034&0.0138&0.0167&    0.0 &0.0  \\
+              \bottomrule
+          \end{tabular}
+        \label{tab:merger_pyblp}
+      \end{table}
+\end{center}
+These estimates are very similar to my previous ones! The Post-Nabisco merger causes very small changes in equilibrium outcomes, whereas the GM-Quaker merger leads to more significant changes. The direction and magnitude of the changes are very close for my Julia implementation and the pyblp implementation, which is encouraging!
+\end{sol}
+
+
+    
+\end{document}
