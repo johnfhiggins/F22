@@ -97,19 +97,18 @@ function gmm_wrapper(theta2)
     val
 end
 function g!(storage, theta2)
-    storage = gmmobj(theta2, Data(), res, 1)[2]
+    storage .= gmmobj(theta2, Data(), res, 1)[2]
     #val = vec(val)
     #val
 end
 
 @unpack theti, thetj,x1, x2, IV, invA= Data()
 function gmm_estimation()
-    opt = optimize(gmm_wrapper, g!, res.theta2, BFGS())
+    opt = optimize(gmm_wrapper, g!, zeros(13), BFGS(),  Optim.Options(g_tol = 1e-20, iterations = 100, store_trace = true, show_trace = true))
     theta2 = opt.minimizer
     #theta2 = res.theta2
     varcov = var_cov(Data(), res)
-    ###I'm cheating rn; remove the absolute value!
-    se = sqrt.(diag(abs.(varcov)))
+    se = sqrt.(Complex.((diag(varcov))))
     theta2w = Array(sparse(theti, thetj,theta2 ))
     t = size(se,1) - size(theta2,1)
     se2w = Array(sparse(theti, thetj, se[t+1:size(se,1)]))
