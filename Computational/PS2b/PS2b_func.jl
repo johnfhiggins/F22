@@ -61,12 +61,13 @@ function quadrature_d2(data::Data, inside, bound_0, bound_1, ρ, σ)
     val = 0.0
     nodes_0 = log.(d2_quad[:,1]) .+ bound_0
     nodes_1 = log.(d2_quad[:,2]) .+ bound_1
-    jacob_0 = 1./(nodes_0)
-    jacob_1 = 1./(nodes_1)
+    jacob_0 = 1 ./(nodes_0)
+    jacob_1 = 1 ./(nodes_1)
     weights = d2_quad[:,3]
-    for i=1:n
-        val += weights[i]*cdf(dist, -inside - ρ*nodes_1[i])*(pdf(dist, nodes_1[i]-ρ*nodes_0[i])*pdf(dist, nodes_0[i]/σ)/σ)*jacob_0[i]*jacob_1[i]
-    end
+    #for i=1:n
+    #    val += weights[i]*cdf(dist, -inside - ρ*nodes_1[i])*(pdf(dist, nodes_1[i]-ρ*nodes_0[i])*pdf(dist, nodes_0[i]/σ)/σ)*jacob_0[i]*jacob_1[i]
+    #end
+    val = sum( weights .* cdf.(dist, -inside .- ρ .* nodes_1) .* (pdf.(dist, nodes_1 .- ρ .* nodes_0) .* pdf.(dist, nodes_0 ./ σ) ./ σ) .* jacob_0 .* jacob_1)
     val
 end
 
@@ -80,11 +81,11 @@ function likelihood(data::Data, T, X, Z, α, β, γ, ρ)
     if T ==1 
         val = cdf(dist, ind_0/σ)
     elseif T == 2
-        val = quadrature_d1(-ind_1, ind_0, ρ, σ)
+        val = quadrature_d1(data, -ind_1, ind_0, ρ, σ)
     elseif T == 3
-        val = quadrature_d2(-ind_2, ind_0, ind_1, ρ, σ)
+        val = quadrature_d2(data, -ind_2, ind_0, ind_1, ρ, σ)
     else
-        val = quadrature_d2(ind_2, ind_0, ind_1, ρ, σ)
+        val = quadrature_d2(data, ind_2, ind_0, ind_1, ρ, σ)
     end
     val
 end
