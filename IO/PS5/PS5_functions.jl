@@ -1,0 +1,6 @@
+df = DataFrame(readdlm("XMat.out"), :auto)
+display(df)
+rename!(df, [:county, :log_pop, :log_ret, :urban_pct, :midwest, :log_benton_dist, :south, :kmart, :walmart, :small_stores, :num_kmart, :num_walmart, :opt_1, :opt_2, :opt_3])
+CSV.write("Xmat.csv", df)
+probit_WM = glm(@formula(walmart ~ log_pop+log_ret+urban_pct+midwest+south +kmart), df, Binomial(), ProbitLink(), verbose=true)
+probit_KM = glm(@formula(kmart ~ log_pop+log_ret+urban_pct+midwest+south +walmart), df, Binomial(), ProbitLink(), verbose=true)

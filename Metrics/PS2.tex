@@ -1,0 +1,72 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Do not alter this block of commands.  If you're proficient at LaTeX, you may include additional packages, create macros, etc. immediately below this block of commands, but make sure to NOT alter the header, margin, and comment settings here. 
+\documentclass[12pt]{article}
+ \usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,amsfonts, enumitem, fancyhdr, color, hyperref,comment, graphicx, environ,mathtools, bbm, tikz, setspace, cleveref,listings, dcolumn}
+\usepackage{array, multirow, caption, booktabs}
+\usepackage{ mathrsfs }
+\usetikzlibrary{matrix,positioning}
+\tikzset{bullet/.style={circle,draw=black,inner sep=8pt}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\Var}{\text{Var}}
+\DeclareMathOperator*{\Cov}{\text{Cov}}
+
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\DeclareMathOperator{\eps}{\varepsilon}
+
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\pagestyle{fancy}
+\setlength{\headheight}{65pt}
+\newenvironment{problem}[2][Problem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{sol}
+    {\emph{Solution:}
+    }
+    {
+    \qed
+    }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\usepackage{xcolor}
+ 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\rhead{John Higgins\\Econ 715 \\ 26 October, 2022} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+I chose to discuss the paper by Pakes, Porter, Ho, and Ishii. The paper sets forth a framework the use of inequality constraints for the purposes of structural estimation. Under an assumption of utility maximization, the econometrician can infer bounds on the payoffs of chosen actions relative to the other options available to the agent. While the econometrician may have a noisy estimate of players' payoffs due to unobservable payoff-relevant factors, certain inequalities must hold in order for chosen actions to be optimal. The method of moment inequalities exploits this relationship and strives to at least partially identify structural parameters of interest (sometimes, point identification is possible, but not generally attainable).
+
+One application of moment inequality methods is estimating models of entry. The econometrician observes chosen actions as well as payoff-relevant data. However, there are many components of the underlying economic environment which are unobservable to the practitioner. For example, there may be heterogeneity in firms' costs or productivity which is not reflected in the data available to the researcher. These unobservable characteristics affect firms' profitability of entry and thus contribute to a selection problem: the firms which enter may be ones which have low cost shocks (or high productivity shocks), whereas firms which decide not to enter will be ones with unfavorable shocks. It is difficult in this context to identify model parameters, as the entry decision depends endogenously on idiosyncratic firm-level shocks. However, while point identification may be impossible, it is still possible to construct bounds on payoffs using an assumption of equilibrium play. 
+
+The framework has as its foundation the assumption that agents play strategies which maximize their payoff. Based on this assumption, it follows that the payoff of the chosen strategy must dominate all other strategies available to the player. This is the motivation for Assumption 1 (the Best Response Condition). An additional assumption which is made is that opponent actions and associated endogenous variables are conditionally independent of the action chosen by each player. This is formalized in Assumption 2 (the Counterfactual Condition), which requires that the mapping between players' actions and endogenous variables must remain the same even as players change their actions (possibly after conditioning on some additional exogenous variables).
+
+The authors then consider the context where the practitioner has some parametric estimate $r(\cdot, \theta)$ of the true payoff function $\pi(\cdot)$. For actions $d_i$ and $d_i'$ available to player $i$, opponent actions $d_{-i}$, exogenous regressor $z$, the practitioner would like to estimate $\Delta \pi(d_i, d'_i, d_{-i}, z)$. This represents the difference in payoff achieved by choosing action $d_i$ instead of $d'_i$ given opponent action profile $d_{-i}$ and exogenous regressor $z$. We would like to use $\Delta \pi(\cdot)$ and the fact that $\Delta \pi(d_i, d'_i, d_{-i}, z) \geq 0$ in equilibrium to form our moment inequalities. Unfortunately, the true determinants of payoffs are unobservable! We must instead use our estimate $r(\cdot)$ to approximate $\Delta pi(\cdot)$. In particular, the authors define $\Delta r(d_i, d'_i, d_{-i}, z, \theta)$ as the difference in the (approximate) payoff from playing $d_i$ over $d'_{i}$ given opponent action profile $d_{-i}$, exogenous variables $z$, and parameter $\theta$. Using these functions, they construct $\nu_{1,i,d, d'}$ as the difference between $\Delta \pi(d, d', d_{-i}, z)$ and its mean (which they denote $\nu_{1, i, d, d'}^{\pi}$) minus the difference between $\Delta r(d, d', d_{-i}, z, \theta)$ and its mean (denoted $\nu_{1, i, d, d'}^r$). They also define $\nu_{2, i, d, d'}$ as the difference in the expectation of $\Delta \pi(\cdot)$ and $\Delta r(\cdot)$. Intuitively, $\nu_2$ is the average amount by which the estimated difference in payoffs differs from the actual difference in payoffs. Together, $\nu_1$ and $\nu_2$ are disturbance terms which represent the unobserved discrepancies between estimated payoff differences and actual payoff differences. 
+
+Using $\nu_1$ and $\nu_2$, we can finally construct the elusive moment inequalities! In Assumption 3, the authors require that there exists some non-negative weight function $h$ which satisfies the following two inequalities:
+\[(a) \quad E\left[ \sum_{i=1}^n \sum_{d' \in D_i} h^i(d'; d_{i}, J_i, x_{-i}) \nu_{2, i, d_{i}, d'}\right] \leq 0\]
+\[(b) \quad E\left[ \sum_{i=1}^n \sum_{d' \in D_i} h^i(d'; d_{i}, J_i, x_{-i}) \nu_{1, i, d_{i}, d'}^r\right] \geq 0\] 
+Intuitively, $(a)$ requires that the (weighted) sum of the difference between $\Delta \pi(d_i, d', d_{-i}, z_i)$ and $\Delta r(d_i, d', d_{-i}, z_i, \theta)$ be negative. In other words, on average, we require that $\Delta r$ is an overestimate of the true difference in payoffs between playing the observed strategy and any alternatives $d'$ (or at least this is my interpretation!). Condition $(b)$ requires that the weighted deviation of $\Delta r(d', d_i, d_{-i}, z_i, \theta)$ from its mean must be less than zero. 
+
+Under Assumptions 1-3, we have the following system of moment inequalities:
+\[E\left[ \sum_{i=1}^n \sum_{d' \in D_i} h^i(d'; d_{i}, x_{-i}) \Delta r(d_i, d', d_{-i}, z_i, \theta_0)\right] \geq 0\]
+which holds at the true parameter $\theta_0$. We can define sample analogs of these inequalities in order to estimate $\theta_0$.
+
+Moment inequalities will generally only allow partial identification of $\theta_0$, rather than point identification. This means that while we can put bounds on the set of values which are consistent with our moment conditions, we cannot be sure exactly where the true value lies within the set we identify. The authors consider an empirical application (a model of ATM deployment with unobservable costs) where moment inequalities are used to construct bounds on unobservable structural parameters and thus partially identify the model. 
+
+I think the paper is very interesting and don't have much in the way of suggestions for improvement. I would be curious to understand how Assumptions 1-3 could be weakened and still have equation (5) (the moment inequalities) be valid. Assumptions 1 and 2 seem pretty standard, but 3 seems to be a bit more restrictive. Of course, there are many contexts where 3 is definitely plausible (particularly single-agent games or those with informational symmetry). As the authors note, it is only potentially problematic in games with asymmetric information. I'd be interested to see how we could relax the requirement on the structure of $\nu_1$ and $\nu_2$ and still achieve similar identification as this approach. 
+
+\end{document}

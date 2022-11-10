@@ -1,0 +1,314 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Do not alter this block of commands.  If you're proficient at LaTeX, you may include additional packages, create macros, etc. immediately below this block of commands, but make sure to NOT alter the header, margin, and comment settings here. 
+\documentclass[12pt]{article}
+ \usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,amsfonts, enumitem, fancyhdr, color, hyperref,comment, graphicx, environ,mathtools, bbm, tikz, setspace, cleveref,listings, dcolumn}
+\usepackage{array, multirow, caption, booktabs}
+\usepackage{ mathrsfs }
+\captionsetup[table]{name=Table}
+\renewcommand{\thetable}{\Roman{table}}
+\usetikzlibrary{matrix,positioning}
+\tikzset{bullet/.style={circle,draw=black,inner sep=8pt}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\Var}{\text{Var}}
+\DeclareMathOperator*{\Cov}{\text{Cov}}
+
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\DeclareMathOperator{\eps}{\varepsilon}
+
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\pagestyle{fancy}
+\setlength{\headheight}{65pt}
+\newenvironment{problem}[2][Problem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{sol}
+    {\emph{Solution:}
+    }
+    {
+    \qed
+    }
+
+\lstdefinestyle{myCustomMatlabStyle}{
+    %basicstyle=\ttfamily
+  language=Matlab,
+  numbers=left,
+  stepnumber=1,
+  numbersep=10pt,
+  tabsize=4,
+  showspaces=false,
+  showstringspaces=false
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\usepackage{xcolor}
+ 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\rhead{John Higgins\\Econ 761 \\ 14 November, 2022} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\begin{problem}{1}
+\end{problem}
+\begin{sol}
+
+    We use the following variables: log of the population, log of retail sales per capita, the urban ratio, a dummy for whether the county is in the Midwest, a dummy for whether the county is in the South, and the entry decision by the other firm ($\delta_i)$. We see that both firms have positive coefficients for all county-level variables. Furthermore, the presence of a rival firm reduces firm $i$'s probability of entry. The main limitation of this model is the fact that the entry decision of each firm is endogenous and should not be thought of as an exogenous regressor. Walmart's decision to enter depends on Kmart's entry decision, but simultaneously Kmart's entry decision depends on Walmart's entry decision. As the entry decisions of either firm are simultaneously determined, we cannot separately regress Walmart's probability of entry on Kmart's entry decision and vice versa, since each should affect the other if we assume firms are behaving strategically. 
+    \begin{table}[!htbp] \centering 
+      \caption{Probit Regressions, Walmart and Kmart} 
+      \label{} 
+    \begin{tabular}{@{\extracolsep{5pt}}lcc} 
+    \\[-1.8ex]\hline 
+    \hline \\[-1.8ex] 
+     & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
+    \cline{2-3} 
+    \\[-1.8ex] & Walmart & Kmart \\ 
+    \\[-1.8ex] & (1) & (2)\\ 
+    \hline \\[-1.8ex] 
+     Log of population & 1.647$^{***}$ & 1.747$^{***}$ \\ 
+      & (0.081) & (0.110) \\ 
+     Log of retail sales per capita  & 1.344$^{***}$ & 1.723$^{***}$ \\ 
+      & (0.115) & (0.147) \\ 
+     Urban ratio & 1.235$^{***}$ & 1.238$^{***}$ \\ 
+      & (0.185) & (0.229) \\ 
+     Midwest & 0.958$^{***}$ & 0.578$^{***}$ \\ 
+      & (0.135) & (0.148) \\ 
+     South & 1.543$^{***}$ & 0.328$^{**}$ \\ 
+      & (0.137) & (0.148) \\ 
+     $\delta_i$ & $-$0.817$^{***}$ & -0.710^{***} \\ 
+      & (0.109) & (0.113) \\ 
+     Constant & $-$17.554$^{***}$ & $-$21.536$^{***}$ \\ 
+      & (1.018) & (1.377) \\ 
+    \hline \\[-1.8ex] 
+    Observations & 2,065 & 2,065 \\ 
+    Log Likelihood & $-$788.029 & $-$566.926 \\ 
+    Akaike Inf. Crit. & 1,590.059 & 1,147.853 \\ 
+    \hline 
+    \hline \\[-1.8ex] 
+    \textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+    \end{tabular} 
+    \end{table} 
+\end{sol}
+\begin{problem}{2}
+\end{problem}
+\begin{sol}
+We now consider whether an instrumenting/control function approach may be useful. Suppose we do a probit regression of Walmart's probability of entry on the distance from Benton County (home of Walmart headquarters) and then use the predicted probability of Walmart entering in our probit regression for Kmart's entry decision. This could be a valid approach, since the distance of a given country from Benton county arguably affects the profitability of opening a Walmart location in the county. If the county is very close to Benton County, the logistical cost of opening a new location in that county is likely to be low (due to low cost of transportation, ease of corporate travel to and from the location, etc.). Conversely, if the new county is very far from Walmart headquarters, Walmart might face significantly more logistical hurdles if it were to build a new location there (increased time/cost of transportation, less seamless corporate integration, etc.). In summary, we can plausibly argue that the distance of the given county from the Walmart headquarters in Benton County affects the profitability of entry and thus impacts Walmart's entry decision. In order for this to be a valid instrument, however, the distance from Benton county must also not impact the profitability of Kmart entry. This is reasonable, since Kmart at the time was headquartered in Troy, Michigan, meaning that the distance of a county from Benton county likely has little (if any) first order impact on Kmart's logistics. It only indirectly affects Kmart's entry insofar as it affects Walmart's entry, but this is permissible.
+\end{sol}
+\begin{problem}{3}
+\end{problem}
+\begin{sol}
+  We now estimate two ``Bresnahan and Reiss'' ordered Probit models. The first specification is an ordered Probit regression of the number of large players on market-level characteristics, whereas the second specification is an ordered Probit on the total number of small and large players in the market (where small players are small retail stores). The estimates for each specification are included in Table II:
+    \begin{table}[!htbp] \centering 
+        \caption{Ordered Probit Regressions} 
+        \label{} 
+      \begin{tabular}{@{\extracolsep{5pt}}lcc} 
+      \\[-1.8ex]\hline 
+      \hline \\[-1.8ex] 
+       & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
+      \cline{2-3} 
+      \\[-1.8ex] & # of large stores & Total # of stores\\ 
+      \\[-1.8ex] & (1) & (2)\\ 
+      \hline \\[-1.8ex] 
+       Log of population & 1.775$^{***}$ & 1.388$^{***}$ \\ 
+        & (0.070) & (0.046) \\ 
+       Log retail & 1.527$^{***}$ & 0.828$^{***}$ \\ 
+        & (0.098) & (0.060) \\ 
+       Urban ratio & 1.310$^{***}$ & $-$0.746$^{***}$ \\ 
+        & (0.162) & (0.114) \\ 
+       Midwest & 0.855$^{***}$ & $-$0.193$^{**}$ \\ 
+        & (0.120) & (0.087) \\ 
+       South & 1.125$^{***}$ & 0.656$^{***}$ \\ 
+        & (0.118) & (0.086) \\ 
+      \hline \\[-1.8ex] 
+      Observations & 2,065 & 2,065 \\ 
+      \hline 
+      \hline \\[-1.8ex] 
+      \textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+      \end{tabular} 
+      \end{table} 
+      One thing we note here is that the coefficients for the regression with large stores only are broadly consistent with the results in Table II, albeit with some small differences. The coefficients are more different when we consider the ordered Probit model with both small and large players. Here, we see that the coefficient on the urban ratio and midwest are negative. Furthermore, even the positive coefficients are smaller than the ones in previous regressions. What is going on here? The answer lies in the homogeneity assumption of the ordered Probit regression. The ordered Probit regression model assumes that the identity of the firms is irrelevant for the entry decision (since we are regressing only on the total number of firms). This means a county with two small, local retail stores has the same realized level of the dependent variable as a county with both a Walmart and a Kmart. However, counties which only have two small local retailers are likely to be very different in characteristics from a county with two major retail operations! The reason why the urban ratio coefficient becomes negative is likely the following: small counties with a much smaller urban population may be more likely to have a bunch of small, local retail stores. This correlates to a relatively high number of total firms. Conversely, counties with a much larger urban population may have a Walmart and only a few local retail stores (because Walmart is only likely to enter if there is a significant urban population, and the entry of Walmart may have led smaller retail stores to exit). In the presence of this relationship, our regression model would find that the total number of retail stores is negatively associated with the urban ratio.
+
+      A problem with both models is the homogeneity assumption. Walmart is different from Kmart, and both are very different from small retail stores. For a given market, the entry decision of Walmart will be very different from the entry decision of a small retailer (holding competitors constant) due to differences in cost structure, logistical networks, scale, productivity, etc. Furthermore, Walmart's entry decision is going to be dramatically different if their opponent is Kmart versus a small retail store. Similarly, the entry (and exit) decisions of small retail stores are going to differ based on whether they are competing with two other small retail stores versus competing with a Walmart and a Kmart. In summary, there are many limitations in using an ordered Probit model to model the strategic considerations of firms.
+    \end{sol}
+\begin{problem}{4}
+\end{problem}
+\begin{sol}
+  We now aim to add heterogeneity to the model. Suppose that Walmart and Kmart play an entry game of incomplete information. The profit functions to firm $i$ in market $m$ given action $y$ is given by the following:
+  \[\pi_{im}(y) = y_{im}(x_{im} \beta_i + \Delta_i y_{-i} + \eps_i)\]
+  where $\beta_i$ and $\Delta_i$ are parameters, $x_{im}$ are firm-market level observables, $y_{-i}$ is the entry decision of the other firm, and $\eps_i$ is the unobservable part of profits. Suppose that $\eps_i \sim N(0,1)$. Let $y_{im}=1$ indicate that firm $i$ enters market $m$, and $y_{im} = 0 $ indicate that firm $i$ chooses not to enter $m$. This implies the following:
+  \[\pi_{im}(1) = x_{im} \beta_i + \Delta_i y_{-i} + \eps_i\]
+  \[\pi_{im}(0) = 0\]
+  We will use the framework for Bajari et al. to estimate $\beta_i$ and $\Delta_i$. We will have $x_{im}$ be the same county-level covariates used in previous regressions, with the inclusion of the log of distance from Benton County for Walmart. Let $\sigma_i(y_i = k \mid x_{im})$ indicate the probability that player $i$ chooses $y_i = k$ given state variables $x_{im}$. The expected payoff $\Pi_i$ to player $i$ is obtained by the following:
+  \[U_{i}(y_{im}, x_{im}, \eps_i; \beta) = \sum_{y_{-i}} \pi_{im}(y_{im}, y_{-i}, x_{im}, \beta) \sigma_{-i}(y_{-im}\mid x_{im}) + \eps_i \]
+  We can also define the deterministic component of $i$'s payoffs as the following:
+  \[\Pi_{i}(y_{im}, x_{im}, \eps_i; \beta) = \sum_{y_{-i}} \pi_{im}(y_{im}, y_{-i}, x_{im}, \beta) \sigma_{-i}(y_{-im}\mid x_{im}) \]
+  We can also deduce that the optimal action for player $i$ must satisfy the following:
+  \[\sigma_{i}(y_{im} \mid x_{im}) = P(U_{i}(y_{im}, x_{im}, \eps_i; \beta) > U_{i}(y_{jm}, x_{im}, \eps_i;\beta))\]
+  Let $\sigma_{w}(1 \mid x_{m})$ indicate the probability Walmart enters market $m$ given market-level state variables $x_m$. It follows that $\sigma_{w}(0\mid x_m) = 1 - \sigma_{w}(1 \mid x_{m})$ represents the probability Walmart doesn't enter. We define $\sigma_{k}(1 \mid x_m)$ and $\sigma_k(0 \mid x_m)$ similarly. We do not know these probabilities, but we may have estimates $\hat{\sigma}_w(1\mid x_m)$ and $\hat{\sigma}_k(1 \mid x_m)$. These estimates may be obtained parametrically or non-parametrically. We will estimate them parametrically using Probit regressions. Specifically, we do a probit regression of Walmart's entry based on the county level covariates in part 1 as well as the log of the distance from Benton County (we do not regress on Kmart's entry). Similarly, we estimate a Probit regression Kmart's entry decision on the county level covariates in part 1 (not including Walmart). 
+  
+  Given these estimated probabilities of entering, we can determine the payoffs to each firm of entering vs staying out. The expected utility of firm $i$ (with opponent $j$) from entering market $m$ is given by
+  \begin{align*}\hat{\Pi}_{i}(1, x_{im}) &= \hat{\sigma}_{j}(1, x_{jm})(x_{im}\beta_i + \Delta_i + \eps_i) + (1-\hat{\sigma}_j(1, x_{m}))(x_{im}\beta_i + \eps_i)\\
+    &= x_{im} \beta_i + \hat{\sigma}_j(1, x_{jm})\Delta_i + \eps_i
+  \end{align*}
+  We also find that 
+  \[\hat{\Pi}_i(0, x_{im}) = 0\]
+  Given that $\eps_i \sim N(0,1)$, we predict that Player $i$ will enter if and only if 
+  \begin{align*}&\Delta \hat{\Pi}_i(1,0, x_{im}, \beta) \geq 0 \\\iff& \hat{\Pi}_i(1, x_{im}, \beta) \geq 0\\
+    \iff &x_{im} \beta_i + \hat{\sigma}_j(1, x_{jm})\Delta_i + \eps_i \geq 0\\ \iff &\eps_i \geq -x_{im}\beta_i - \hat{\sigma}_j(1, x_{jm}) \Delta_i\\ \iff& \eps_i \leq x_{im}\beta_i + \hat{\sigma}_j(1, x_{jm}) \Delta_i
+  \end{align*}
+  where the last line follows from the symmetry of the Normal distribution. It then follows that
+  \begin{align*}\hat{\sigma}_i(1, x_{im}) &= P(\Delta \hat{\Pi}_i(1,0, x_{im}, \beta) \geq 0)\\
+    & = P( \eps_i \leq x_{im}\beta_i + \hat{\sigma}_j(1, x_{jm}) \Delta_i) \\
+    &= \Phi(x_{im}\beta_i + \hat{\sigma}_j(1, x_{jm}) \Delta_i)\\& = \Phi(\hat{\Pi}_i(1, x_{im}, \beta))\end{align*}
+  Hence,
+  \begin{align*}\hat{\Pi}_i(1, x_{im}) = \Phi^{-1}(\hat{\sigma}_i(1, x_{im})) = x_{im} \beta_i + \Delta_i \hat{\sigma}_{j}(1,s) + \eps_i
+  \end{align*}
+  In other words, we can back out the expected entry profits implied by the estimated entry probability using the inverse quantile function of the Normal distribution. Thus, in order to estimate $\beta_i$ and $\Delta_i$, we can simply regress $\Phi^{-1}(\hat{\sigma}_i(1, x_{im}))$ on $x_{im}$ and $\hat{\sigma}_{j}(1,s)$ using Weighted Least Squares. We include the results of our regression below:
+  \begin{table}[!htbp] \centering 
+    \caption{Two-stage semi-parametric WLS, Probit shocks} 
+    \label{} 
+  \begin{tabular}{@{\extracolsep{5pt}}lcc} 
+  \\[-1.8ex]\hline 
+  \hline \\[-1.8ex] 
+   & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
+  \cline{2-3} 
+  \\[-1.8ex] & Walmart & Kmart \\ 
+  \\[-1.8ex] & (1) & (2)\\ 
+  \hline \\[-1.8ex] 
+   Log population & 1.823$^{***}$ & 1.758$^{***}$ \\ 
+    & (0.003) & (0.011) \\ 
+   Log retail & 1.544$^{***}$ & 1.730$^{***}$ \\ 
+    & (0.002) & (0.006) \\ 
+   Log Benton distance & $-$1.079$^{***}$ &  \\ 
+    & (0.002) &  \\ 
+   Urban ratio & 1.306$^{***}$ & 1.236$^{***}$ \\ 
+    & (0.004) & (0.020) \\ 
+   Midwest & 0.002 & 0.580$^{***}$ \\ 
+    & (0.002) & (0.018) \\ 
+   South & 0.702$^{***}$ & 0.340$^{***}$ \\ 
+    & (0.002) & (0.018) \\ 
+   $\Delta_{i}$ & $-$0.714$^{***}$ & -0.764 \\ 
+    & (0.022) & (0.023)  \\ 
+   Constant & $-$12.236$^{***}$ & $-$21.612$^{***}$ \\ 
+    & (0.014) & (0.052) \\ 
+  \hline \\[-1.8ex] 
+  Observations & 2,065 & 2,065 \\ 
+  R$^{2}$ & 0.997 & 0.995 \\ 
+  Adjusted R$^{2}$ & 0.997 & 0.995 \\ 
+  Residual Std. Error & 1.262 (df = 2057) & 1.471 (df = 2058) \\ 
+  F Statistic & 115,641.400$^{***}$ (df = 7; 2057) & 71,692.330$^{***}$ (df = 6; 2058) \\ 
+  \hline 
+  \hline \\[-1.8ex] 
+  \textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+  \end{tabular} 
+  \end{table} 
+
+
+  We find that the direction and magnitude of the coefficients is similar to what we have found previously in Table I, albeit with some slight differences. Namely, the coefficient estimates for each county-level covariate seems to be higher for Walmart than the initial regression in Table I, whereas the impact of KMart entry appears to be smaller in absolute value. The coefficient estimates for Kmart do not differ significantly from those found in Table I.
+
+
+  Alternatively, based on the approach outlined in section 4.2 of the paper, we can form moments using the observed choices and the choice probabilities $(\sigma(1, \hat{\sigma}_k, x_{wm}))$ implied by the first stage estimated probabilities $(\hat{\sigma}_k)$ and parameter vector $\theta_i$. Specifically, we form the moment vectors
+  \[g_w(\theta) = \begin{bmatrix} y_{wm} - \sigma(1, \hat{\sigma}_k, x_{wm}, \theta_w) \end{bmatrix}_{m=1}^M \]
+  \[g_k(\theta) = \begin{bmatrix} y_{km} - \sigma(1, \hat{\sigma}_w, x_{wm}, \theta_k) \end{bmatrix}_{m=1}^M \]
+  where $\theta_w = (\beta_w, \Delta_w)$ and $\theta_k = (\beta_k, \Delta_k)$. Assuming a probit specification, we have that 
+  \[ \sigma(1, \hat{\sigma}_k, x_{wm}, \theta_w) = \Phi(x_{wm}\beta_w + \Delta_w \hat{\sigma}_k(1 \mid x_{m}))\]
+  Given these moment vectors, we can construct sample moment vectors and use GMM. We use the WLS coefficient estimates as the initial value for our GMM estimation. We list our coefficients in Table IV alongside our WLS estimates. They are pretty similar to our WLS coefficient estimates, which is mildly reassuring. GMM seems to find smaller values for $\Delta_i$.
+
+  \begin{table}[!htbp] \centering 
+    \caption{Two-stage semi-parametric WLS and GMM, Probit shocks} 
+    \label{} 
+  \begin{tabular}{@{\extracolsep{5pt}}lcccc} 
+  \\[-1.8ex]\hline 
+  \hline \\[-1.8ex] 
+   & \multicolumn{2}{c}{Walmart:}& 
+    \multicolumn{2}{c}{KMart:} \\
+   \\\cline{2-3}  \cline{4-5} \\
+  \\[-1.8ex] & WLS & GMM & WLS & GMM \\ 
+  \\[-1.8ex] & (1) & (2) & (3) & (4)\\ 
+  \hline \\[-1.8ex] 
+   Log population & 1.823$^{***}$& 1.887 & 1.758$^{***}$ & 1.810 \\ 
+    & (0.003)& & (0.011)& \\ 
+   Log retail & 1.544$^{***}$ & 1.550& 1.730$^{***}$ & 1.666\\ 
+    & (0.002)& & (0.006)& \\ 
+   Log Benton distance & $-$1.079$^{***}$ &-1.152   \\ 
+    & (0.002)& &  \\ 
+   Urban ratio & 1.306$^{***}$ &1.540& 1.236$^{***}$& 1.925 \\ 
+    & (0.004)& & (0.020)& \\ 
+   Midwest & 0.002 & 0.061& 0.580$^{***}$ & 1.014 \\ 
+    & (0.002)& & (0.018)& \\ 
+   South& 0.702$^{***}$ & 0.682& 0.340$^{***}$ & 0.132 \\ 
+    & (0.002)& & (0.018)& \\ 
+   $\Delta_{i}$ & $-$0.714$^{***}$ & -0.400& -0.764 & -0.673 \\ 
+    & (0.022)& & (0.023)&  \\ 
+   Constant & $-$12.236$^{***}$ &-12.166& $-$21.612$^{***}$ & -21.728\\ 
+    & (0.014) &  & (0.052)&  \\ 
+  \hline \\[-1.8ex] 
+ \hline 
+  \hline \\[-1.8ex] 
+  \textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+  \end{tabular} 
+  \end{table} 
+
+
+  To compute standard errors, I would use the fact that, if $N$ is the sample size,
+  \[\sqrt{N}(\hat{\theta} - \theta_0) \rightarrow_d N(0, (\hat{\Gamma}' \hat{\Omega}^{-1} \hat{\Gamma})^{-1})\]
+  where
+  \[\hat{\Gamma} = \frac{\partial E[g(\theta)]}{\partial \theta'}\rVert_{\theta = \hat{\theta}}\]
+  and 
+  \[\Omega = E[g(\hat{\theta})g(\hat{\theta})']\]
+  We then have that $N Var(\hat{\theta}) \rightarrow_p (\hat{\Gamma}' \hat{\Omega}^{-1} \hat{\Gamma})^{-1}$. We can use the diagonal elements of the variance covariance matrix to construct the standard errors.
+
+
+  Finally, if we want to go full parametric, we can do a probit regression of entry based on market level covariates and our first-stage predicted probabilities of entry. I have included the results for this specification in Table V. Of course, the coefficients are different due to the fact that we are assuming a Probit regression model, and the interpretation of Probit coefficients is different than that of least squares (since the marginal impact of a regressor depends on the value of each of the other regressors, meaning that we don't have the same natural interpretation as we do with OLS where the coefficients are the marginal change in the dependent variable). Also, it is well known that the scale parameter for Probit regression is not identified, so the magnitude of these coefficients is not uniquely identified. Nonetheless, the sign of each of the coefficients agrees with what we have found previously.
+  \begin{table}[!htbp] \centering 
+    \caption{Fully parametric two-stage Probit} 
+    \label{} 
+  \begin{tabular}{@{\extracolsep{5pt}}lcc} 
+  \\[-1.8ex]\hline 
+  \hline \\[-1.8ex] 
+   & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
+  \cline{2-3} 
+  \\[-1.8ex] & Walmart & Kmart  \\ 
+  \\[-1.8ex] & (1) & (2)\\ 
+  \hline \\[-1.8ex] 
+   Log population & 4.802$^{***}$ & 4.635$^{***}$ \\ 
+    & (0.230) & (0.254) \\ 
+   Log retail& 4.352$^{***}$ & 3.828$^{***}$ \\ 
+    & (0.247) & (0.233) \\ 
+   Log Benton dist& $-$1.462$^{***}$ &  \\ 
+    & (0.120) &  \\ 
+   Urban ratio & 3.648$^{***}$ & 3.211$^{***}$ \\ 
+    & (0.289) & (0.301) \\ 
+   Midwest& 0.579$^{***}$ & 1.966$^{***}$ \\ 
+    & (0.181) & (0.186) \\ 
+   South & 1.039$^{***}$ & 2.705$^{***}$ \\ 
+    & (0.182) & (0.230) \\ 
+   $\Delta_i$& $-$9.368$^{***}$ & -7.103$^{***}$ \\ 
+    & (0.533) &  (0.464)\\ 
+   Constant & $-$41.901$^{***}$ & $-$47.444$^{***}$ \\ 
+    & (2.445) & (2.547) \\ 
+  \hline \\[-1.8ex] 
+  Observations & 2,065 & 2,065 \\ 
+  Log Likelihood & $-$455.661 & $-$399.776 \\ 
+  Akaike Inf. Crit. & 927.321 & 813.552 \\ 
+  \hline 
+  \hline \\[-1.8ex] 
+  \textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+  \end{tabular} 
+  \end{table} 
+
+\end{sol}
+
+
+
+\end{document}
