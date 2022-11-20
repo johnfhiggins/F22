@@ -125,7 +125,7 @@ function compute_ρ(data, W, λ_p)
     ρ
 end
 
-function GMM_objective(data, λ_p_vec; method, λ_hat)
+function GMM_objective(data, λ_p_vec; method=nothing, λ_hat=nothing)
     @unpack Z = data
     λ_p = λ_p_vec[1] 
     if method == "two-step"
@@ -135,7 +135,7 @@ function GMM_objective(data, λ_p_vec; method, λ_hat)
         ρ_2 = compute_ρ(data, W_2, λ_p)
         val = ρ_2' * Z * W_2 * Z' * ρ_2
         return val
-    else #one step
+    else
         W = inv(Z' * Z)
         ρ = compute_ρ(data, W, λ_p)
         val = ρ' * Z * W * Z' * ρ
@@ -148,9 +148,9 @@ function λ_grid_search(data, W)
     λ_grid = collect(0.0:0.01:1.0)
     val_array = zeros(length(λ_grid),2)
     for (i,λ_p) in enumerate(λ_grid)
-        ρ = compute_ρ(data, W, λ_p)
-        println(i/length(λ_grid))
-        val_array[i,:] .= [ρ' * Z * W * Z' * ρ,  λ_p]
+        #ρ = compute_ρ(data, W, λ_p)
+        #println(i/length(λ_grid))
+        val_array[i,:] .= [GMM_objective(data, λ_p, method="one-step"),  λ_p]
     end
     val_array
 end
