@@ -8,3 +8,6 @@ data = Data()
 
 β_IV_2 = IV(data.X, data.Z, inv(data.Z' * data.Z), test)
 test2 =  BLP_contraction(data, data.shares, β_IV_2, 0.6)
+
+
+test = λ_grid_search(data, inv(data.Z' * data.Z))

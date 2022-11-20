@@ -9,7 +9,7 @@
     #select the relevant columns from the data and convert into array 
     char ::Array{Float64} = Array(char_df) 
     δ_iia ::Vector{Float64} = identity.(Array(char_df[!, "delta_iia"]))
-    Z ::Array{Float64} = Array(IV_df[!, Not([:Model_id, :Year])]) 
+    Z ::Array{Float64} = hcat(X[:,2:size(X,2)], Array(IV_df[!, [:i_import, :diffiv_local_0, :diffiv_local_1, :diffiv_local_2, :diffiv_local_3, :diffiv_ed_0 ]]))
     income :: Array{Float64} = Array(type_df)
     min_year :: Int64 = Int64(minimum(char_df[!, "Year"]))
     max_year :: Int64 = Int64(maximum(char_df[!, "Year"]))
@@ -73,7 +73,7 @@ function BLP_contraction_mkt(income, price, shares, δ_t, λ_p)
     σ_pred = share_pred(income, μ, δ_0)
     δ_1 = δ_0 + log.(shares) - log.(σ_pred)
     error = maximum(abs.(δ_1 - δ_0))
-    δ_0 = δ_1
+    δ_0 = copy(δ_1)
     ε_newt = 1
     n =1
     while error > ε
@@ -83,14 +83,14 @@ function BLP_contraction_mkt(income, price, shares, δ_t, λ_p)
             σ_pred = share_pred(income, μ, δ_0)
             δ_1 = δ_0 + log.(shares) - log.(σ_pred)
             error = maximum(abs.(δ_1 - δ_0))
-            δ_0 = δ_1
+            δ_0 = copy(δ_1)
         else
             σ_ind = ind_share_pred(μ, δ_0)
             σ_pred = share_pred(income, μ, δ_0)
             Δ = jacobian(σ_ind)
             δ_1 = δ_0 +(inv(Δ ./ σ_pred))*(log.(shares) - log.(σ_pred))
             error = maximum(abs.(δ_1 - δ_0))
-            δ_0 = δ_1
+            δ_0 = copy(δ_1)
         end
     end
     #println("Convergence!")
@@ -104,7 +104,7 @@ function BLP_contraction(data::Data, λ_p)
         mkt_indicator = mkt_index[:, index]
         X_t = X[mkt_indicator,:]
         price_t = X_t[:,1]
-        X_t = X_t[:,2:size(X_t,2)]
+        #X_t = X_t[:,2:size(X_t,2)]
         δ_t = δ_iia[mkt_indicator]
         shares_t = shares[mkt_indicator]
         δ[mkt_indicator] = BLP_contraction_mkt(income, price_t, shares_t, δ_t, λ_p)
@@ -119,19 +119,17 @@ end
 
 #function GMM
 
-function λ_grid_search(data)
+function λ_grid_search(data, W)
     @unpack X, Z = data
-    λ_grid = collect(0.0:0.1:1.0)
-    val_array = zeros(length(λ_grid))
-    W = inv(Z' * Z)
-    inner = Z * W * Z'
+    λ_grid = collect(0.0:0.01:1.0)
+    val_array = zeros(length(λ_grid),2)
     for (i,λ_p) in enumerate(λ_grid)
         δ = BLP_contraction(data, λ_p)
         β_IV = IV(X, Z, W, δ)
         exog = X * β_IV
         ρ = δ - exog
-        println(i/10)
-        val_array[i] = ρ' * inner * ρ
+        println(i/length(λ_grid))
+        val_array[i,:] .= [ρ' * Z * W * Z' * ρ,  λ_p]
     end
     val_array
 end
