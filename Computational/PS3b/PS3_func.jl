@@ -30,9 +30,10 @@ end
 
 function μ_comp(income, price, λ_p)
     μ = zeros(length(price), length(income))
-    for i=1:length(income)
-        μ[:,i] .= λ_p .* income[i] .* price
-    end
+    μ = λ_p * price * income'
+    #for i=1:length(income)
+    ##    μ[:,i] .= λ_p .* income[i] .* price
+    #end
     μ
 end
 
@@ -56,7 +57,7 @@ function share_pred(income, μ, δ)
     share
 end
 
-#to do: jacobian is messed up
+
 function jacobian(σ)
     J_t = size(σ, 1)
     R = size(σ, 2)
@@ -64,10 +65,11 @@ function jacobian(σ)
     Δ
 end
 
-function BLP_contraction_mkt( X, income, price, shares, δ_t, α, β, λ_p)
+function BLP_contraction_mkt(income, price, shares, δ_t, λ_p)
     ε = 1e-12
     μ = μ_comp(income, price, λ_p)
     δ_0 = δ_t
+    σ_ind = ind_share_pred(μ, δ_0)
     σ_pred = share_pred(income, μ, δ_0)
     δ_1 = δ_0 + log.(shares) - log.(σ_pred)
     error = maximum(abs.(δ_1 - δ_0))
@@ -83,8 +85,9 @@ function BLP_contraction_mkt( X, income, price, shares, δ_t, α, β, λ_p)
             error = maximum(abs.(δ_1 - δ_0))
             δ_0 = δ_1
         else
+            σ_ind = ind_share_pred(μ, δ_0)
             σ_pred = share_pred(income, μ, δ_0)
-            Δ = jacobian(σ_pred)
+            Δ = jacobian(σ_ind)
             δ_1 = δ_0 +(inv(Δ ./ σ_pred))*(log.(shares) - log.(σ_pred))
             error = maximum(abs.(δ_1 - δ_0))
             δ_0 = δ_1
@@ -94,11 +97,9 @@ function BLP_contraction_mkt( X, income, price, shares, δ_t, α, β, λ_p)
     δ_1
 end 
 
-function BLP_contraction(data::Data, β_iv, λ_p)
+function BLP_contraction(data::Data, λ_p)
     @unpack char, X, shares, δ_iia, income, year_range, mkt_index= data
     δ = zeros(size(char,1))
-    α = β_iv[1]
-    β = β_iv[2:length(β_iv)]
     for (index, year) in enumerate(year_range) 
         mkt_indicator = mkt_index[:, index]
         X_t = X[mkt_indicator,:]
@@ -106,7 +107,7 @@ function BLP_contraction(data::Data, β_iv, λ_p)
         X_t = X_t[:,2:size(X_t,2)]
         δ_t = δ_iia[mkt_indicator]
         shares_t = shares[mkt_indicator]
-        δ[mkt_indicator] = BLP_contraction_mkt(X_t, income, price_t, shares_t, δ_t, α, β, λ_p)
+        δ[mkt_indicator] = BLP_contraction_mkt(income, price_t, shares_t, δ_t, λ_p)
     end
     δ
 end
@@ -118,15 +119,16 @@ end
 
 #function GMM
 
-function λ_grid_search(data, β_IV)
+function λ_grid_search(data)
     @unpack X, Z = data
     λ_grid = collect(0.0:0.1:1.0)
     val_array = zeros(length(λ_grid))
-    exog = X * β_IV
     W = inv(Z' * Z)
     inner = Z * W * Z'
     for (i,λ_p) in enumerate(λ_grid)
-        δ = BLP_contraction(data, β_IV, λ_p)
+        δ = BLP_contraction(data, λ_p)
+        β_IV = IV(X, Z, W, δ)
+        exog = X * β_IV
         ρ = δ - exog
         println(i/10)
         val_array[i] = ρ' * inner * ρ
