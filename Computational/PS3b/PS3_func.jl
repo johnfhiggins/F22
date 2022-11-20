@@ -117,19 +117,41 @@ function IV(X, Z, W, δ)
     β
 end
 
-#function GMM
+function compute_ρ(data, W, λ_p)
+    @unpack X, Z = data
+    δ = BLP_contraction(data, λ_p)
+    β_IV = IV(X, Z, W ,δ)
+    ρ = δ - X*β_IV
+    ρ
+end
+
+function GMM_objective(data, λ_p_vec; method, λ_hat)
+    @unpack Z = data
+    λ_p = λ_p_vec[1] 
+    if method == "two-step"
+        W_1 = inv(Z' * Z)
+        ρ_1 = compute_ρ(data, W_1, λ_hat)
+        W_2 = inv((Z .* ρ_1)' * (Z .* ρ_1))
+        ρ_2 = compute_ρ(data, W_2, λ_p)
+        val = ρ_2' * Z * W_2 * Z' * ρ_2
+        return val
+    else #one step
+        W = inv(Z' * Z)
+        ρ = compute_ρ(data, W, λ_p)
+        val = ρ' * Z * W * Z' * ρ
+        return val
+    end
+end
 
 function λ_grid_search(data, W)
     @unpack X, Z = data
     λ_grid = collect(0.0:0.01:1.0)
     val_array = zeros(length(λ_grid),2)
     for (i,λ_p) in enumerate(λ_grid)
-        δ = BLP_contraction(data, λ_p)
-        β_IV = IV(X, Z, W, δ)
-        exog = X * β_IV
-        ρ = δ - exog
+        ρ = compute_ρ(data, W, λ_p)
         println(i/length(λ_grid))
         val_array[i,:] .= [ρ' * Z * W * Z' * ρ,  λ_p]
     end
     val_array
 end
+
