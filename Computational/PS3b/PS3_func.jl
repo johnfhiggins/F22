@@ -94,8 +94,8 @@ function BLP_contraction_mkt( X, income, price, shares, δ_t, α, β, λ_p)
     δ_1
 end 
 
-function BLP_contraction(data::Data, shares, β_iv, λ_p)
-    @unpack char, X, δ_iia, income, year_range, mkt_index= data
+function BLP_contraction(data::Data, β_iv, λ_p)
+    @unpack char, X, shares, δ_iia, income, year_range, mkt_index= data
     δ = zeros(size(char,1))
     α = β_iv[1]
     β = β_iv[2:length(β_iv)]
@@ -116,8 +116,20 @@ function IV(X, Z, W, δ)
     β
 end
 
-
+#function GMM
 
 function λ_grid_search(data, β_IV)
-    λ_grid = collect(0.0:0.01:1.0)
-    for λ_p in λ_grid
+    @unpack X, Z = data
+    λ_grid = collect(0.0:0.1:1.0)
+    val_array = zeros(length(λ_grid))
+    exog = X * β_IV
+    W = inv(Z' * Z)
+    inner = Z * W * Z'
+    for (i,λ_p) in enumerate(λ_grid)
+        δ = BLP_contraction(data, β_IV, λ_p)
+        ρ = δ - exog
+        println(i/10)
+        val_array[i] = ρ' * inner * ρ
+    end
+    val_array
+end
