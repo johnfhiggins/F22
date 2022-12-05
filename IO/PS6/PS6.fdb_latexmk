@@ -1,6 +1,6 @@
 # Fdb version 3
-["pdflatex"] 1670212430 "/Users/johnhiggins/Documents/F22/IO/PS6/PS6.tex" "PS6.pdf" "PS6" 1670212431
-  "/Users/johnhiggins/Documents/F22/IO/PS6/PS6.tex" 1670212428 10616 4c9ee248a7afce340ec81bf1546f8788 ""
+["pdflatex"] 1670260949 "/Users/johnhiggins/Documents/F22/IO/PS6/PS6.tex" "PS6.pdf" "PS6" 1670260951
+  "/Users/johnhiggins/Documents/F22/IO/PS6/PS6.tex" 1670260949 10703 f2f91c497027eae5711a17eae12656ed ""
   "/usr/local/texlive/2022/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2022/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/local/texlive/2022/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -182,13 +182,13 @@
   "Bid_2.png" 1669763736 57425 2a7c96e549a38bb098a972a13e0360b8 ""
   "Bid_3.png" 1669763730 57366 ad33a1c05ff1a1154a20ca490a6a8ab4 ""
   "Bid_4.png" 1669763722 56996 1f09e78f4fc5d2482d9a838e42a69b35 ""
-  "CDF_val.png" 1669851111 81236 622e9cdace4319d5468fc652ffe4ff77 ""
-  "Marginal SIPV.png" 1670212372 76034 d084dea0bc0de71cce085e5c72cea06a ""
+  "CDF_val.png" 1670260589 75768 d6082e6e3fcb43db43baf41a7302aa26 ""
+  "Marginal SIPV.png" 1670260818 75715 0fdb8847927e5c98ee3524880ba7ff16 ""
   "Marginal_plot.png" 1669851044 108314 9565f5347f8bd0d5413d44bc139f6eec ""
-  "PS6.aux" 1670212431 1385 b89806163328efb4c1a3ff4b9b32a6f7 "pdflatex"
+  "PS6.aux" 1670260950 1385 70544a8781282ecf640a8ee7559b8763 "pdflatex"
   "PS6.out" 0 -1 0 "pdflatex"
-  "PS6.tex" 1670212428 10616 4c9ee248a7afce340ec81bf1546f8788 ""
-  "SIPV_CDF.png" 1670212393 64405 20102482c4fbd5cc6aa8d8144d1f936f ""
+  "PS6.tex" 1670260949 10703 f2f91c497027eae5711a17eae12656ed ""
+  "SIPV_CDF.png" 1670260843 61762 606e2d686f113f1b95443f1a82cd1c60 ""
   "Valuation_Dist.png" 1669850978 81714 8e3dd4f80e71e2e34bc315ce2784b160 ""
   (generated)
   "PS6.aux"

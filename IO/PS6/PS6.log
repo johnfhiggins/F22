@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.6)  4 DEC 2022 21:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.6)  5 DEC 2022 11:22
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -746,40 +746,40 @@ File: Marginal_plot.png Graphic file (type png)
 Package pdftex.def Info: Marginal_plot.png  used on input line 150.
 (pdftex.def)             Requested size: 377.60725pt x 326.11536pt.
  [4]
-<CDF_val.png, id=46, 839.135pt x 724.7075pt>
+<CDF_val.png, id=46, 811.03pt x 671.50874pt>
 File: CDF_val.png Graphic file (type png)
 <use CDF_val.png>
 Package pdftex.def Info: CDF_val.png  used on input line 156.
-(pdftex.def)             Requested size: 377.60725pt x 326.11536pt.
+(pdftex.def)             Requested size: 364.96013pt x 302.17615pt.
  [5 <./Marginal_plot.png>]
-<Marginal SIPV.png, id=52, 947.54pt x 587.19376pt>
+<Marginal SIPV.png, id=52, 811.03pt x 671.50874pt>
 File: Marginal SIPV.png Graphic file (type png)
 <use Marginal SIPV.png>
 Package pdftex.def Info: Marginal SIPV.png  used on input line 166.
-(pdftex.def)             Requested size: 426.38905pt x 264.23474pt.
+(pdftex.def)             Requested size: 364.96013pt x 302.17615pt.
  [6 <./CDF_val.png>]
-<SIPV_CDF.png, id=58, 947.54pt x 587.19376pt>
+<SIPV_CDF.png, id=58, 811.03pt x 671.50874pt>
 File: SIPV_CDF.png Graphic file (type png)
 <use SIPV_CDF.png>
 Package pdftex.def Info: SIPV_CDF.png  used on input line 167.
-(pdftex.def)             Requested size: 426.38905pt x 264.23474pt.
- [7 <./Marginal SIPV.png> <./SIPV_CDF.png>] (./PS6.aux)
+(pdftex.def)             Requested size: 364.96013pt x 302.17615pt.
+ [7 <./Marginal SIPV.png> <./SIPV_CDF.png>] [8] (./PS6.aux)
 Package rerunfilecheck Info: File `PS6.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 26337 strings out of 478268
- 495193 string characters out of 5846348
+ 26338 strings out of 478268
+ 495199 string characters out of 5846348
  758945 words of memory out of 5000000
  44102 multiletter control sequences out of 15000+600000
  475404 words of font info for 52 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,12n,89p,1031b,446s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on PS6.pdf (7 pages, 520872 bytes).
+Output written on PS6.pdf (8 pages, 512506 bytes).
 PDF statistics:
- 105 PDF objects out of 1000 (max. 8388607)
- 61 compressed objects within 1 object stream
- 10 named destinations out of 1000 (max. 500000)
+ 109 PDF objects out of 1000 (max. 8388607)
+ 64 compressed objects within 1 object stream
+ 11 named destinations out of 1000 (max. 500000)
  58 words of extra memory for PDF output out of 10000 (max. 10000000)
 

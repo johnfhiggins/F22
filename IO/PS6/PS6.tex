@@ -151,7 +151,7 @@ The correlation between bidders' expected valuations are all very close to zero,
     \end{center}
     While the overall shape of the marginal distribution is similar to each of the individual marginal distributions, it doesn't seem to perfectly align with the data. Namely, bidder 1's marginal distribution is significantly different from the estimated distribution. The marginals of bidders 2-4 seem to align more closely with the marginal distribution under symmetry and independence. I
 
-    I also include the cdf of the marginal distribution below, with the individual bidders' valuation cdfs plotted in different colors for comparison. Again, we see that bidders 2-4 appear to be similar, whereas bidder 1 is different.
+    I also include the empirical cdf of the marginal distribution below, with the individual bidders' valuation empirical cdfs plotted in different colors for comparison. Again, we see that bidders 2-4 appear to be similar, whereas bidder 1 is different.
     \begin{center}
         \includegraphics[scale=0.45]{CDF_val.png}
     \end{center}
@@ -161,12 +161,12 @@ The correlation between bidders' expected valuations are all very close to zero,
 \begin{sol}
     I now re-estimate the model by imposing the assumption of symmetric independent private values from the onset. Under this assumption, each bidder's equilibrium bids will satisfy the following:
     \[u_i = b_i + \frac{G(b_i)}{(n-1)g(b_i)}\]
-    We non-parametrically estimate the empirical marginal distribution of bids $G$ (as well as the corresponding density $g$) using kernel estimation. Using these estimates, we then find the implied bidder valuations. I estimate the density of the resulting marginal distribution non-parametrically and plot it alongside the previous marginal density (when we didn't initially assume SIPV). I have also plotted the CDF of each distribution.
+    We non-parametrically estimate the empirical marginal distribution of bids $G$ (as well as the corresponding density $g$) using kernel estimation. Using these estimates, we then find the implied bidder valuations. I estimate the density of the resulting marginal distribution non-parametrically and plot it alongside the previous marginal density (when we didn't initially assume SIPV). I have also plotted the empirical CDF of the distribution of valuations.
     \begin{center}
         \includegraphics[scale=0.45]{Marginal SIPV.png}\\
         \includegraphics[scale=0.45]{SIPV_CDF.png}
     \end{center}
-    Since the estimated marginal distribution under the initial assumption of SIPV is quite different the previously-estimated marginal, it seems like the SIPV assumption is not quite valid.
+    Since the estimated marginal distribution under the initial assumption of SIPV is quite different the previously-estimated marginal (and the CDFs differ significantly as well), it seems like the SIPV assumption is not quite valid.
 \end{sol}
 
 
