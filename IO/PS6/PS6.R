@@ -13,16 +13,18 @@ kd_est <- data.frame(grid)
 kd_est$G <- 0
 kd_est$g <- 0
 for (ind in 1:length(grid)){
-  m <- grid[ind]
-  kd_est$G1[ind] <- (1/(h))*mean((dnorm((m - fpa$V1)/h)*(fpa$M1 < m) ))#+ dnorm((m - fpa$V2)/h)*(fpa$M2 < m) + dnorm((m - fpa$V3)/h)*(fpa$M3 < m)+ dnorm((m - fpa$V4)/h)*(fpa$M4 < m) ))
-  kd_est$G2[ind] <- (1/(h))*mean((dnorm((m - fpa$V2)/h)*(fpa$M2< m) ))
-  kd_est$G3[ind] <- (1/(h))*mean((dnorm((m - fpa$V3)/h)*(fpa$M3< m) ))
-  kd_est$G4[ind] <- (1/(h))*mean((dnorm((m - fpa$V4)/h)*(fpa$M4< m) ))
-  kd_est$g1[ind] <- (1/(h^2))*mean(dnorm((m - fpa$V1)/h)*dnorm((m - fpa$M1)/h))# + dnorm((m - fpa$V2)/h)*dnorm((m - fpa$M2)/h) + dnorm((m - fpa$V3)/h)*dnorm((m - fpa$M3)/h) + dnorm((m - fpa$V4)/h)*dnorm((m - fpa$M4)/h) )
-  kd_est$g2[ind] <- (1/(h^2))*mean(dnorm((m - fpa$V2)/h)*dnorm((m - fpa$M2)/h))
-  kd_est$g3[ind] <- (1/(h^2))*mean(dnorm((m - fpa$V3)/h)*dnorm((m - fpa$M3)/h))
-  kd_est$g4[ind] <- (1/(h^2))*mean(dnorm((m - fpa$V4)/h)*dnorm((m - fpa$M4)/h))
+  b <- grid[ind]
+  kd_est$G1[ind] <- (1/(h))*mean((dnorm((b - fpa$V1)/h)*(fpa$M1 < b) ))
+  kd_est$G2[ind] <- (1/(h))*mean((dnorm((b - fpa$V2)/h)*(fpa$M2< b) ))
+  kd_est$G3[ind] <- (1/(h))*mean((dnorm((b - fpa$V3)/h)*(fpa$M3< b) ))
+  kd_est$G4[ind] <- (1/(h))*mean((dnorm((b - fpa$V4)/h)*(fpa$M4< b) ))
+  kd_est$g1[ind] <- (1/(h^2))*mean(dnorm((b - fpa$V1)/h)*dnorm((b - fpa$M1)/h))
+  kd_est$g2[ind] <- (1/(h^2))*mean(dnorm((b - fpa$V2)/h)*dnorm((b - fpa$M2)/h))
+  kd_est$g3[ind] <- (1/(h^2))*mean(dnorm((b - fpa$V3)/h)*dnorm((b - fpa$M3)/h))
+  kd_est$g4[ind] <- (1/(h^2))*mean(dnorm((b - fpa$V4)/h)*dnorm((b - fpa$M4)/h))
 }
+
+plot(grid,kd_est$G1/kd_est$g1)
 
 kd_est$markdown1 <- kd_est$G1/kd_est$g1
 kd_est$markdown2 <- kd_est$G2/kd_est$g2
@@ -159,11 +161,15 @@ legend(210, 0.4,legend=c("CDF of valuations \n (under ind + sym) ", "Bidder 1", 
 
 #symmetric independent private values
 h_g <- 20
-second_highest <- function(x) order(x, decreasing=TRUE)[2]
-fpa$second <- apply(cbind(fpa$V1, fpa$V2, fpa$V3, fpa$V4),1, function(x) x[second_highest(x)])
-g <- density(fpa$second, from=0, to=max(u_grid))
-g_int <- approxfun(g$x, g$y, yleft=0, yright=0)
-G_vals <- apply(cbind(-Inf, g$x), 1, function(x) {integrate(g_int, lower=x[1], upper=x[2])$value})
+#second_highest <- function(x) order(x, decreasing=TRUE)[2]
+#fpa$second <- apply(cbind(fpa$V1, fpa$V2, fpa$V3, fpa$V4),1, function(x) x[second_highest(x)])
+#g <- density(fpa$second, from=0, to=max(u_grid))
+#g_int <- approxfun(g$x, g$y, yleft=0, yright=0)
+#G_vals <- apply(cbind(-Inf, g$x), 1, function(x) {integrate(g_int, lower=x[1], upper=x[2])$value})
+#G <- approxfun(g$x, G_vals, yleft=0, yright=1)
+
+g <- f_indsym
+G_vals <- f_cdf
 G <- approxfun(g$x, G_vals, yleft=0, yright=1)
 
 fpa$uhat_1 <- fpa$V1 + G(fpa$V1)/(3*g_int(fpa$V1))
@@ -171,10 +177,10 @@ fpa$uhat_2 <- fpa$V2 + G(fpa$V2)/(3*g_int(fpa$V2))
 fpa$uhat_3 <- fpa$V3 + G(fpa$V3)/(3*g_int(fpa$V3))
 fpa$uhat_4 <- fpa$V4 + G(fpa$V4)/(3*g_int(fpa$V4))
 
-f1 <- density(fpa$uhat_1)
-f2 <- density(fpa$uhat_2)
-f3 <- density(fpa$uhat_3)
-f4 <- density(fpa$uhat_4)
+f1 <- density(fpa$uhat_1, from=0, to=max(u_grid))
+f2 <- density(fpa$uhat_2, from=0, to=max(u_grid))
+f3 <- density(fpa$uhat_3, from=0, to=max(u_grid))
+f4 <- density(fpa$uhat_4, from=0, to=max(u_grid))
 
 f_SIPV <- density(unlist(stack(fpa, select=c("uhat_1", "uhat_2", "uhat_3", "uhat_4"))[1]), from=0, to=max(u_grid))
 f_SIPV_int <- approxfun(f_SIPV$x, f_SIPV$y, yleft=0, yright=0)
@@ -184,7 +190,7 @@ F_SIPV_fun <- approxfun(u_grid, F_SIPV, yleft=0, yright=1)
 
 plot(f_SIPV, lwd=3, main ="Marginal distribution of valuations under initial SIPV assumption \n (plotted with previous marginal for comparison)")
 lines(f_indsym$x,f_indsym$y, type="l", col="red", lwd=3)
-legend(5, 0.0010, legend=c("Marginal distribution (under init. SIPV assn.) ", "Previous marginal (not under initial SIPV)"), col=c("black", "red" ), lty=1, lwd=c(3, 3))
+legend(150, 0.008, legend=c("Marginal distribution (under init. SIPV assn.) ", "Previous marginal (not under initial SIPV)"), col=c("black", "red" ), lty=1, lwd=c(3, 3))
 
 plot(F_SIPV_fun, xlim=c(0,300), type='l', col="black", lwd=3, main="CDF of valuations under initial SIPV assumption \n (plotted with previous CDF for comparison")
 lines(f_indsym$x, f_cdf, lwd=3, col="red")
