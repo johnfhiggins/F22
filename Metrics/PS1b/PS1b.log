@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.6)  4 DEC 2022 21:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.6)  1 DEC 2022 22:08
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**/Users/johnhiggins/Documents/F22/IO/PS6/PS6.tex
-(/Users/johnhiggins/Documents/F22/IO/PS6/PS6.tex
+**/Users/johnhiggins/Documents/F22/Metrics/PS1b/PS1b.tex
+(/Users/johnhiggins/Documents/F22/Metrics/PS1b/PS1b.tex
 LaTeX2e <2021-11-15> patch level 1
 L3 programming layer <2022-02-24> (/usr/local/texlive/2022/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2021/10/04 v1.4n Standard LaTeX document class
@@ -599,27 +599,27 @@ File: tikzlibrarypositioning.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 File: l3backend-pdftex.def 2022-02-07 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count327
 \l__pdf_internal_box=\box69
-) (./PS6.aux)
-\openout1 = `PS6.aux'.
+) (./PS1b.aux)
+\openout1 = `PS1b.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -674,7 +674,7 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
  (/usr/local/texlive/2022/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
-Package hyperref Info: Link coloring OFF on input line 59.
+Package hyperref Info: Link coloring OFF on input line 49.
  (/usr/local/texlive/2022/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
  (/usr/local/texlive/2022/texmf-dist/tex/latex/refcount/refcount.sty
@@ -684,102 +684,87 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count334
 )
-LaTeX Info: Redefining \ref on input line 59.
-LaTeX Info: Redefining \pageref on input line 59.
-LaTeX Info: Redefining \nameref on input line 59.
- (./PS6.out) (./PS6.out)
+LaTeX Info: Redefining \ref on input line 49.
+LaTeX Info: Redefining \pageref on input line 49.
+LaTeX Info: Redefining \nameref on input line 49.
+ (./PS1b.out) (./PS1b.out)
 \@outlinefile=\write5
-\openout5 = `PS6.out'.
+\openout5 = `PS1b.out'.
 
 \c@lstlisting=\count335
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 64.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 60.
  (/usr/local/texlive/2022/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 64.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 60.
  (/usr/local/texlive/2022/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Trying to load font information for U+rsfs on input line 64.
+LaTeX Font Info:    Trying to load font information for U+rsfs on input line 60.
  (/usr/local/texlive/2022/texmf-dist/tex/latex/jknapltx/ursfs.fd
 File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
 )
-<Valuation_Dist.png, id=7, 839.135pt x 724.7075pt>
-File: Valuation_Dist.png Graphic file (type png)
-<use Valuation_Dist.png>
-Package pdftex.def Info: Valuation_Dist.png  used on input line 70.
-(pdftex.def)             Requested size: 377.60725pt x 326.11536pt.
-<Bid_1.png, id=9, 839.135pt x 724.7075pt>
-File: Bid_1.png Graphic file (type png)
-<use Bid_1.png>
-Package pdftex.def Info: Bid_1.png  used on input line 74.
-(pdftex.def)             Requested size: 209.78323pt x 181.17642pt.
-<Bid_2.png, id=10, 839.135pt x 724.7075pt>
-File: Bid_2.png Graphic file (type png)
-<use Bid_2.png>
-Package pdftex.def Info: Bid_2.png  used on input line 74.
-(pdftex.def)             Requested size: 209.78323pt x 181.17642pt.
- [1{/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
+LaTeX Font Info:    Trying to load font information for U+bbm on input line 109.
+ (/usr/local/texlive/2022/texmf-dist/tex/latex/bbm-macros/ubbm.fd
+File: ubbm.fd 1999/03/15 V 1.2 Font definition for bbm font - TH
+) [1{/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
- <./Valuation_Dist.png>]
-<Bid_3.png, id=25, 839.135pt x 724.7075pt>
-File: Bid_3.png Graphic file (type png)
-<use Bid_3.png>
-Package pdftex.def Info: Bid_3.png  used on input line 75.
-(pdftex.def)             Requested size: 209.78323pt x 181.17642pt.
-<Bid_4.png, id=26, 839.135pt x 724.7075pt>
-File: Bid_4.png Graphic file (type png)
-<use Bid_4.png>
-Package pdftex.def Info: Bid_4.png  used on input line 75.
-(pdftex.def)             Requested size: 209.78323pt x 181.17642pt.
-
-Overfull \hbox (1.65634pt too wide) in paragraph at lines 80--82
-\OT1/cmr/m/it/12 Solution:  \OT1/cmr/m/n/12 I have in-cluded the es-ti-mated value of $\OML/cmm/m/it/12 F[]\OT1/cmr/m/n/12 (\OML/cmm/m/it/12 u[]; u[]; u[]; u[]\OT1/cmr/m/n/12 )$ at all vec-tors $(\OML/cmm/m/it/12 u[]; u[]; u[]; u[]\OT1/cmr/m/n/12 )$
+]
+Overfull \hbox (1.18645pt too wide) detected at line 113
+[][] \OML/cmm/m/it/12 W[] []
  []
 
-[2 <./Bid_1.png> <./Bid_2.png> <./Bid_3.png> <./Bid_4.png>] [3]
-<Marginal_plot.png, id=40, 839.135pt x 724.7075pt>
-File: Marginal_plot.png Graphic file (type png)
-<use Marginal_plot.png>
-Package pdftex.def Info: Marginal_plot.png  used on input line 150.
-(pdftex.def)             Requested size: 377.60725pt x 326.11536pt.
- [4]
-<CDF_val.png, id=46, 839.135pt x 724.7075pt>
-File: CDF_val.png Graphic file (type png)
-<use CDF_val.png>
-Package pdftex.def Info: CDF_val.png  used on input line 156.
-(pdftex.def)             Requested size: 377.60725pt x 326.11536pt.
- [5 <./Marginal_plot.png>]
-<Marginal SIPV.png, id=52, 947.54pt x 587.19376pt>
-File: Marginal SIPV.png Graphic file (type png)
-<use Marginal SIPV.png>
-Package pdftex.def Info: Marginal SIPV.png  used on input line 166.
-(pdftex.def)             Requested size: 426.38905pt x 264.23474pt.
- [6 <./CDF_val.png>]
-<SIPV_CDF.png, id=58, 947.54pt x 587.19376pt>
-File: SIPV_CDF.png Graphic file (type png)
-<use SIPV_CDF.png>
-Package pdftex.def Info: SIPV_CDF.png  used on input line 167.
-(pdftex.def)             Requested size: 426.38905pt x 264.23474pt.
- [7 <./Marginal SIPV.png> <./SIPV_CDF.png>] (./PS6.aux)
-Package rerunfilecheck Info: File `PS6.out' has not changed.
+[2] [3]
+Overfull \hbox (3.97618pt too wide) in paragraph at lines 210--211
+[]\OT1/cmr/m/n/12 Given the as-sump-tion that er-rors are in-de-pen-dent of re-gres-sors, the asymp-totic variance-
+ []
+
+[4]
+<qreg_comp.png, id=53, 700.6175pt x 511.9125pt>
+File: qreg_comp.png Graphic file (type png)
+<use qreg_comp.png>
+Package pdftex.def Info: qreg_comp.png  used on input line 263.
+(pdftex.def)             Requested size: 350.30789pt x 255.95563pt.
+<gmm_comp.png, id=55, 700.6175pt x 511.9125pt>
+File: gmm_comp.png Graphic file (type png)
+<use gmm_comp.png>
+Package pdftex.def Info: gmm_comp.png  used on input line 264.
+(pdftex.def)             Requested size: 350.30789pt x 255.95563pt.
+<md_comp.png, id=56, 700.6175pt x 511.9125pt>
+File: md_comp.png Graphic file (type png)
+<use md_comp.png>
+Package pdftex.def Info: md_comp.png  used on input line 265.
+(pdftex.def)             Requested size: 350.30789pt x 255.95563pt.
+ [5] [6 <./qreg_comp.png> <./gmm_comp.png>]
+<est_comp.png, id=73, 700.6175pt x 511.9125pt>
+File: est_comp.png Graphic file (type png)
+<use est_comp.png>
+Package pdftex.def Info: est_comp.png  used on input line 269.
+(pdftex.def)             Requested size: 350.30789pt x 255.95563pt.
+<est_comp_bagged.png, id=74, 700.6175pt x 511.9125pt>
+File: est_comp_bagged.png Graphic file (type png)
+<use est_comp_bagged.png>
+Package pdftex.def Info: est_comp_bagged.png  used on input line 270.
+(pdftex.def)             Requested size: 350.30789pt x 255.95563pt.
+ [7 <./md_comp.png> <./est_comp.png>] [8 <./est_comp_bagged.png>] (./PS1b.aux)
+Package rerunfilecheck Info: File `PS1b.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 26337 strings out of 478268
- 495193 string characters out of 5846348
- 758945 words of memory out of 5000000
- 44102 multiletter control sequences out of 15000+600000
- 475404 words of font info for 52 fonts, out of 8000000 for 9000
+ 26366 strings out of 478268
+ 495759 string characters out of 5846348
+ 763213 words of memory out of 5000000
+ 44106 multiletter control sequences out of 15000+600000
+ 475799 words of font info for 55 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,12n,89p,1031b,446s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on PS6.pdf (7 pages, 520872 bytes).
+ 84i,12n,89p,1544b,582s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ </Users/johnhiggins/Library/texlive/2022/texmf-var/fonts/pk/ljfour/public/bbm/bbm12.600pk></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
+Output written on PS1b.pdf (8 pages, 225316 bytes).
 PDF statistics:
- 105 PDF objects out of 1000 (max. 8388607)
- 61 compressed objects within 1 object stream
- 10 named destinations out of 1000 (max. 500000)
- 58 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 142 PDF objects out of 1000 (max. 8388607)
+ 100 compressed objects within 1 object stream
+ 33 named destinations out of 1000 (max. 500000)
+ 38 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -39,9 +39,17 @@ fpa$u2 <- fpa$V2 + markdown2$(fpa$V2)
 fpa$u3 <- fpa$V3 + markdown3(fpa$V3)
 fpa$u4 <- fpa$V4 + markdown4(fpa$V4)
 
+plot(fpa$u1, fpa$V1, xlim=c(0, max(fpa$u1)), ylim=c(0, max(fpa$u1)), main="Bidder 1's bid as function of (implied) valuation", xlab="Valuation", ylab="Bid")
+abline(0,1)
+plot(fpa$u2, fpa$V2, xlim=c(0, max(fpa$u2)), ylim=c(0, max(fpa$u2)), main="Bidder 2's bid as function of (implied) valuation", xlab="Valuation", ylab="Bid")
+abline(0,1)
+plot(fpa$u3, fpa$V3, xlim=c(0, max(fpa$u3)), ylim=c(0, max(fpa$u3)), main="Bidder 3's bid as function of (implied) valuation", xlab="Valuation", ylab="Bid")
+abline(0,1)
+plot(fpa$u4, fpa$V4, xlim=c(0, max(fpa$u4)), ylim=c(0, max(fpa$u4)), main="Bidder 4's bid as function of (implied) valuation", xlab="Valuation", ylab="Bid")
+abline(0,1)
 
 #construct f_U
-u_grid <- seq(0, 280, 0.2)
+u_grid <- seq(0, 325, 0.2)
 
 u1_L <- quantile(fpa$u1, probs=0.25)
 u1_H <- quantile(fpa$u1, probs=0.75)
@@ -87,12 +95,13 @@ for (i in 1:length(u_grid)){
   dens4 <- (1/h4)*mean(dnorm((u - fpa$u4)/h_f))
   marg_dist[i,] <- c(u, dens1, dens2, dens3, dens4)
 }
-lines(marg_dist$u, marg_dist$dens1, col="black", type='l')
+plot(marg_dist$u, marg_dist$dens1, col="black", type='l', xlab="Valuation", ylab="Density", main="Estimated marginal densities of valuation by bidder")
 lines(marg_dist$u,marg_dist$dens2, col="red")
 lines(marg_dist$u, marg_dist$dens3, col="blue")
 lines(marg_dist$u, marg_dist$dens4, col="green")
+legend(220, 0.005,legend=c("Bidder 1", "Bidder 2", "Bidder 3", "Bidder 4"), col=c("black", "red", "blue", "green"), lty=1)
 
-
+#using the ready-made density to check whether I'm correct and to also find the right bandwidth to use
 est1 <- density(fpa$u1, from=0, to=max(u_grid))
 est2 <- density(fpa$u2, from=0, to=max(u_grid))
 est3 <- density(fpa$u3, from=0, to=max(u_grid))
@@ -107,23 +116,55 @@ lines(est3$x, est3$y)
 lines(est4$x, est4$y)
 
 
-#idea: if they follow the same distribution, just combine them
+#test for correlation
+cor(fpa$u1, fpa$u2)
+cor(fpa$u1, fpa$u3)
+cor(fpa$u1, fpa$u4)
+cor(fpa$u2, fpa$u3)
+cor(fpa$u2, fpa$u4)
+cor(fpa$u3, fpa$u4)
+
+
+#plot of marginal distribution of valuations assuming independence and symmetry
+f_indsym <- density(unlist(stack(fpa, select=c("u1", "u2", "u3", "u4"))[1]), from=0, to=max(u_grid))
+
+plot(f_indsym, lwd=3, type='l', xlab="Valuation", ylab="Density", main="Marginal density assuming independence and symmetry \n (plotted with individual marginals for comparison)")
+lines(marg_dist$u, marg_dist$dens1, col="orange")
+lines(marg_dist$u,marg_dist$dens2, col="red")
+lines(marg_dist$u, marg_dist$dens3, col="blue")
+lines(marg_dist$u, marg_dist$dens4, col="green")
+legend(200, 0.005,legend=c("Marginal distribution \n (under ind + sym) ", "Bidder 1 Marginal", "Bidder 2 Marginal", "Bidder 3 Marginal", "Bidder 4 Marginal"), col=c("black", "red", "orange", "blue", "green"), lty=1, lwd=c(3, 1,1,1,1))
+
+
+f_dist <- approxfun(f_indsym$x, f_indsym$y, yleft=0, yright=0)
+f_cdf <- apply(cbind(-Inf, f_indsym$x), 1, function(x) {integrate(f_dist, lower=x[1], upper=x[2])$value}) #ecdf(unlist(stack(fpa, select=c("u1", "u2", "u3", "u4"))[1]))
+
+f_1 <- approxfun(est1$x, est1$y, yleft=0, yright=0)
+cdf_1 <- apply(cbind(0, est1$x), 1, function(x) {integrate(f_1, lower=x[1], upper=x[2])$value})
+f_2 <- approxfun(est2$x, est2$y, yleft=0, yright=0)
+cdf_2 <- apply(cbind(0, est2$x), 1, function(x) {integrate(f_2, lower=x[1], upper=x[2])$value})
+f_3 <- approxfun(est3$x, est3$y, yleft=0, yright=0)
+cdf_3 <- apply(cbind(0, est3$x), 1, function(x) {integrate(f_3, lower=x[1], upper=x[2])$value})
+f_4 <- approxfun(est4$x, est4$y, yleft=0, yright=0)
+cdf_4 <- apply(cbind(0, est4$x), 1, function(x) {integrate(f_4, lower=x[1], upper=x[2])$value})
+
+plot(f_indsym$x,f_cdf, type='l',lwd=5,  main ="CDF of valuations assuming independence and symmetry \n (plotted with individual marginals for comparison)")
+lines(est1$x, cdf_1, col="orange")
+lines(est2$x, cdf_2, col="red")
+lines(est3$x, cdf_3, col="blue")
+lines(est4$x, cdf_4, col="green")
+legend(210, 0.4,legend=c("CDF of valuations \n (under ind + sym) ", "Bidder 1", "Bidder 2", "Bidder 3", "Bidder 4 "), col=c("black", "orange", "red", "blue", "green"), lty=1, lwd=c(5, 1,1,1,1))
+
 
 
 #symmetric independent private values
 h_g <- 20
 second_highest <- function(x) order(x, decreasing=TRUE)[2]
 fpa$second <- apply(cbind(fpa$V1, fpa$V2, fpa$V3, fpa$V4),1, function(x) x[second_highest(x)])
-G <- ecdf(fpa$second)
-g <- density(fpa$second)
-g_int <- approxfun(x=g$x, y=g$y, rule = 2)
-
-
-Gmax <- ecdf(fpa$V2)
-gmax <- density(fpa$V2)
-gmax_int <- approxfun(x = gmax$x, y=g$y, rule=2)
-fpa$max_md <- fpa$V2 + Gmax(fpa$V2)/(3*gmax_int(fpa$V2))
-max_d <- density(fpa$max_md)
+g <- density(fpa$second, from=0, to=max(u_grid))
+g_int <- approxfun(g$x, g$y, yleft=0, yright=0)
+G_vals <- apply(cbind(-Inf, g$x), 1, function(x) {integrate(g_int, lower=x[1], upper=x[2])$value})
+G <- approxfun(g$x, G_vals, yleft=0, yright=1)
 
 fpa$uhat_1 <- fpa$V1 + G(fpa$V1)/(3*g_int(fpa$V1))
 fpa$uhat_2 <- fpa$V2 + G(fpa$V2)/(3*g_int(fpa$V2))
@@ -135,12 +176,17 @@ f2 <- density(fpa$uhat_2)
 f3 <- density(fpa$uhat_3)
 f4 <- density(fpa$uhat_4)
 
-f <- density(unlist(stack(fpa, select=c("uhat_1", "uhat_2", "uhat_3", "uhat_4"))[1]))
-plot(f)
-lines(f1$x,f1$y, type="l")
-lines(f2$x, f2$y, col="red")
-lines(f3$x, f3$y, col="blue")
-lines(f4$x, f4$y, col="green")     
+f_SIPV <- density(unlist(stack(fpa, select=c("uhat_1", "uhat_2", "uhat_3", "uhat_4"))[1]), from=0, to=max(u_grid))
+f_SIPV_int <- approxfun(f_SIPV$x, f_SIPV$y, yleft=0, yright=0)
+F_SIPV <- apply(cbind(-Inf, u_grid), 1, function(x) {integrate(f_SIPV_int, lower=x[1], upper=x[2])$value})
+F_SIPV_fun <- approxfun(u_grid, F_SIPV, yleft=0, yright=1)
 
-ggplot(fpa) + stat_density(aes(uhat_1), color="red", fill="red", alpha=0.2) + stat_density(aes(uhat_2), color="blue", fill="blue", alpha=0.2) + stat_density(aes(uhat_3),  color="green",fill="green", alpha=0.2) + stat_density(aes(uhat_2), fill="purple", alpha=0.2)
+
+plot(f_SIPV, lwd=3, main ="Marginal distribution of valuations under initial SIPV assumption \n (plotted with previous marginal for comparison)")
+lines(f_indsym$x,f_indsym$y, type="l", col="red", lwd=3)
+legend(5, 0.0010, legend=c("Marginal distribution (under init. SIPV assn.) ", "Previous marginal (not under initial SIPV)"), col=c("black", "red" ), lty=1, lwd=c(3, 3))
+
+plot(F_SIPV_fun, xlim=c(0,300), type='l', col="black", lwd=3, main="CDF of valuations under initial SIPV assumption \n (plotted with previous CDF for comparison")
+lines(f_indsym$x, f_cdf, lwd=3, col="red")
+legend(120, 0.15, legend=c("CDF of valuations (under init. SIPV assn.) ", "Previous CDF (not under initial SIPV)"), col=c("black", "red" ), lty=1, lwd=c(3, 3))
 

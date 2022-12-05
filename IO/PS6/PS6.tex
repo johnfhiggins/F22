@@ -67,7 +67,7 @@
     
     I have plotted the kernel density of each bidder below (on the same graph for comparison):
     \begin{center}
-        \includegraphics[scale=0.45]{Valuation Dist.png}
+        \includegraphics[scale=0.45]{Valuation_Dist.png}
     \end{center}
     I have also plotted their bid as a function of their valuation (as well as a 45-degree line). Based on these plots, we can see that bidders are shading their bids (as we would expect in a first price auction).
     \begin{center}
@@ -159,7 +159,14 @@ The correlation between bidders' expected valuations are all very close to zero,
 \begin{problem}{6}
 \end{problem}
 \begin{sol}
-    I now re-estimate the model by imposing the assumption of symmetric independent private values from the onset. 
+    I now re-estimate the model by imposing the assumption of symmetric independent private values from the onset. Under this assumption, each bidder's equilibrium bids will satisfy the following:
+    \[u_i = b_i + \frac{G(b_i)}{(n-1)g(b_i)}\]
+    We non-parametrically estimate the empirical marginal distribution of bids $G$ (as well as the corresponding density $g$) using kernel estimation. Using these estimates, we then find the implied bidder valuations. I estimate the density of the resulting marginal distribution non-parametrically and plot it alongside the previous marginal density (when we didn't initially assume SIPV). I have also plotted the CDF of each distribution.
+    \begin{center}
+        \includegraphics[scale=0.45]{Marginal SIPV.png}\\
+        \includegraphics[scale=0.45]{SIPV_CDF.png}
+    \end{center}
+    Since the estimated marginal distribution under the initial assumption of SIPV is quite different the previously-estimated marginal, it seems like the SIPV assumption is not quite valid.
 \end{sol}
 
 
